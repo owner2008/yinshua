@@ -1,0 +1,15 @@
+{
+  "name": "yinshua-quote-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "不干胶印刷产品展示与参数化报价系统",
+  "scripts": {
+    "dev:api": "pnpm --dir apps/api start:dev",
+    "build:api": "pnpm --dir apps/api build",
+    "lint:api": "pnpm --dir apps/api lint"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

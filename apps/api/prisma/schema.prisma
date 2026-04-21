@@ -1,0 +1,378 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        BigInt          @id @default(autoincrement())
+  wxOpenid  String?         @unique @map("wx_openid") @db.VarChar(128)
+  unionid   String?         @db.VarChar(128)
+  mobile    String?         @unique @db.VarChar(32)
+  nickname  String?         @db.VarChar(128)
+  avatar    String?         @db.VarChar(512)
+  status    String          @default("active") @db.VarChar(32)
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  profile   MemberProfile?
+  addresses MemberAddress[]
+  quotes    Quote[]
+
+  @@map("users")
+}
+
+model MemberLevel {
+  id           BigInt          @id @default(autoincrement())
+  name         String          @db.VarChar(64)
+  code         String          @unique @db.VarChar(64)
+  discountRate Decimal         @default(1) @map("discount_rate") @db.Decimal(10, 4)
+  priority     Int             @default(0)
+  remark       String?         @db.VarChar(255)
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  profiles     MemberProfile[]
+  quotes       Quote[]
+
+  @@map("member_levels")
+}
+
+model MemberProfile {
+  id                  BigInt       @id @default(autoincrement())
+  userId              BigInt       @unique @map("user_id")
+  memberNo            String       @unique @map("member_no") @db.VarChar(64)
+  customerType        String       @default("personal") @map("customer_type") @db.VarChar(32)
+  companyName         String?      @map("company_name") @db.VarChar(128)
+  contactName         String?      @map("contact_name") @db.VarChar(64)
+  taxNo               String?      @map("tax_no") @db.VarChar(64)
+  industry            String?      @db.VarChar(64)
+  source              String?      @db.VarChar(64)
+  salesOwnerId        BigInt?      @map("sales_owner_id")
+  levelId             BigInt?      @map("level_id")
+  defaultDiscountRate Decimal?     @map("default_discount_rate") @db.Decimal(10, 4)
+  remark              String?      @db.Text
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
+  user                User         @relation(fields: [userId], references: [id])
+  level               MemberLevel? @relation(fields: [levelId], references: [id])
+
+  @@map("member_profiles")
+}
+
+model MemberAddress {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt   @map("user_id")
+  consignee String   @db.VarChar(64)
+  mobile    String   @db.VarChar(32)
+  province  String   @db.VarChar(64)
+  city      String   @db.VarChar(64)
+  district  String?  @db.VarChar(64)
+  detail    String   @db.VarChar(255)
+  isDefault Boolean  @default(false) @map("is_default")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("member_addresses")
+}
+
+model Product {
+  id                  BigInt            @id @default(autoincrement())
+  categoryId          BigInt?           @map("category_id")
+  name                String            @db.VarChar(128)
+  code                String            @unique @db.VarChar(64)
+  coverImage          String?           @map("cover_image") @db.VarChar(512)
+  galleryJson         Json?             @map("gallery_json")
+  description         String?           @db.Text
+  applicationScenario String?           @map("application_scenario") @db.Text
+  status              String            @default("active") @db.VarChar(32)
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+  templates           ProductTemplate[]
+  quotes              Quote[]
+
+  @@map("products")
+}
+
+model ProductTemplate {
+  id                BigInt                  @id @default(autoincrement())
+  productId         BigInt                  @map("product_id")
+  templateName      String                  @map("template_name") @db.VarChar(128)
+  widthMin          Decimal                 @map("width_min") @db.Decimal(10, 2)
+  widthMax          Decimal                 @map("width_max") @db.Decimal(10, 2)
+  heightMin         Decimal                 @map("height_min") @db.Decimal(10, 2)
+  heightMax         Decimal                 @map("height_max") @db.Decimal(10, 2)
+  quantityMin       Int                     @map("quantity_min")
+  quantityMax       Int                     @map("quantity_max")
+  allowCustomShape  Boolean                 @default(false) @map("allow_custom_shape")
+  allowLamination   Boolean                 @default(false) @map("allow_lamination")
+  allowHotStamping  Boolean                 @default(false) @map("allow_hot_stamping")
+  allowUv           Boolean                 @default(false) @map("allow_uv")
+  allowDieCut       Boolean                 @default(false) @map("allow_die_cut")
+  allowProofing     Boolean                 @default(false) @map("allow_proofing")
+  defaultLossRate   Decimal                 @default(1) @map("default_loss_rate") @db.Decimal(10, 4)
+  minPrice          Decimal                 @default(0) @map("min_price") @db.Decimal(12, 2)
+  status            String                  @default("active") @db.VarChar(32)
+  createdAt         DateTime                @default(now()) @map("created_at")
+  updatedAt         DateTime                @updatedAt @map("updated_at")
+  product           Product                 @relation(fields: [productId], references: [id])
+  options           ProductTemplateOption[]
+  ruleSets          QuoteRuleSet[]
+  quotes            Quote[]
+
+  @@index([productId])
+  @@map("product_templates")
+}
+
+model ProductTemplateOption {
+  id          BigInt          @id @default(autoincrement())
+  templateId  BigInt          @map("template_id")
+  optionType  String          @map("option_type") @db.VarChar(32)
+  optionValue String          @map("option_value") @db.VarChar(128)
+  optionLabel String          @map("option_label") @db.VarChar(128)
+  sort        Int             @default(0)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  template    ProductTemplate @relation(fields: [templateId], references: [id])
+
+  @@index([templateId])
+  @@map("product_template_options")
+}
+
+model Material {
+  id        BigInt          @id @default(autoincrement())
+  code      String          @unique @db.VarChar(64)
+  name      String          @db.VarChar(128)
+  type      String          @map("material_type") @db.VarChar(32)
+  unit      String          @db.VarChar(32)
+  spec      String?         @db.VarChar(128)
+  brand     String?         @db.VarChar(128)
+  status    String          @default("active") @db.VarChar(32)
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  prices    MaterialPrice[]
+  quotes    Quote[]
+  stockItems StockItem[]
+  stockMovements StockMovement[]
+
+  @@map("materials")
+}
+
+model MaterialPrice {
+  id            BigInt    @id @default(autoincrement())
+  materialId    BigInt    @map("material_id")
+  priceType     String    @default("calc") @map("price_type") @db.VarChar(32)
+  unitPrice     Decimal   @map("unit_price") @db.Decimal(12, 4)
+  currency      String    @default("CNY") @db.VarChar(16)
+  effectiveFrom DateTime  @map("effective_from")
+  effectiveTo   DateTime? @map("effective_to")
+  isCurrent     Boolean   @default(true) @map("is_current")
+  source        String?   @db.VarChar(64)
+  updatedBy     BigInt?   @map("updated_by")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  material      Material  @relation(fields: [materialId], references: [id])
+
+  @@index([materialId, isCurrent])
+  @@map("material_prices")
+}
+
+model Process {
+  id          BigInt         @id @default(autoincrement())
+  code        String         @unique @db.VarChar(64)
+  name        String         @db.VarChar(128)
+  processType String         @map("process_type") @db.VarChar(64)
+  feeMode     String         @map("fee_mode") @db.VarChar(32)
+  status      String         @default("active") @db.VarChar(32)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  prices      ProcessPrice[]
+
+  @@map("processes")
+}
+
+model ProcessPrice {
+  id            BigInt    @id @default(autoincrement())
+  processId     BigInt    @map("process_id")
+  feeMode       String    @map("fee_mode") @db.VarChar(32)
+  unitPrice     Decimal   @default(0) @map("unit_price") @db.Decimal(12, 4)
+  minFee        Decimal   @default(0) @map("min_fee") @db.Decimal(12, 2)
+  setupFee      Decimal   @default(0) @map("setup_fee") @db.Decimal(12, 2)
+  effectiveFrom DateTime  @map("effective_from")
+  effectiveTo   DateTime? @map("effective_to")
+  isCurrent     Boolean   @default(true) @map("is_current")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  process       Process   @relation(fields: [processId], references: [id])
+
+  @@index([processId, isCurrent])
+  @@map("process_prices")
+}
+
+model PrintPrice {
+  id            BigInt    @id @default(autoincrement())
+  printMode     String    @map("print_mode") @db.VarChar(64)
+  feeMode       String    @map("fee_mode") @db.VarChar(32)
+  unitPrice     Decimal   @default(0) @map("unit_price") @db.Decimal(12, 4)
+  setupFee      Decimal   @default(0) @map("setup_fee") @db.Decimal(12, 2)
+  effectiveFrom DateTime  @map("effective_from")
+  effectiveTo   DateTime? @map("effective_to")
+  isCurrent     Boolean   @default(true) @map("is_current")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([printMode, isCurrent])
+  @@map("print_prices")
+}
+
+model QuoteRuleSet {
+  id                BigInt          @id @default(autoincrement())
+  productTemplateId BigInt          @map("product_template_id")
+  name              String          @db.VarChar(128)
+  scene             String          @db.VarChar(64)
+  status            String          @default("active") @db.VarChar(32)
+  priority          Int             @default(0)
+  versionNo         String          @map("version_no") @db.VarChar(64)
+  effectiveFrom     DateTime        @map("effective_from")
+  effectiveTo       DateTime?       @map("effective_to")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+  template          ProductTemplate @relation(fields: [productTemplateId], references: [id])
+  rules             QuoteRule[]
+  snapshots         QuoteSnapshot[]
+
+  @@index([productTemplateId, status, priority])
+  @@map("quote_rule_sets")
+}
+
+model QuoteRule {
+  id            BigInt       @id @default(autoincrement())
+  ruleSetId     BigInt       @map("rule_set_id")
+  conditionJson Json         @map("condition_json")
+  configJson    Json         @map("config_json")
+  enabled       Boolean      @default(true)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  ruleSet       QuoteRuleSet @relation(fields: [ruleSetId], references: [id])
+
+  @@index([ruleSetId])
+  @@map("quote_rules")
+}
+
+model Quote {
+  id                 BigInt          @id @default(autoincrement())
+  quoteNo            String          @unique @map("quote_no") @db.VarChar(64)
+  userId             BigInt?         @map("user_id")
+  productId          BigInt          @map("product_id")
+  productTemplateId  BigInt          @map("product_template_id")
+  memberLevelId      BigInt?         @map("member_level_id")
+  customerType       String?         @map("customer_type") @db.VarChar(32)
+  width              Decimal         @db.Decimal(10, 2)
+  height             Decimal         @db.Decimal(10, 2)
+  quantity           Int
+  materialId         BigInt          @map("material_id")
+  processOptionsJson Json?           @map("process_options_json")
+  priceSubtotal      Decimal         @map("price_subtotal") @db.Decimal(12, 2)
+  fixedFeeTotal      Decimal         @default(0) @map("fixed_fee_total") @db.Decimal(12, 2)
+  discountTotal      Decimal         @default(0) @map("discount_total") @db.Decimal(12, 2)
+  finalPrice         Decimal         @map("final_price") @db.Decimal(12, 2)
+  unitPrice          Decimal         @map("unit_price") @db.Decimal(12, 4)
+  status             String          @default("draft") @db.VarChar(32)
+  validUntil         DateTime?       @map("valid_until")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+  product            Product         @relation(fields: [productId], references: [id])
+  template           ProductTemplate @relation(fields: [productTemplateId], references: [id])
+  material           Material        @relation(fields: [materialId], references: [id])
+  user               User?           @relation(fields: [userId], references: [id])
+  memberLevel        MemberLevel?    @relation(fields: [memberLevelId], references: [id])
+  snapshot           QuoteSnapshot?
+
+  @@index([userId])
+  @@map("quotes")
+}
+
+model QuoteSnapshot {
+  id                        BigInt       @id @default(autoincrement())
+  quoteId                   BigInt       @unique @map("quote_id")
+  ruleSetId                 BigInt       @map("rule_set_id")
+  ruleVersion               String       @map("rule_version") @db.VarChar(64)
+  materialPriceSnapshotJson Json         @map("material_price_snapshot_json")
+  processPriceSnapshotJson  Json         @map("process_price_snapshot_json")
+  printPriceSnapshotJson    Json         @map("print_price_snapshot_json")
+  formulaSnapshotJson       Json         @map("formula_snapshot_json")
+  fullSnapshotJson          Json         @map("full_snapshot_json")
+  createdAt                 DateTime     @default(now()) @map("created_at")
+  quote                     Quote        @relation(fields: [quoteId], references: [id])
+  ruleSet                   QuoteRuleSet @relation(fields: [ruleSetId], references: [id])
+
+  @@index([quoteId])
+  @@map("quote_snapshots")
+}
+
+model OperationLog {
+  id         BigInt   @id @default(autoincrement())
+  operatorId BigInt?  @map("operator_id")
+  module     String   @db.VarChar(64)
+  action     String   @db.VarChar(64)
+  targetType String   @map("target_type") @db.VarChar(64)
+  targetId   BigInt?  @map("target_id")
+  beforeJson Json?    @map("before_json")
+  afterJson  Json?    @map("after_json")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([module, targetType, targetId])
+  @@map("operation_logs")
+}
+
+model Warehouse {
+  id          BigInt          @id @default(autoincrement())
+  name        String          @db.VarChar(128)
+  code        String          @unique @db.VarChar(64)
+  type        String          @map("warehouse_type") @db.VarChar(32)
+  managerId   BigInt?         @map("manager_id")
+  status      String          @default("active") @db.VarChar(32)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  stockItems  StockItem[]
+  movements   StockMovement[]
+
+  @@map("warehouses")
+}
+
+model StockItem {
+  id           BigInt    @id @default(autoincrement())
+  materialId   BigInt    @map("material_id")
+  warehouseId  BigInt    @map("warehouse_id")
+  qty          Decimal   @default(0) @db.Decimal(14, 4)
+  reservedQty  Decimal   @default(0) @map("reserved_qty") @db.Decimal(14, 4)
+  availableQty Decimal   @default(0) @map("available_qty") @db.Decimal(14, 4)
+  safetyQty    Decimal   @default(0) @map("safety_qty") @db.Decimal(14, 4)
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  material     Material  @relation(fields: [materialId], references: [id])
+  warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
+
+  @@unique([materialId, warehouseId])
+  @@map("stock_items")
+}
+
+model StockMovement {
+  id           BigInt    @id @default(autoincrement())
+  movementNo   String    @unique @map("movement_no") @db.VarChar(64)
+  movementType String    @map("movement_type") @db.VarChar(32)
+  warehouseId  BigInt    @map("warehouse_id")
+  materialId   BigInt    @map("material_id")
+  qty          Decimal   @db.Decimal(14, 4)
+  unitCost     Decimal?  @map("unit_cost") @db.Decimal(12, 4)
+  refType      String?   @map("ref_type") @db.VarChar(64)
+  refId        BigInt?   @map("ref_id")
+  operatorId   BigInt?   @map("operator_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
+  material     Material  @relation(fields: [materialId], references: [id])
+
+  @@map("stock_movements")
+}

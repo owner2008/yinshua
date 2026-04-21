@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# build output
+dist/
+**/dist/
+
+# local runtime and installers
+.tools/
+
+# environment
+.env
+*.local
+apps/api/.env
+
+# logs
+*.log
+*.pid
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Prisma generated local files are installed through dependencies
+*.tsbuildinfo
