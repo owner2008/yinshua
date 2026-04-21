@@ -43,7 +43,7 @@
 ```text
 apps/
   api/      NestJS 后端
-  admin/    后台管理端占位
+  admin/    后台管理端
   client/   微信小程序 / H5 用户端占位
 database/   SQL 草案与种子数据
 docs/       API 文档与执行状态
@@ -60,9 +60,12 @@ scripts/    本地开发环境脚本
 - P4 会员与历史报价 API
 - P5 基础库存与审计 API
 
-尚未开始：
+已完成第一版：
 
 - 后台管理端页面
+
+尚未开始：
+
 - 用户端小程序 / H5 页面
 - 真实微信登录 code2Session 与 JWT
 - 真实 MySQL 环境下的完整联调
@@ -126,6 +129,23 @@ pnpm --dir apps/api start:dev
 http://127.0.0.1:3000/api
 ```
 
+## 启动后台管理端
+
+先启动后端，再启动管理端：
+
+```powershell
+pnpm --dir apps/admin install
+pnpm --dir apps/admin dev
+```
+
+后台地址：
+
+```text
+http://127.0.0.1:5173
+```
+
+管理端通过 Vite 代理访问后端 `/api`。
+
 ## 数据库配置
 
 复制环境变量文件：
@@ -166,6 +186,7 @@ pnpm --dir apps/api db:seed
 pnpm --dir apps/api typecheck
 pnpm --dir apps/api build
 pnpm --dir apps/api lint
+pnpm --dir apps/admin build
 ```
 
 当前已验证：
@@ -283,8 +304,7 @@ build 通过
 ## 下一步计划
 
 1. 配置真实 MySQL 并完成完整联调。
-2. 实现后台管理端页面。
+2. 完善后台管理端编辑、删除、筛选和权限。
 3. 实现用户端产品展示与在线报价页面。
 4. 将微信登录占位逻辑替换为真实微信登录。
 5. 增加接口测试与端到端验收用例。
-
