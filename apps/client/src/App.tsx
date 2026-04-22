@@ -1,9 +1,8 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { post, request } from './api';
+import { getMemberSession, loginMember, post, request, saveMemberSession } from './api';
 import { sampleProducts, sampleTemplates } from './sampleData';
-import { MemberQuote, Product, ProductTemplate, QuoteInput, QuoteResult, TemplateOption } from './types';
+import { MemberQuote, MemberSession, Product, ProductTemplate, QuoteInput, QuoteResult, TemplateOption } from './types';
 
-const DEFAULT_USER_ID = 1;
 const money = new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' });
 
 export function App() {
@@ -17,10 +16,25 @@ export function App() {
   const [notice, setNotice] = useState('正在读取产品配置');
   const [busy, setBusy] = useState(false);
   const [historyBusy, setHistoryBusy] = useState(false);
+  const [memberSession, setMemberSession] = useState<MemberSession | null>(() => getMemberSession());
 
   useEffect(() => {
     void loadCatalog();
+    void ensureMemberSession();
   }, []);
+
+  async function ensureMemberSession() {
+    const existing = getMemberSession();
+    if (existing) {
+      setMemberSession(existing);
+      return existing;
+    }
+
+    const session = await loginMember();
+    saveMemberSession(session);
+    setMemberSession(session);
+    return session;
+  }
 
   async function loadCatalog() {
     try {
@@ -93,7 +107,8 @@ export function App() {
     setBusy(true);
     setNotice('正在保存报价');
     try {
-      const result = await post<QuoteResult>('/quotes', normalizeQuoteInput({ ...quoteInput, memberId: DEFAULT_USER_ID }));
+      await ensureMemberSession();
+      const result = await post<QuoteResult>('/quotes', normalizeQuoteInput(quoteInput));
       setQuoteResult(result);
       setNotice(`报价单 ${result.quoteNo} 已保存`);
       await loadHistory();
@@ -107,7 +122,8 @@ export function App() {
   async function loadHistory() {
     setHistoryBusy(true);
     try {
-      setHistory(await request<MemberQuote[]>(`/member/quotes?userId=${DEFAULT_USER_ID}`));
+      await ensureMemberSession();
+      setHistory(await request<MemberQuote[]>('/member/quotes'));
     } catch {
       setHistory([]);
     } finally {
@@ -340,7 +356,7 @@ function HistoryPanel({ history, loading, onRefresh }: { history: MemberQuote[];
                 <span>产品 {quote.productId} / 模板 {quote.productTemplateId}</span>
               </div>
               <div>
-                <strong>{quote.summary ? money.format(quote.summary.finalPrice) : '-'}</strong>
+                <strong>{getQuoteSummary(quote) ? money.format(getQuoteSummary(quote)!.finalPrice) : '-'}</strong>
                 <span>{quote.quantity} 个</span>
               </div>
             </article>
@@ -349,6 +365,10 @@ function HistoryPanel({ history, loading, onRefresh }: { history: MemberQuote[];
       )}
     </section>
   );
+}
+
+function getQuoteSummary(quote: MemberQuote): QuoteResult['summary'] | undefined {
+  return quote.summary ?? quote.snapshot?.fullSnapshotJson?.summary;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {

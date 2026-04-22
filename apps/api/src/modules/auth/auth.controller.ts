@@ -1,10 +1,15 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { BindMobileDto, WxLoginDto } from './dto/auth.dto';
+import { AdminLoginDto, BindMobileDto, WxLoginDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly auth: AuthService) {}
+
+  @Post('admin-login')
+  adminLogin(@Body() dto: AdminLoginDto) {
+    return this.auth.adminLogin(dto);
+  }
 
   @Post('wx-login')
   wxLogin(@Body() dto: WxLoginDto) {

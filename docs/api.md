@@ -69,6 +69,12 @@
 
 请求体同 `POST /api/quotes/calculate`。
 
+需要在请求头携带用户端登录后获得的会员 token：
+
+```http
+Authorization: Bearer <member-token>
+```
+
 ## 3. 后台报价查询
 
 ### `GET /api/admin/quotes`
@@ -127,7 +133,7 @@ pnpm --dir apps/api db:seed
 - `GET /api/member/addresses`
 - `POST /api/member/addresses`
 
-说明：当前登录接口为开发期占位实现，`wx-login` 会用 `mock_${code}` 生成 openid，后续需要替换为真实微信 code2Session 和 JWT。
+说明：`wx-login` 会返回会员 token。未配置 `WECHAT_APPID` / `WECHAT_APP_SECRET` 或传入 `mock_` 前缀 code 时，会使用开发期 mock openid；配置正式小程序密钥后会调用微信 code2Session。会员资料、地址、历史报价与保存报价接口需要携带 `Authorization: Bearer <member-token>`。
 
 后台配置：
 
@@ -162,8 +168,17 @@ pnpm --dir apps/api db:seed
 - `GET /api/admin/stock-items`
 - `GET /api/admin/stock-movements`
 - `POST /api/admin/stock-movements`
+- `GET /api/admin/admin-users`
+- `POST /api/admin/admin-users`
+- `PUT /api/admin/admin-users/:id`
+- `GET /api/admin/admin-roles`
+- `POST /api/admin/admin-roles`
+- `PUT /api/admin/admin-roles/:id`
+- `GET /api/admin/admin-permissions`
 
 后台配置类写操作会记录操作日志，包含模块、动作、目标对象、before_json、after_json 和创建时间。
+
+后台权限管理接口需要 `admin:permission` 权限码。
 
 库存流水 `movementType` 支持：
 

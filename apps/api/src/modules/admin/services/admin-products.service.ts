@@ -180,6 +180,16 @@ export class AdminProductsService {
   }
 
   private async replaceTemplateOptions(id: number, dto: Partial<CreateProductTemplateDto>) {
+    const hasOptionUpdate =
+      dto.materialIds !== undefined ||
+      dto.processCodes !== undefined ||
+      dto.printModes !== undefined ||
+      dto.shapeTypes !== undefined;
+
+    if (!hasOptionUpdate) {
+      return;
+    }
+
     const optionRows = [
       ...(dto.materialIds ?? []).map((value) => ['material', String(value), String(value)]),
       ...(dto.processCodes ?? []).map((value) => ['process', value, value]),
@@ -188,6 +198,7 @@ export class AdminProductsService {
     ] as Array<[string, string, string]>;
 
     if (optionRows.length === 0) {
+      await this.prisma.productTemplateOption.deleteMany({ where: { templateId: BigInt(id) } });
       return;
     }
 

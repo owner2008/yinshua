@@ -51,6 +51,17 @@ export interface QuoteInput {
   memberId?: number;
 }
 
+export interface MemberSession {
+  token: string;
+  expiresAt: string;
+  user: {
+    id: string | number;
+    wxOpenid?: string;
+    nickname?: string;
+    avatar?: string;
+  };
+}
+
 export interface QuoteResult {
   quoteNo: string;
   productId: number;
@@ -105,4 +116,7 @@ export interface MemberQuote {
   quantity: number;
   createdAt?: string;
   summary?: QuoteResult['summary'];
+  snapshot?: {
+    fullSnapshotJson?: QuoteResult;
+  };
 }

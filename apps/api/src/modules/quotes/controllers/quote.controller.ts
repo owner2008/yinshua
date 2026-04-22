@@ -1,4 +1,8 @@
-import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../../auth/admin-auth.guard';
+import { CurrentMember } from '../../auth/current-member.decorator';
+import { RequireAdminPermission } from '../../auth/admin-permission.decorator';
+import { MemberAuthGuard } from '../../auth/member-auth.guard';
 import { CreateQuoteDto } from '../dto/create-quote.dto';
 import { QuoteService } from '../services/quote.service';
 import { QuoteSnapshotService } from '../services/quote-snapshot.service';
@@ -16,16 +20,21 @@ export class QuoteController {
   }
 
   @Post('quotes')
-  create(@Body() dto: CreateQuoteDto) {
-    return this.quotes.create(dto);
+  @UseGuards(MemberAuthGuard)
+  create(@Body() dto: CreateQuoteDto, @CurrentMember() member: CurrentMember) {
+    return this.quotes.create(dto, member.userId);
   }
 
   @Get('admin/quotes')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote')
   findAll() {
     return this.quotes.findAll();
   }
 
   @Get('admin/quotes/:quoteNo')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote')
   async findOne(@Param('quoteNo') quoteNo: string) {
     const quote = await this.quotes.findOne(quoteNo);
     if (!quote) {
@@ -36,6 +45,8 @@ export class QuoteController {
   }
 
   @Get('admin/quote-snapshots/:quoteNo')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote')
   async findSnapshot(@Param('quoteNo') quoteNo: string) {
     const quote = await this.quotes.findOne(quoteNo);
     const snapshot = quote?.snapshot ?? this.snapshots.findByQuoteNo(quoteNo);

@@ -1,0 +1,35 @@
+<view class="page">
+  <view class="hero card">
+    <view>
+      <text class="eyebrow">会员中心</text>
+      <view class="title">历史报价</view>
+      <view class="muted">{{notice}}</view>
+    </view>
+    <button class="mini-button" size="mini" loading="{{busy}}" bindtap="loadHistory">刷新</button>
+  </view>
+
+  <view wx:if="{{quotes.length}}" class="quote-list">
+    <block wx:for="{{quotes}}" wx:key="id">
+      <view class="card quote-card" data-id="{{item.id}}" bindtap="openQuote">
+        <view class="quote-top">
+          <view>
+            <view class="quote-no">{{item.quoteNo}}</view>
+            <view class="muted">{{item.createdAtText}}</view>
+          </view>
+          <view class="quote-price">¥{{item.finalPrice}}</view>
+        </view>
+        <view class="quote-meta">
+          <text>{{item.productName}}</text>
+          <text>{{item.quantity}} 个</text>
+          <text>{{item.customerTypeText}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view wx:else class="empty card">
+    <view class="empty-title">暂无历史报价</view>
+    <view class="muted">保存过的报价会显示在这里。</view>
+    <button class="primary-button empty-button" bindtap="goQuote">去报价</button>
+  </view>
+</view>

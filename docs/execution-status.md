@@ -80,7 +80,21 @@
 - 已实现报价单列表页面。
 - 已实现仓库、库存项、库存流水页面。
 - 已实现操作日志页面。
+- 已补充产品、报价模板、材料、材料价格的筛选、编辑、停用与当前价格筛选体验。
+- 已补充工艺、工艺价格、印刷价格、报价规则集、报价规则明细的筛选、编辑、启停与价格筛选体验。
+- 已补充仓库、库存项、库存流水、报价单、操作日志的筛选、详情与关键操作体验。
+- 已新增后台开发期登录页、管理员 token 签发、前端会话保存、退出与写接口 Bearer token 守卫。
+- 已新增后台管理员、角色、权限 Prisma 模型与 seed，后台登录会优先使用数据库管理员账号，数据库不可用时回退到环境变量开发账号。
+- 已实现后台写接口按权限码拦截，并按登录账号权限过滤后台菜单与写操作入口。
+- 已将报价单查询与操作日志查询纳入后台权限码保护，报价单使用 `admin:quote`，操作日志使用 `admin:audit-log`。
+- 已新增后台权限管理页面与接口，支持管理员创建/编辑、角色创建/编辑、角色权限分配与权限码查看，统一使用 `admin:permission` 权限码。
+- 已补充后台权限管理自保护规则，禁止停用或移除最后一个拥有 `admin:permission` 的启用管理员入口。
+- 已修正报价模板选项更新时无法清空旧选项的问题。
+- 已优化后台前端包体积，页面改为懒加载，React、Ant Design、页面代码分 chunk 输出，并修复后台 build 脚本对系统旧 Node 的依赖。
 - 已通过 `pnpm --dir apps/admin build`。
+- 已新增 API 自动化测试脚本与基础用例，覆盖报价样例计算、管理员/会员 token、权限 Guard、权限管理自保护规则。
+- 已新增 API 集成测试脚本，使用真实 MySQL 验证报价计算、保存、报价快照持久化、会员历史报价与详情查询链路。
+- 已扩展 API 集成测试，覆盖后台权限管理角色/管理员写操作、角色权限绑定、管理员角色绑定、审计日志写入与最后权限管理员保护规则。
 
 ### P3：用户端核心流程
 
@@ -90,27 +104,38 @@
 - 已接入 `POST /api/quotes/calculate` 生成报价明细。
 - 已接入 `POST /api/quotes` 保存报价。
 - 已接入 `GET /api/member/quotes?userId=1` 查询历史报价。
+- 已新增用户端会员 token，保存报价、会员报价历史与详情查询改为从 Bearer token 识别当前用户。
+- 用户端 H5 已接入开发期自动 mock 微信登录，保存报价与历史报价不再硬编码 `userId=1`。
 - 产品与模板配置优先读取后端接口，接口不可用时使用内置样例数据支撑前端开发。
 - 已通过 `pnpm --dir apps/client build`。
+- 已新增原生微信小程序工程，微信开发者工具通过根 `project.config.json` 指向 `apps/miniprogram/`。
+- 小程序已实现报价页，支持产品/模板/材料/印刷/形状/工艺/客户类型选择，接入 `POST /api/quotes/calculate` 与 `POST /api/quotes`。
+- 小程序已实现历史报价页，接入 `GET /api/member/quotes`，使用会员 Bearer token 读取当前用户报价历史。
+- 小程序已接入 `wx.login` 到 `POST /api/auth/wx-login`，本地 API 地址集中配置在 `apps/miniprogram/config.js`。
 
 ## 当前实现说明
 
 当前报价引擎已经支持数据库读取报价配置。如果未配置 `DATABASE_URL`，或数据库不可用，会自动使用内存示例配置，便于开发期继续验证报价流程。
 
-待连接真实 MySQL 后验证：
+本地真实 MySQL 已完成验证：
 
-- `pnpm --dir apps/api prisma:push`
-- `pnpm --dir apps/api db:seed`
-- `pnpm --dir apps/api start`
+- 已执行 `prisma db push`，MySQL `yinshua` schema 已同步。
+- 已执行 seed，报价基础配置、管理员、角色与权限数据已写入数据库。
+- 已补充 API 启动时加载 `.env`，避免运行时未读取 `DATABASE_URL` 而回退到内存数据。
+- 已验证后台报价单/操作日志未带 token 返回 401，管理员登录后返回 200。
+- 已验证后台权限管理接口未带 token 返回 401，超级管理员登录后可查询管理员、角色与权限码。
+- 已验证停用最后一个权限管理员、清空最后一个权限角色权限都会返回 400。
+- 已验证用户端报价计算、微信占位登录、保存报价、会员历史报价与详情查询链路。
+- 已验证用户端保存报价未带会员 token 返回 401，mock 微信登录后带 token 保存与历史查询成功。
+- 已通过 `pnpm --dir apps/api test`，当前 10 个 API 自动化测试全部通过。
+- 已通过 `pnpm --dir apps/api test:integration`，当前 3 个 MySQL 集成测试通过。
 
 ## 下一步优先级
 
-1. 配置真实 MySQL `DATABASE_URL` 并执行 `prisma db push`。
-2. 执行 seed，验证报价数据从数据库读取。
-3. 连接真实 MySQL 后执行用户端报价、保存、历史报价完整联调。
-4. 完善后台管理端编辑、删除、筛选、权限与体验。
-5. 将微信登录占位逻辑替换为真实微信 code 校验与 JWT。
-6. 按小程序目标将用户端 H5 页面迁移或复用到 Taro 工程。
+1. 配置正式小程序 `WECHAT_APPID` / `WECHAT_APP_SECRET`，用真实微信 code 校验替换开发期 mock code。
+2. 配置小程序 request 合法域名或本地开发“不校验合法域名”，完成微信开发者工具与真机联调。
+3. 为后台管理端补充页面级 smoke 测试。
+4. 补充 CI 脚本，统一运行 API typecheck/test/test:integration 与前端 build。
 
 ## 验收用报价样例
 

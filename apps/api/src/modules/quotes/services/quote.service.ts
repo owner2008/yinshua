@@ -26,13 +26,13 @@ export class QuoteService {
     return this.calc.calculate(dto, config);
   }
 
-  async create(dto: CreateQuoteDto): Promise<QuoteResult> {
+  async create(dto: CreateQuoteDto, userId?: number): Promise<QuoteResult> {
     const result = await this.calculate(dto);
     this.quotes.set(result.quoteNo, structuredClone(result));
     this.snapshots.save(result.quoteNo, result.snapshot);
 
     if (process.env.DATABASE_URL) {
-      await this.persist(result, dto);
+      await this.persist(result, dto, userId ?? dto.memberId);
     }
 
     return result;
@@ -79,13 +79,13 @@ export class QuoteService {
     return quote ? structuredClone(quote) : undefined;
   }
 
-  private async persist(result: QuoteResult, dto: CreateQuoteDto): Promise<void> {
+  private async persist(result: QuoteResult, dto: CreateQuoteDto, userId?: number): Promise<void> {
     try {
       await this.prisma.$transaction(async (tx) => {
         const quote = await tx.quote.create({
           data: {
             quoteNo: result.quoteNo,
-            userId: dto.memberId ? BigInt(dto.memberId) : undefined,
+            userId: userId ? BigInt(userId) : undefined,
             productId: BigInt(result.productId),
             productTemplateId: BigInt(result.productTemplateId),
             customerType: dto.customerType,

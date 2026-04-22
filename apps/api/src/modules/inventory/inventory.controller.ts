@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../auth/admin-auth.guard';
+import { RequireAdminPermission } from '../auth/admin-permission.decorator';
 import {
   CreateStockMovementDto,
   CreateWarehouseDto,
@@ -16,11 +18,15 @@ export class InventoryController {
   }
 
   @Post('warehouses')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:inventory')
   createWarehouse(@Body() dto: CreateWarehouseDto) {
     return this.inventory.createWarehouse(dto);
   }
 
   @Put('warehouses/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:inventory')
   updateWarehouse(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateWarehouseDto) {
     return this.inventory.updateWarehouse(id, dto);
   }
@@ -36,6 +42,8 @@ export class InventoryController {
   }
 
   @Post('stock-movements')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:inventory')
   createMovement(@Body() dto: CreateStockMovementDto) {
     return this.inventory.createMovement(dto);
   }

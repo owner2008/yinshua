@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../../auth/admin-auth.guard';
+import { RequireAdminPermission } from '../../auth/admin-permission.decorator';
 import {
   CreatePrintPriceDto,
   CreateProcessDto,
@@ -17,11 +19,15 @@ export class AdminProcessesController {
   }
 
   @Post('processes')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
   createProcess(@Body() dto: CreateProcessDto) {
     return this.processes.createProcess(dto);
   }
 
   @Put('processes/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
   updateProcess(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProcessDto) {
     return this.processes.updateProcess(id, dto);
   }
@@ -32,6 +38,8 @@ export class AdminProcessesController {
   }
 
   @Post('process-prices')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
   createProcessPrice(@Body() dto: CreateProcessPriceDto) {
     return this.processes.createProcessPrice(dto);
   }
@@ -42,6 +50,8 @@ export class AdminProcessesController {
   }
 
   @Post('print-prices')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
   createPrintPrice(@Body() dto: CreatePrintPriceDto) {
     return this.processes.createPrintPrice(dto);
   }

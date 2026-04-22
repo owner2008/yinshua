@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../../auth/admin-auth.guard';
+import { RequireAdminPermission } from '../../auth/admin-permission.decorator';
 import {
   CreateMaterialDto,
   CreateMaterialPriceDto,
@@ -16,11 +18,15 @@ export class AdminMaterialsController {
   }
 
   @Post('materials')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
   createMaterial(@Body() dto: CreateMaterialDto) {
     return this.materials.createMaterial(dto);
   }
 
   @Put('materials/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
   updateMaterial(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateMaterialDto) {
     return this.materials.updateMaterial(id, dto);
   }
@@ -31,6 +37,8 @@ export class AdminMaterialsController {
   }
 
   @Post('material-prices')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
   createPrice(@Body() dto: CreateMaterialPriceDto) {
     return this.materials.createPrice(dto);
   }

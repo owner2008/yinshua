@@ -7,6 +7,8 @@
     "start:dev": "nest start --watch",
     "build": "nest build",
     "lint": "eslint \"src/**/*.ts\"",
+    "test": "..\\..\\.tools\\node\\node.exe --import tsx --test \"src/**/*.test.ts\"",
+    "test:integration": "..\\..\\.tools\\node\\node.exe --import tsx --test \"src/**/*.itest.ts\"",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",

@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { AdminAuthGuard } from '../../auth/admin-auth.guard';
+import { RequireAdminPermission } from '../../auth/admin-permission.decorator';
 import {
   CreateQuoteRuleDto,
   CreateQuoteRuleSetDto,
@@ -17,11 +19,15 @@ export class AdminQuoteRulesController {
   }
 
   @Post('quote-rule-sets')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote-rule')
   createRuleSet(@Body() dto: CreateQuoteRuleSetDto) {
     return this.rules.createRuleSet(dto);
   }
 
   @Put('quote-rule-sets/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote-rule')
   updateRuleSet(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateQuoteRuleSetDto) {
     return this.rules.updateRuleSet(id, dto);
   }
@@ -32,11 +38,15 @@ export class AdminQuoteRulesController {
   }
 
   @Post('quote-rules')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote-rule')
   createRule(@Body() dto: CreateQuoteRuleDto) {
     return this.rules.createRule(dto);
   }
 
   @Put('quote-rules/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote-rule')
   updateRule(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateQuoteRuleDto) {
     return this.rules.updateRule(id, dto);
   }

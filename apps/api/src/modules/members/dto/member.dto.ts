@@ -1,6 +1,7 @@
 import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class UpsertMemberProfileDto {
+  @IsOptional()
   @IsInt()
   userId!: number;
 
@@ -30,6 +31,7 @@ export class UpsertMemberProfileDto {
 }
 
 export class CreateMemberAddressDto {
+  @IsOptional()
   @IsInt()
   userId!: number;
 

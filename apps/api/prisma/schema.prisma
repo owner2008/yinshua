@@ -24,6 +24,69 @@ model User {
   @@map("users")
 }
 
+model AdminUser {
+  id           BigInt          @id @default(autoincrement())
+  username     String          @unique @db.VarChar(64)
+  displayName  String?         @map("display_name") @db.VarChar(64)
+  passwordHash String          @map("password_hash") @db.VarChar(255)
+  status       String          @default("active") @db.VarChar(32)
+  lastLoginAt  DateTime?       @map("last_login_at")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  roles        AdminUserRole[]
+
+  @@map("admin_users")
+}
+
+model AdminRole {
+  id          BigInt                @id @default(autoincrement())
+  code        String                @unique @db.VarChar(64)
+  name        String                @db.VarChar(64)
+  description String?               @db.VarChar(255)
+  status      String                @default("active") @db.VarChar(32)
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
+  users       AdminUserRole[]
+  permissions AdminRolePermission[]
+
+  @@map("admin_roles")
+}
+
+model AdminPermission {
+  id          BigInt                @id @default(autoincrement())
+  code        String                @unique @db.VarChar(128)
+  name        String                @db.VarChar(64)
+  module      String                @db.VarChar(64)
+  description String?               @db.VarChar(255)
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
+  roles       AdminRolePermission[]
+
+  @@map("admin_permissions")
+}
+
+model AdminUserRole {
+  adminUserId BigInt    @map("admin_user_id")
+  roleId      BigInt    @map("role_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id])
+  role        AdminRole @relation(fields: [roleId], references: [id])
+
+  @@id([adminUserId, roleId])
+  @@map("admin_user_roles")
+}
+
+model AdminRolePermission {
+  roleId       BigInt          @map("role_id")
+  permissionId BigInt          @map("permission_id")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  role         AdminRole       @relation(fields: [roleId], references: [id])
+  permission   AdminPermission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+  @@map("admin_role_permissions")
+}
+
 model MemberLevel {
   id           BigInt          @id @default(autoincrement())
   name         String          @db.VarChar(64)

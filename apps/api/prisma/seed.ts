@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { createHash, randomBytes } from 'node:crypto';
 
 const prisma = new PrismaClient();
 const startedAt = new Date('2026-04-21T00:00:00+08:00');
@@ -43,6 +44,7 @@ async function main() {
   await seedProcesses();
   await seedPrintPrices();
   await seedRules();
+  await seedAdminAccount();
 }
 
 async function seedOptions() {
@@ -188,6 +190,65 @@ async function seedRules() {
       },
     });
   }
+}
+
+async function seedAdminAccount() {
+  const permissions = [
+    ['admin:product', '产品与模板管理', 'product'],
+    ['admin:pricing', '材料、工艺与价格管理', 'pricing'],
+    ['admin:quote-rule', '报价规则管理', 'quote-rule'],
+    ['admin:quote', '报价单查看', 'quote'],
+    ['admin:inventory', '库存管理', 'inventory'],
+    ['admin:audit-log', '操作日志查看', 'audit-log'],
+    ['admin:permission', '管理员与权限管理', 'permission'],
+  ] as const;
+
+  for (const [code, name, module] of permissions) {
+    await prisma.adminPermission.upsert({
+      where: { code },
+      update: { name, module },
+      create: { code, name, module },
+    });
+  }
+
+  const role = await prisma.adminRole.upsert({
+    where: { code: 'super_admin' },
+    update: { name: '超级管理员', status: 'active' },
+    create: { code: 'super_admin', name: '超级管理员', description: '拥有第一阶段后台全部操作权限' },
+  });
+
+  for (const [code] of permissions) {
+    const permission = await prisma.adminPermission.findUniqueOrThrow({ where: { code } });
+    await prisma.adminRolePermission.upsert({
+      where: { roleId_permissionId: { roleId: role.id, permissionId: permission.id } },
+      update: {},
+      create: { roleId: role.id, permissionId: permission.id },
+    });
+  }
+
+  const username = process.env.ADMIN_USERNAME ?? 'admin';
+  const password = process.env.ADMIN_PASSWORD ?? 'admin123';
+  const adminUser = await prisma.adminUser.upsert({
+    where: { username },
+    update: { displayName: '系统管理员', status: 'active' },
+    create: {
+      username,
+      displayName: '系统管理员',
+      passwordHash: hashPassword(password),
+    },
+  });
+
+  await prisma.adminUserRole.upsert({
+    where: { adminUserId_roleId: { adminUserId: adminUser.id, roleId: role.id } },
+    update: {},
+    create: { adminUserId: adminUser.id, roleId: role.id },
+  });
+}
+
+function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString('hex');
+  const digest = createHash('sha256').update(`${salt}:${password}`).digest('hex');
+  return `sha256:${salt}:${digest}`;
 }
 
 main()
