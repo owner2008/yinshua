@@ -6,7 +6,9 @@
   "scripts": {
     "dev:api": "pnpm --dir apps/api start:dev",
     "build:api": "pnpm --dir apps/api build",
-    "lint:api": "pnpm --dir apps/api lint"
+    "lint:api": "pnpm --dir apps/api lint",
+    "dev:client": "pnpm --dir apps/client dev",
+    "build:client": "pnpm --dir apps/client build"
   },
   "engines": {
     "node": ">=20"
