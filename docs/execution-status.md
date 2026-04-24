@@ -132,6 +132,18 @@
 
 当前报价引擎已经支持数据库读取报价配置。如果未配置 `DATABASE_URL`，或数据库不可用，会自动使用内存示例配置，便于开发期继续验证报价流程。
 
+本地最简启动顺序：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\dev-env.ps1
+. .\scripts\start-mysql.ps1
+pnpm --dir apps/api prisma:push
+pnpm --dir apps/api db:seed
+pnpm --dir apps/api start:dev
+pnpm --dir apps/admin dev
+pnpm --dir apps/client dev
+```
+
 本地真实 MySQL 已完成验证：
 
 - 已执行 `prisma db push`，MySQL `yinshua` schema 已同步。

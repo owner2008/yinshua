@@ -63,12 +63,14 @@ scripts/    本地开发环境脚本
 已完成第一版：
 
 - 后台管理端页面
+- H5 用户端多页面流程
+- 微信小程序基础页面与报价流程
 
-尚未开始：
+当前仍待收口：
 
-- 用户端小程序 / H5 页面
-- 真实微信登录 code2Session 与 JWT
-- 真实 MySQL 环境下的完整联调
+- 真实微信登录 code2Session 对接
+- 小程序真机联调与合法域名配置
+- Docker / Nginx / CI 与页面级 smoke 测试
 
 详细进度见：
 
@@ -104,6 +106,47 @@ scripts\dev-env.cmd
 ```
 
 如果已经全局安装 Node.js 和 pnpm，可以直接使用系统环境。
+
+## 最简启动
+
+建议在项目根目录按下面顺序启动：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\dev-env.ps1
+. .\scripts\start-mysql.ps1
+pnpm --dir apps/api prisma:push
+pnpm --dir apps/api db:seed
+pnpm --dir apps/api start:dev
+pnpm --dir apps/admin dev
+pnpm --dir apps/client dev
+```
+
+常用地址：
+
+```text
+API:    http://127.0.0.1:3000/api
+Admin:  http://127.0.0.1:5173
+Client: http://127.0.0.1:5174
+```
+
+快速验收命令：
+
+```powershell
+pnpm --dir apps/api test
+pnpm --dir apps/api test:integration
+pnpm --dir apps/admin build
+pnpm --dir apps/client build
+```
+
+当前已验证：
+
+```text
+本地 MySQL 可启动
+apps/api test 通过
+apps/api test:integration 通过
+apps/admin build 通过
+apps/client build 通过
+```
 
 ## 安装依赖
 
