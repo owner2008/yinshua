@@ -31,6 +31,7 @@ export class AdminQuoteRulesService {
         scene: dto.scene,
         priority: dto.priority ?? 0,
         versionNo: dto.versionNo,
+        status: dto.status,
         effectiveFrom: new Date(),
       },
     });

@@ -41,6 +41,14 @@ function post(path, data) {
   return request(path, { method: 'POST', data });
 }
 
+function put(path, data) {
+  return request(path, { method: 'PUT', data });
+}
+
+function del(path) {
+  return request(path, { method: 'DELETE' });
+}
+
 function loginMember() {
   const existing = getSession();
   if (existing) {
@@ -111,8 +119,10 @@ function formatNetworkError(message) {
 
 module.exports = {
   clearSession,
+  del,
   getSession,
   loginMember,
   post,
+  put,
   request
 };

@@ -5,6 +5,13 @@ import { QuoteRule, QuoteRuleSet } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
 
+const sceneOptions = [
+  { label: '普通客户', value: 'retail' },
+  { label: '企业客户', value: 'enterprise' },
+  { label: '批量客户', value: 'bulk' },
+  { label: '打样场景', value: 'proofing' },
+];
+
 export function QuoteRulesPage() {
   return (
     <div className="page-card">
@@ -78,7 +85,7 @@ function RuleSets() {
       <div className="filter-bar">
         <Input.Search
           allowClear
-          placeholder="搜索名称、场景、版本或模板ID"
+          placeholder="搜索名称、场景、版本或模板编号"
           value={keyword}
           onChange={(event) => setKeyword(event.target.value)}
           style={{ width: 300 }}
@@ -96,10 +103,10 @@ function RuleSets() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
-        { title: '模板ID', dataIndex: 'productTemplateId' },
+        { title: '编号', dataIndex: 'id' },
+        { title: '模板编号', dataIndex: 'productTemplateId' },
         { title: '名称', dataIndex: 'name' },
-        { title: '场景', dataIndex: 'scene' },
+        { title: '场景', dataIndex: 'scene', render: renderScene },
         { title: '版本', dataIndex: 'versionNo' },
         { title: '优先级', dataIndex: 'priority' },
         { title: '规则数', render: (_, record) => record.rules?.length ?? 0 },
@@ -122,9 +129,11 @@ function RuleSets() {
       ]} />
       <Modal title={editing ? '编辑规则集' : '新增规则集'} open={open} onOk={submit} onCancel={() => setOpen(false)}>
         <Form form={form} layout="vertical">
-          {!editing ? <Form.Item name="productTemplateId" label="模板ID" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} /></Form.Item> : null}
+          {!editing ? <Form.Item name="productTemplateId" label="模板编号" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} /></Form.Item> : null}
           <Form.Item name="name" label="名称" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="scene" label="场景" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="scene" label="场景" rules={[{ required: true }]}>
+            <Select options={sceneOptions} />
+          </Form.Item>
           <Form.Item name="priority" label="优先级"><InputNumber style={{ width: '100%' }} /></Form.Item>
           <Form.Item name="versionNo" label="版本号" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="status" label="状态" rules={[{ required: true }]}>
@@ -139,6 +148,10 @@ function RuleSets() {
       </Modal>
     </>
   );
+}
+
+function renderScene(value?: string): string {
+  return sceneOptions.find((option) => option.value === value)?.label ?? value ?? '-';
 }
 
 function Rules() {
@@ -215,7 +228,7 @@ function Rules() {
     <>
       <PageHeader title="报价规则" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={openCreate}>新增规则</Button> : null} />
       <div className="filter-bar">
-        <Select allowClear placeholder="规则集ID" value={ruleSetId} onChange={setRuleSetId} style={{ width: 160 }} options={ruleSetOptions} />
+        <Select allowClear placeholder="规则集编号" value={ruleSetId} onChange={setRuleSetId} style={{ width: 160 }} options={ruleSetOptions} />
         <Select
           value={enabled}
           onChange={setEnabled}
@@ -228,8 +241,8 @@ function Rules() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
-        { title: '规则集ID', dataIndex: 'ruleSetId' },
+        { title: '编号', dataIndex: 'id' },
+        { title: '规则集编号', dataIndex: 'ruleSetId' },
         { title: '启用', dataIndex: 'enabled', render: (value: boolean) => <Tag color={value ? 'green' : 'default'}>{value ? '启用' : '停用'}</Tag> },
         { title: '条件', dataIndex: 'conditionJson', ellipsis: true, render: (value) => JSON.stringify(value) },
         { title: '配置', dataIndex: 'configJson', ellipsis: true, render: (value) => JSON.stringify(value) },
@@ -247,9 +260,9 @@ function Rules() {
       ]} />
       <Modal title={editing ? '编辑规则' : '新增规则'} open={open} onOk={submit} onCancel={() => setOpen(false)} width={760}>
         <Form form={form} layout="vertical">
-          {!editing ? <Form.Item name="ruleSetId" label="规则集ID" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} /></Form.Item> : null}
-          <Form.Item name="conditionJson" label="条件 JSON" rules={[{ required: true }]}><Input.TextArea rows={4} /></Form.Item>
-          <Form.Item name="configJson" label="配置 JSON" rules={[{ required: true }]}><Input.TextArea rows={4} /></Form.Item>
+          {!editing ? <Form.Item name="ruleSetId" label="规则集编号" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} /></Form.Item> : null}
+          <Form.Item name="conditionJson" label="条件配置" rules={[{ required: true }]}><Input.TextArea rows={4} /></Form.Item>
+          <Form.Item name="configJson" label="报价配置" rules={[{ required: true }]}><Input.TextArea rows={4} /></Form.Item>
           <Form.Item name="enabled" label="启用" valuePropName="checked"><Switch /></Form.Item>
         </Form>
       </Modal>

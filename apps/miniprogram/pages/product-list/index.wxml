@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="card">
+    <view class="section-title">产品分类</view>
+    <scroll-view scroll-x class="filter-scroll">
+      <view class="chip {{!activeCategory ? 'active' : ''}}" data-id="" bindtap="selectCategory">全部</view>
+      <block wx:for="{{categories}}" wx:key="id">
+        <view class="chip {{activeCategory === item.id + '' ? 'active' : ''}}" data-id="{{item.id}}" bindtap="selectCategory">{{item.name}}</view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>产品</text>
+      <text class="muted">{{products.length}} 款</text>
+    </view>
+    <view wx:if="{{!products.length}}" class="muted">{{notice || '暂无产品'}}</view>
+    <view class="product-grid">
+      <block wx:for="{{products}}" wx:key="id">
+        <view class="product-tile" data-id="{{item.id}}" bindtap="openDetail">
+          <image wx:if="{{item.coverImage}}" class="tile-thumb cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
+          <view wx:else class="tile-thumb tone-{{index % 3}}"></view>
+          <view class="tile-name">{{item.name}}</view>
+          <view class="tile-meta muted">{{item.applicationScenario || '可按需定制'}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

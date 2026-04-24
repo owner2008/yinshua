@@ -1,0 +1,88 @@
+.hero {
+  display: flex;
+  gap: 20rpx;
+  align-items: center;
+}
+
+.hero-thumb {
+  width: 180rpx;
+  height: 140rpx;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #24495b;
+  font-weight: 800;
+  background: linear-gradient(120deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2)), #cfe0e6;
+}
+
+.hero-thumb.cover {
+  display: block;
+  background: #eef3f6;
+}
+
+.hero-thumb.tone-1 {
+  background: linear-gradient(120deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2)), #eadfa4;
+}
+
+.hero-thumb.tone-2 {
+  background: linear-gradient(120deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2)), #c6dccc;
+}
+
+.hero-body {
+  flex: 1;
+}
+
+.hero-body .eyebrow {
+  font-size: 22rpx;
+  color: #4d7186;
+  font-weight: 700;
+}
+
+.hero-body .title {
+  font-size: 36rpx;
+  font-weight: 800;
+  margin: 6rpx 0;
+}
+
+.action-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12rpx;
+}
+
+.gallery-img {
+  width: 100%;
+  height: 180rpx;
+  border-radius: 10rpx;
+  border: 1rpx solid #d7e3e8;
+}
+
+.template-item {
+  margin-bottom: 16rpx;
+  padding: 14rpx;
+  border: 1rpx solid #d7e3e8;
+  border-radius: 10rpx;
+  background: #f8fbfc;
+}
+
+.template-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-bottom: 6rpx;
+}

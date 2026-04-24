@@ -12,6 +12,7 @@ export const defaultAdminPermissions = [
   'admin:pricing',
   'admin:quote-rule',
   'admin:quote',
+  'admin:member',
   'admin:inventory',
   'admin:audit-log',
   'admin:permission',

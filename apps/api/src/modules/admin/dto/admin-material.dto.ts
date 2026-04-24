@@ -20,6 +20,10 @@ export class CreateMaterialDto {
   @IsOptional()
   @IsString()
   brand?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
 
 export class UpdateMaterialDto {

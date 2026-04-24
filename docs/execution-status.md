@@ -32,8 +32,12 @@
 
 ### P2：后台核心配置
 
-- 已实现产品管理 API。
+- 已新增 `ProductCategory` Prisma 模型与迁移 SQL，`Product` 表补充 `sort`、`isHot` 字段。
+- 已实现产品分类管理 API（`GET/POST/PUT /admin/product-categories`），含 before/after 审计。
+- 已预置不干胶印刷行业常用分类：铜版纸、PET/透明、PVC/合成纸、热敏物流、食品饮料、日化美妆、电子电器、医药保健、防伪易碎、特殊工艺、包装封口、可移除标签。
+- 已实现产品管理 API，表单支持选择所属分类、封面图、详情图集、状态、首页热门与排序；新增产品提交的状态字段已纳入后端校验与保存。
 - 已实现报价模板管理 API。
+- 已为每款示例产品配置独立模板与选项（PET / 铜版纸 / 烫金 / 热敏），并补齐热敏纸材料与 `hot_stamp` 工艺；每个模板对应独立的 retail / enterprise 规则集。
 - 已实现模板可选材料、工艺、印刷方式、形状配置。
 - 已实现材料管理 API。
 - 已实现材料价格管理 API，新价格会使旧 current 价格失效。
@@ -52,7 +56,7 @@
 - 已实现微信登录占位 API，便于开发期创建用户。
 - 已实现手机号绑定 API。
 - 已实现会员资料查询与维护 API。
-- 已实现会员地址列表与新增 API。
+- 已实现会员地址列表、新增、更新、设为默认、删除 API，默认地址切换在同用户下互斥。
 - 已实现用户侧历史报价列表与详情 API。
 - 已支持保存报价时关联用户 ID，便于历史报价查询。
 - 已通过 `typecheck` 和 `build`。
@@ -73,6 +77,7 @@
 
 - 已使用 React + Vite + Ant Design 搭建后台管理端。
 - 已实现基础布局与侧边导航。
+- 已新增产品分类管理页面，支持新增、编辑、启停与排序，菜单项使用 `admin:product` 权限码控制。
 - 已实现产品与报价模板页面。
 - 已实现材料与材料价格页面。
 - 已实现工艺、工艺价格、印刷价格页面。
@@ -98,12 +103,18 @@
 
 ### P3：用户端核心流程
 
+- 已修复切换产品时报价参数不跟随变动的问题：当前产品没有模板时直接展示空状态，不再静默回退到其他产品的模板；每款示例产品的材料/工艺/印刷/形状选项都来自自身模板。
 - 已使用 React + Vite + TypeScript 搭建用户端 H5 第一版。
-- 已实现产品选择与当前产品展示。
-- 已实现报价模板、尺寸、数量、材料、印刷、形状、客户类型、工艺、打样、加急参数填写。
+- 已接入 `react-router-dom` 将 H5 拆分为多页：首页、产品列表、产品详情、在线报价、历史报价、会员中心。
+- 首页提供 Banner、分类入口、热门产品与最新上架区块，数据来自 `GET /api/catalog/home`。
+- 产品列表页支持按分类筛选，接入 `GET /api/catalog/products`。
+- 产品详情页展示封面、说明、应用场景、图集（若配置）与关联报价模板，接入 `GET /api/catalog/products/:id`。
+- 在线报价页延续原报价表单，可通过 `?productId=` 自动选中当前产品。
+- 会员中心页展示基础资料、收货地址，支持编辑资料与新增地址，接入 `/member/profile` 与 `/member/addresses`。
+- 公共目录接口 `/api/catalog/*` 为只读无鉴权；写操作仍走带会员 token 的接口。
 - 已接入 `POST /api/quotes/calculate` 生成报价明细。
 - 已接入 `POST /api/quotes` 保存报价。
-- 已接入 `GET /api/member/quotes?userId=1` 查询历史报价。
+- 已接入 `GET /api/member/quotes` 查询历史报价。
 - 已新增用户端会员 token，保存报价、会员报价历史与详情查询改为从 Bearer token 识别当前用户。
 - 用户端 H5 已接入开发期自动 mock 微信登录，保存报价与历史报价不再硬编码 `userId=1`。
 - 产品与模板配置优先读取后端接口，接口不可用时使用内置样例数据支撑前端开发。
@@ -112,6 +123,10 @@
 - 小程序已实现报价页，支持产品/模板/材料/印刷/形状/工艺/客户类型选择，接入 `POST /api/quotes/calculate` 与 `POST /api/quotes`。
 - 小程序已实现历史报价页，接入 `GET /api/member/quotes`，使用会员 Bearer token 读取当前用户报价历史。
 - 小程序已接入 `wx.login` 到 `POST /api/auth/wx-login`，本地 API 地址集中配置在 `apps/miniprogram/config.js`。
+- 小程序已新增首页 / 产品列表 / 产品详情 / 会员中心页，tabBar 扩展为 5 个入口（首页 / 产品 / 报价 / 历史 / 我的），与 H5 页面结构一致。
+- 小程序首页与产品列表接入 `GET /api/catalog/home` / `GET /api/catalog/categories` / `GET /api/catalog/products`，产品详情接入 `GET /api/catalog/products/:id`。
+- 小程序会员中心接入 `GET/PUT /member/profile` 与 `GET/POST /member/addresses`，长按地址可通过 ActionSheet 设默认或删除。
+- 前台产品展示已由后台配置驱动：后台可维护产品分类、封面图、详情图集、说明、应用场景、热门与排序；H5 与小程序首页、列表、详情页均优先展示后台配置内容。
 
 ## 当前实现说明
 
@@ -133,9 +148,10 @@
 ## 下一步优先级
 
 1. 配置正式小程序 `WECHAT_APPID` / `WECHAT_APP_SECRET`，用真实微信 code 校验替换开发期 mock code。
-2. 配置小程序 request 合法域名或本地开发“不校验合法域名”，完成微信开发者工具与真机联调。
-3. 为后台管理端补充页面级 smoke 测试。
-4. 补充 CI 脚本，统一运行 API typecheck/test/test:integration 与前端 build。
+2. 配置小程序 request 合法域名或本地开发"不校验合法域名"，完成微信开发者工具与真机联调。
+3. 为 `ProductCategory` 管理、`/api/catalog/*` 与会员地址 PUT/DELETE 路由补充集成测试。
+4. 补充 Docker / Nginx / CI 脚本，统一运行 API typecheck/test/test:integration 与前端 build。
+5. 为后台管理端补充页面级 smoke 测试。
 
 ## 验收用报价样例
 

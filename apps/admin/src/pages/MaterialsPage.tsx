@@ -5,6 +5,32 @@ import { Material, MaterialPrice } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
 
+const priceTypeOptions = [
+  { label: '报价计算', value: 'calc' },
+  { label: '采购参考', value: 'purchase' },
+  { label: '手工维护', value: 'manual' },
+];
+
+const currencyOptions = [
+  { label: '人民币', value: 'CNY' },
+];
+
+const materialTypeOptions = [
+  { label: '面材', value: 'face' },
+  { label: '覆膜材料', value: 'lamination' },
+  { label: '胶黏材料', value: 'adhesive' },
+  { label: '底纸', value: 'liner' },
+  { label: '其他材料', value: 'other' },
+];
+
+const materialUnitOptions = [
+  { label: '平方米', value: 'm2' },
+  { label: '米', value: 'm' },
+  { label: '张', value: 'sheet' },
+  { label: '卷', value: 'roll' },
+  { label: '个', value: 'piece' },
+];
+
 export function MaterialsPage() {
   return (
     <div className="page-card">
@@ -96,11 +122,11 @@ function MaterialList() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
+        { title: '编号', dataIndex: 'id' },
         { title: '编码', dataIndex: 'code' },
         { title: '名称', dataIndex: 'name' },
-        { title: '类型', dataIndex: 'type' },
-        { title: '单位', dataIndex: 'unit' },
+        { title: '类型', dataIndex: 'type', render: renderMaterialType },
+        { title: '单位', dataIndex: 'unit', render: renderMaterialUnit },
         { title: '规格', dataIndex: 'spec' },
         { title: '品牌', dataIndex: 'brand' },
         {
@@ -124,8 +150,12 @@ function MaterialList() {
         <Form form={form} layout="vertical">
           <Form.Item name="code" label="编码" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="name" label="名称" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="type" label="类型" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="unit" label="单位" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="type" label="类型" rules={[{ required: true }]}>
+            <Select options={materialTypeOptions} />
+          </Form.Item>
+          <Form.Item name="unit" label="单位" rules={[{ required: true }]}>
+            <Select options={materialUnitOptions} />
+          </Form.Item>
           <Form.Item name="spec" label="规格"><Input /></Form.Item>
           <Form.Item name="brand" label="品牌"><Input /></Form.Item>
           <Form.Item name="status" label="状态" rules={[{ required: true }]}>
@@ -171,7 +201,7 @@ function MaterialPrices() {
 
   return (
     <>
-      <PageHeader title="材料价格" description="新增价格后旧 current 价格会失效" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={() => setOpen(true)}>新增价格</Button> : null} />
+      <PageHeader title="材料价格" description="新增价格后，旧的当前价格会自动失效" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={() => setOpen(true)}>新增价格</Button> : null} />
       <div className="filter-bar">
         <Select
           allowClear
@@ -192,11 +222,11 @@ function MaterialPrices() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
+        { title: '编号', dataIndex: 'id' },
         { title: '材料', render: (_, record) => record.material ? `${record.material.name} (${record.material.code})` : record.materialId },
-        { title: '价格类型', dataIndex: 'priceType' },
+        { title: '价格类型', dataIndex: 'priceType', render: renderPriceType },
         { title: '单价', dataIndex: 'unitPrice' },
-        { title: '币种', dataIndex: 'currency' },
+        { title: '币种', dataIndex: 'currency', render: renderCurrency },
         { title: '当前', dataIndex: 'isCurrent', render: (value: boolean) => <Tag color={value ? 'green' : 'default'}>{value ? '当前' : '历史'}</Tag> },
       ]} />
       <Modal title="新增材料价格" open={open} onOk={submit} onCancel={() => setOpen(false)}>
@@ -205,10 +235,26 @@ function MaterialPrices() {
             <Select options={materials.map((item) => ({ label: `${item.name} (${item.code})`, value: Number(item.id) }))} />
           </Form.Item>
           <Form.Item name="unitPrice" label="单价" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
-          <Form.Item name="priceType" label="价格类型"><Input /></Form.Item>
-          <Form.Item name="currency" label="币种"><Input /></Form.Item>
+          <Form.Item name="priceType" label="价格类型"><Select options={priceTypeOptions} /></Form.Item>
+          <Form.Item name="currency" label="币种"><Select options={currencyOptions} /></Form.Item>
         </Form>
       </Modal>
     </>
   );
+}
+
+function renderPriceType(value?: string): string {
+  return priceTypeOptions.find((option) => option.value === value)?.label ?? value ?? '-';
+}
+
+function renderCurrency(value?: string): string {
+  return currencyOptions.find((option) => option.value === value)?.label ?? value ?? '-';
+}
+
+function renderMaterialType(value?: string): string {
+  return materialTypeOptions.find((option) => option.value === value)?.label ?? value ?? '-';
+}
+
+function renderMaterialUnit(value?: string): string {
+  return materialUnitOptions.find((option) => option.value === value)?.label ?? value ?? '-';
 }

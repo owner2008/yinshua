@@ -18,20 +18,24 @@ export class AdminProductsService {
 
   findProducts() {
     return this.prisma.product.findMany({
-      orderBy: { id: 'desc' },
-      include: { templates: true },
+      orderBy: [{ sort: 'asc' }, { id: 'desc' }],
+      include: { templates: true, category: true },
     });
   }
 
   async createProduct(dto: CreateProductDto) {
     const product = await this.prisma.product.create({
       data: {
-        categoryId: dto.categoryId ? BigInt(dto.categoryId) : undefined,
+        categoryId: normalizeCategoryId(dto.categoryId),
         name: dto.name,
         code: dto.code,
         coverImage: dto.coverImage,
+        galleryJson: dto.gallery ?? undefined,
         description: dto.description,
         applicationScenario: dto.applicationScenario,
+        status: dto.status,
+        sort: dto.sort,
+        isHot: dto.isHot,
       },
     });
     await this.audit.record({
@@ -49,13 +53,16 @@ export class AdminProductsService {
     const after = await this.prisma.product.update({
       where: { id: BigInt(id) },
       data: {
-        categoryId: dto.categoryId ? BigInt(dto.categoryId) : undefined,
+        categoryId: dto.categoryId === undefined ? undefined : normalizeCategoryId(dto.categoryId),
         name: dto.name,
         code: dto.code,
         coverImage: dto.coverImage,
+        galleryJson: dto.gallery ?? undefined,
         description: dto.description,
         applicationScenario: dto.applicationScenario,
         status: dto.status,
+        sort: dto.sort,
+        isHot: dto.isHot,
       },
     });
     await this.audit.record({
@@ -215,4 +222,14 @@ export class AdminProductsService {
       }),
     ]);
   }
+}
+
+function normalizeCategoryId(categoryId: number | null | undefined): bigint | null | undefined {
+  if (categoryId === null) {
+    return null;
+  }
+  if (categoryId === undefined) {
+    return undefined;
+  }
+  return BigInt(categoryId);
 }

@@ -5,6 +5,14 @@ import { Material, StockItem, StockMovement, Warehouse } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
 
+const warehouseTypeOptions = [
+  { label: '原材料仓', value: 'raw' },
+  { label: '成品仓', value: 'finished' },
+  { label: '半成品仓', value: 'semi_finished' },
+  { label: '辅料仓', value: 'auxiliary' },
+  { label: '其他仓库', value: 'other' },
+];
+
 export function InventoryPage() {
   return (
     <div className="page-card">
@@ -97,10 +105,10 @@ function Warehouses() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
+        { title: '编号', dataIndex: 'id' },
         { title: '名称', dataIndex: 'name' },
         { title: '编码', dataIndex: 'code' },
-        { title: '类型', dataIndex: 'type' },
+        { title: '类型', dataIndex: 'type', render: renderWarehouseType },
         {
           title: '状态',
           dataIndex: 'status',
@@ -122,8 +130,10 @@ function Warehouses() {
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="名称" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="code" label="编码" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="type" label="类型" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="managerId" label="管理员ID"><InputNumber style={{ width: '100%' }} /></Form.Item>
+          <Form.Item name="type" label="类型" rules={[{ required: true }]}>
+            <Select options={warehouseTypeOptions} />
+          </Form.Item>
+          <Form.Item name="managerId" label="管理员编号"><InputNumber style={{ width: '100%' }} /></Form.Item>
           <Form.Item name="status" label="状态" rules={[{ required: true }]}>
             <Select
               options={[
@@ -183,7 +193,7 @@ function StockItems() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
+        { title: '编号', dataIndex: 'id' },
         { title: '材料', render: (_, record) => record.material ? `${record.material.name} (${record.material.code})` : record.materialId },
         { title: '仓库', render: (_, record) => record.warehouse ? `${record.warehouse.name} (${record.warehouse.code})` : record.warehouseId },
         { title: '库存数量', dataIndex: 'qty' },
@@ -286,7 +296,7 @@ function Movements() {
           <Form.Item name="qty" label="数量" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
           <Form.Item name="unitCost" label="单位成本"><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
           <Form.Item name="refType" label="关联类型"><Input /></Form.Item>
-          <Form.Item name="refId" label="关联ID"><InputNumber style={{ width: '100%' }} /></Form.Item>
+          <Form.Item name="refId" label="关联编号"><InputNumber style={{ width: '100%' }} /></Form.Item>
         </Form>
       </Modal>
     </>
@@ -295,4 +305,8 @@ function Movements() {
 
 function movementTypeLabel(value: string): string {
   return { in: '入库', out: '出库', adjust: '调整' }[value] ?? value;
+}
+
+function renderWarehouseType(value?: string): string {
+  return warehouseTypeOptions.find((option) => option.value === value)?.label ?? value ?? '-';
 }

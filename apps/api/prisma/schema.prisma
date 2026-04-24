@@ -142,6 +142,22 @@ model MemberAddress {
   @@map("member_addresses")
 }
 
+model ProductCategory {
+  id        BigInt            @id @default(autoincrement())
+  parentId  BigInt?           @map("parent_id")
+  name      String            @db.VarChar(128)
+  sort      Int               @default(0)
+  status    String            @default("active") @db.VarChar(32)
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  parent    ProductCategory?  @relation("CategoryParent", fields: [parentId], references: [id])
+  children  ProductCategory[] @relation("CategoryParent")
+  products  Product[]
+
+  @@index([parentId])
+  @@map("product_categories")
+}
+
 model Product {
   id                  BigInt            @id @default(autoincrement())
   categoryId          BigInt?           @map("category_id")
@@ -152,11 +168,15 @@ model Product {
   description         String?           @db.Text
   applicationScenario String?           @map("application_scenario") @db.Text
   status              String            @default("active") @db.VarChar(32)
+  sort                Int               @default(0)
+  isHot               Boolean           @default(false) @map("is_hot")
   createdAt           DateTime          @default(now()) @map("created_at")
   updatedAt           DateTime          @updatedAt @map("updated_at")
+  category            ProductCategory?  @relation(fields: [categoryId], references: [id])
   templates           ProductTemplate[]
   quotes              Quote[]
 
+  @@index([categoryId])
   @@map("products")
 }
 

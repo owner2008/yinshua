@@ -1,7 +1,7 @@
-import { App, Button, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tabs, Tag } from 'antd';
+import { App, Button, Form, Image, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tabs, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { hasAdminPermission, post, put } from '../api';
-import { Product, ProductTemplate } from '../types';
+import { Product, ProductCategory, ProductTemplate } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
 
@@ -21,6 +21,7 @@ export function ProductsPage() {
 function ProductList() {
   const { message } = App.useApp();
   const { data, loading, reload } = useRemoteList<Product>('/admin/products');
+  const { data: categories } = useRemoteList<ProductCategory>('/admin/product-categories');
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [keyword, setKeyword] = useState('');
@@ -47,17 +48,26 @@ function ProductList() {
 
   function openEdit(record: Product) {
     setEditing(record);
-    form.setFieldsValue(record);
+    form.setFieldsValue({
+      ...record,
+      categoryId: record.categoryId ? Number(record.categoryId) : undefined,
+      gallery: (record.galleryJson ?? []).join('\n'),
+    });
     setOpen(true);
   }
 
   async function submit() {
     const values = await form.validateFields();
+    const payload = {
+      ...values,
+      categoryId: values.categoryId ?? null,
+      gallery: parseLineList(values.gallery),
+    };
     if (editing) {
-      await put(`/admin/products/${editing.id}`, values);
+      await put(`/admin/products/${editing.id}`, payload);
       message.success('产品已更新');
     } else {
-      await post('/admin/products', values);
+      await post('/admin/products', payload);
       message.success('产品已创建');
     }
     setOpen(false);
@@ -105,9 +115,26 @@ function ProductList() {
         loading={loading}
         dataSource={filteredData}
         columns={[
-          { title: 'ID', dataIndex: 'id', width: 90 },
+          { title: '编号', dataIndex: 'id', width: 90 },
+          {
+            title: '封面',
+            dataIndex: 'coverImage',
+            width: 84,
+            render: (value?: string) => value ? <Image src={value} width={48} height={48} style={{ objectFit: 'cover', borderRadius: 6 }} /> : <span className="muted-text">未设</span>,
+          },
           { title: '名称', dataIndex: 'name' },
+          { title: '分类', render: (_, record) => record.category?.name ?? '未分类', width: 120 },
           { title: '编码', dataIndex: 'code' },
+          {
+            title: '前台',
+            width: 120,
+            render: (_, record) => (
+              <Space size={4}>
+                {record.isHot ? <Tag color="gold">热门</Tag> : null}
+                <Tag>排序 {record.sort ?? 0}</Tag>
+              </Space>
+            ),
+          },
           {
             title: '状态',
             dataIndex: 'status',
@@ -144,7 +171,23 @@ function ProductList() {
             <Input.TextArea rows={2} />
           </Form.Item>
           <Form.Item name="coverImage" label="封面图地址">
-            <Input />
+            <Input placeholder="https://...，用于首页、产品列表和详情头图" />
+          </Form.Item>
+          <Form.Item name="gallery" label="详情图集地址">
+            <Input.TextArea rows={4} placeholder="每行一个图片地址，产品详情页会按顺序展示" />
+          </Form.Item>
+          <Form.Item name="categoryId" label="所属分类">
+            <Select
+              allowClear
+              placeholder="选择分类"
+              options={categories.map((item) => ({ value: Number(item.id), label: item.name }))}
+            />
+          </Form.Item>
+          <Form.Item name="sort" label="排序">
+            <InputNumber min={0} max={9999} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="isHot" label="首页热门" valuePropName="checked">
+            <Switch />
           </Form.Item>
           <Form.Item name="status" label="状态" rules={[{ required: true }]}>
             <Select
@@ -225,7 +268,7 @@ function TemplateList() {
       <div className="filter-bar">
         <Input.Search
           allowClear
-          placeholder="搜索模板名称或产品ID"
+          placeholder="搜索模板名称或产品编号"
           value={keyword}
           onChange={(event) => setKeyword(event.target.value)}
           style={{ width: 280 }}
@@ -236,10 +279,10 @@ function TemplateList() {
         loading={loading}
         dataSource={filteredData}
         columns={[
-          { title: 'ID', dataIndex: 'id', width: 90 },
+          { title: '编号', dataIndex: 'id', width: 90 },
           { title: '模板名称', dataIndex: 'templateName' },
-          { title: '产品ID', dataIndex: 'productId', width: 100 },
-          { title: '尺寸范围', render: (_, r) => `${r.widthMin}-${r.widthMax} x ${r.heightMin}-${r.heightMax}` },
+          { title: '产品编号', dataIndex: 'productId', width: 100 },
+          { title: '尺寸范围', render: (_, r) => `${r.widthMin}-${r.widthMax} × ${r.heightMin}-${r.heightMax}` },
           { title: '数量范围', render: (_, r) => `${r.quantityMin}-${r.quantityMax}` },
           { title: '最低收费', dataIndex: 'minPrice', width: 120 },
           canWrite ? {
@@ -252,7 +295,7 @@ function TemplateList() {
       <Modal title={editing ? '编辑报价模板' : '新增报价模板'} open={open} onOk={submit} onCancel={() => setOpen(false)} width={760}>
         <Form form={form} layout="vertical">
           <Space.Compact block>
-            <Form.Item name="productId" label="产品ID" rules={[{ required: true }]} style={{ width: '30%' }}>
+            <Form.Item name="productId" label="产品编号" rules={[{ required: true }]} style={{ width: '30%' }}>
               <InputNumber style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name="templateName" label="模板名称" rules={[{ required: true }]} style={{ width: '70%' }}>
@@ -271,7 +314,7 @@ function TemplateList() {
             <Form.Item name="minPrice" label="最低收费"><InputNumber /></Form.Item>
             <Form.Item name="defaultLossRate" label="损耗率"><InputNumber step={0.01} /></Form.Item>
           </Space.Compact>
-          <Form.Item name="materialIds" label="材料ID，逗号分隔"><Input placeholder="1,2,3" /></Form.Item>
+          <Form.Item name="materialIds" label="材料编号，逗号分隔"><Input placeholder="1,2,3" /></Form.Item>
           <Form.Item name="processCodes" label="工艺编码，逗号分隔"><Input placeholder="lamination,die_cut" /></Form.Item>
           <Form.Item name="printModes" label="印刷方式，逗号分隔"><Input placeholder="four_color,single_color" /></Form.Item>
           <Form.Item name="shapeTypes" label="形状，逗号分隔"><Input placeholder="rectangle,custom" /></Form.Item>
@@ -289,6 +332,10 @@ function TemplateList() {
 
 function parseStringList(value?: string): string[] {
   return value ? value.split(',').map((item) => item.trim()).filter(Boolean) : [];
+}
+
+function parseLineList(value?: string): string[] {
+  return value ? value.split(/\r?\n|,/).map((item) => item.trim()).filter(Boolean) : [];
 }
 
 function parseNumberList(value?: string): number[] {

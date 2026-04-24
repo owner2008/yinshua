@@ -12,14 +12,16 @@ Page({
     notice: '正在读取产品配置',
     products: sampleProducts,
     templates: sampleTemplates,
-    selectedProductId: 1,
+    pendingQuoteProductId: null,
+    selectedProductId: Number(sampleProducts[0].id),
+    selectedProductAnchor: getProductAnchor(sampleProducts[0].id),
     selectedTemplateIndex: 0,
     selectedMaterialIndex: 0,
     selectedPrintIndex: 0,
     selectedShapeIndex: 0,
     selectedCustomerTypeIndex: 1,
     customerTypeLabels: customerTypes.map((item) => item.label),
-    selectedTemplate: sampleTemplates[0],
+    selectedTemplate: sampleTemplates[0] || null,
     templateNames: [],
     materialLabels: [],
     printLabels: [],
@@ -29,18 +31,61 @@ Page({
     selectedShapeLabel: '',
     selectedCustomerTypeLabel: customerTypes[1].label,
     processOptions: [],
-    quoteInput: createDefaultQuote(sampleProducts[0], sampleTemplates[0]),
+    hasTemplate: Boolean(sampleTemplates[0]),
+    quoteInput: sampleTemplates[0] ? createDefaultQuote(sampleProducts[0], sampleTemplates[0]) : null,
     quoteResult: null
   },
 
   onLoad() {
+    const hinted = getStoredQuoteProductId();
+    if (hinted) {
+      this.setData({
+        pendingQuoteProductId: hinted,
+        selectedProductId: hinted,
+        selectedProductAnchor: getProductAnchor(hinted)
+      });
+      this.applySelectedProduct(hinted);
+    }
     this.loadCatalog();
     loginMember().catch((error) => this.setData({ notice: error.message }));
   },
 
+  onShow() {
+    const hinted = getStoredQuoteProductId();
+    if (!hinted) {
+      return;
+    }
+    this.applySelectedProduct(hinted);
+  },
+
+  applySelectedProduct(productId) {
+    const selectedProductId = Number(productId);
+    const product = this.data.products.find((item) => Number(item.id) === selectedProductId);
+    if (!product) {
+      this.setData({
+        pendingQuoteProductId: selectedProductId,
+        selectedProductId,
+        selectedProductAnchor: getProductAnchor(selectedProductId)
+      });
+      return;
+    }
+    const template = this.data.templates.find((item) => Number(item.productId) === selectedProductId) || null;
+    this.setData({
+      pendingQuoteProductId: selectedProductId,
+      selectedProductId,
+      selectedProductAnchor: getProductAnchor(selectedProductId),
+      selectedTemplateIndex: 0,
+      selectedMaterialIndex: 0,
+      selectedPrintIndex: 0,
+      selectedShapeIndex: 0,
+      quoteInput: createDefaultQuote(product, template),
+      quoteResult: null
+    }, () => this.refreshOptions());
+  },
+
   loadCatalog() {
     this.setData({ busy: true, notice: '正在读取产品配置' });
-    Promise.all([request('/admin/products'), request('/admin/product-templates')])
+    Promise.all([request('/catalog/products'), request('/admin/product-templates')])
       .then(([remoteProducts, remoteTemplates]) => {
         const products = remoteProducts && remoteProducts.length ? remoteProducts : sampleProducts;
         const templates = remoteTemplates && remoteTemplates.length ? remoteTemplates : sampleTemplates;
@@ -54,33 +99,63 @@ Page({
 
   applyCatalog(products, templates, notice) {
     const firstProduct = products[0];
-    const firstTemplate = templates.find((item) => Number(item.productId) === Number(firstProduct && firstProduct.id)) || templates[0];
-    const quoteInput = createDefaultQuote(firstProduct, firstTemplate);
+    const targetProductId = this.data.pendingQuoteProductId || this.data.selectedProductId;
+    const selectedProduct =
+      products.find((item) => Number(item.id) === Number(targetProductId)) ||
+      firstProduct;
+    const firstTemplate = templates.find(
+      (item) => Number(item.productId) === Number(selectedProduct && selectedProduct.id)
+    );
     this.setData({
       products,
       templates,
-      selectedProductId: Number(firstProduct && firstProduct.id || 1),
+      pendingQuoteProductId: null,
+      selectedProductId: Number((selectedProduct && selectedProduct.id) || 1),
+      selectedProductAnchor: getProductAnchor((selectedProduct && selectedProduct.id) || 1),
       selectedTemplateIndex: 0,
-      quoteInput,
+      selectedMaterialIndex: 0,
+      selectedPrintIndex: 0,
+      selectedShapeIndex: 0,
+      quoteInput: firstTemplate ? createDefaultQuote(selectedProduct, firstTemplate) : null,
       quoteResult: null,
       notice
-    });
-    this.refreshOptions();
+    }, () => this.refreshOptions());
+    wx.removeStorageSync('yinshua_quote_product');
   },
 
   refreshOptions() {
-    const productTemplates = this.data.templates.filter((item) => Number(item.productId) === Number(this.data.selectedProductId));
-    const selectedTemplate = productTemplates[this.data.selectedTemplateIndex] || productTemplates[0] || this.data.templates[0];
+    const productTemplates = this.data.templates.filter(
+      (item) => Number(item.productId) === Number(this.data.selectedProductId)
+    );
+    const selectedTemplate = productTemplates[this.data.selectedTemplateIndex] || productTemplates[0] || null;
+    if (!selectedTemplate) {
+      this.setData({
+        selectedTemplate: null,
+        templateNames: [],
+        materialLabels: [],
+        printLabels: [],
+        shapeLabels: [],
+        selectedMaterialLabel: '',
+        selectedPrintLabel: '',
+        selectedShapeLabel: '',
+        processOptions: [],
+        hasTemplate: false
+      });
+      return;
+    }
     const options = getTemplateOptions(selectedTemplate);
-    const selectedMaterial = options.materials[this.data.selectedMaterialIndex] || options.materials[0] || {};
-    const selectedPrint = options.printModes[this.data.selectedPrintIndex] || options.printModes[0] || {};
-    const selectedShape = options.shapes[this.data.selectedShapeIndex] || options.shapes[0] || {};
+    const materialIdx = Math.min(this.data.selectedMaterialIndex, Math.max(0, options.materials.length - 1));
+    const printIdx = Math.min(this.data.selectedPrintIndex, Math.max(0, options.printModes.length - 1));
+    const shapeIdx = Math.min(this.data.selectedShapeIndex, Math.max(0, options.shapes.length - 1));
+    const selectedMaterial = options.materials[materialIdx] || {};
+    const selectedPrint = options.printModes[printIdx] || {};
+    const selectedShape = options.shapes[shapeIdx] || {};
     const quoteInput = {
-      ...this.data.quoteInput,
-      productTemplateId: Number(selectedTemplate && selectedTemplate.id || 1),
-      materialId: Number(selectedMaterial.optionValue || 2),
-      printMode: selectedPrint.optionValue || 'four_color',
-      shapeType: selectedShape.optionValue || 'rectangle'
+      ...(this.data.quoteInput || {}),
+      productTemplateId: Number(selectedTemplate.id),
+      materialId: Number(selectedMaterial.optionValue || 0),
+      printMode: selectedPrint.optionValue || '',
+      shapeType: selectedShape.optionValue || ''
     };
     this.setData({
       selectedTemplate,
@@ -91,25 +166,31 @@ Page({
       selectedMaterialLabel: selectedMaterial.optionLabel || '',
       selectedPrintLabel: selectedPrint.optionLabel || '',
       selectedShapeLabel: selectedShape.optionLabel || '',
+      selectedMaterialIndex: materialIdx,
+      selectedPrintIndex: printIdx,
+      selectedShapeIndex: shapeIdx,
       processOptions: options.processes.map((item) => ({
         ...item,
-        selected: quoteInput.processCodes.includes(item.optionValue)
+        selected: (quoteInput.processCodes || []).includes(item.optionValue)
       })),
-      quoteInput
+      quoteInput,
+      hasTemplate: true
     });
   },
 
   selectProduct(event) {
     const selectedProductId = Number(event.currentTarget.dataset.id);
     const product = this.data.products.find((item) => Number(item.id) === selectedProductId);
-    const template = this.data.templates.find((item) => Number(item.productId) === selectedProductId) || this.data.templates[0];
+    const template = this.data.templates.find((item) => Number(item.productId) === selectedProductId) || null;
     this.setData({
+      pendingQuoteProductId: null,
       selectedProductId,
+      selectedProductAnchor: getProductAnchor(selectedProductId),
       selectedTemplateIndex: 0,
       selectedMaterialIndex: 0,
       selectedPrintIndex: 0,
       selectedShapeIndex: 0,
-      quoteInput: createDefaultQuote(product, template),
+      quoteInput: template ? createDefaultQuote(product, template) : null,
       quoteResult: null
     });
     this.refreshOptions();
@@ -117,9 +198,14 @@ Page({
 
   changeTemplate(event) {
     const selectedTemplateIndex = Number(event.detail.value);
-    const productTemplates = this.data.templates.filter((item) => Number(item.productId) === Number(this.data.selectedProductId));
+    const productTemplates = this.data.templates.filter(
+      (item) => Number(item.productId) === Number(this.data.selectedProductId)
+    );
     const template = productTemplates[selectedTemplateIndex] || productTemplates[0];
     const product = this.data.products.find((item) => Number(item.id) === Number(this.data.selectedProductId));
+    if (!template) {
+      return;
+    }
     this.setData({
       selectedTemplateIndex,
       selectedMaterialIndex: 0,
@@ -171,14 +257,21 @@ Page({
   },
 
   toggleProcess(event) {
+    if (!this.data.quoteInput) {
+      return;
+    }
     const code = event.currentTarget.dataset.code;
-    const current = this.data.quoteInput.processCodes;
+    const current = this.data.quoteInput.processCodes || [];
     const next = current.includes(code) ? current.filter((item) => item !== code) : [...current, code];
     this.setData({ 'quoteInput.processCodes': next });
     this.refreshOptions();
   },
 
   calculate() {
+    if (!this.data.quoteInput) {
+      wx.showToast({ title: '当前产品暂无报价模板', icon: 'none' });
+      return;
+    }
     this.setData({ busy: true, notice: '正在计算报价' });
     post('/quotes/calculate', normalizeQuoteInput(this.data.quoteInput))
       .then((quoteResult) => this.setData({ quoteResult, notice: '报价已生成' }))
@@ -190,6 +283,10 @@ Page({
   },
 
   saveQuote() {
+    if (!this.data.quoteInput) {
+      wx.showToast({ title: '当前产品暂无报价模板', icon: 'none' });
+      return;
+    }
     this.setData({ busy: true, notice: '正在保存报价' });
     loginMember()
       .then(() => post('/quotes', normalizeQuoteInput(this.data.quoteInput)))
@@ -206,19 +303,28 @@ Page({
 });
 
 function createDefaultQuote(product, template) {
+  if (!template) {
+    return null;
+  }
   const options = getTemplateOptions(template);
   const firstMaterial = options.materials[0] || {};
   const firstPrint = options.printModes[0] || {};
   const firstShape = options.shapes[0] || {};
+  const widthMin = Number(template.widthMin);
+  const widthMax = Number(template.widthMax);
+  const heightMin = Number(template.heightMin);
+  const heightMax = Number(template.heightMax);
+  const qtyMin = Number(template.quantityMin);
+  const qtyMax = Number(template.quantityMax);
   return {
-    productId: Number(product && product.id || template && template.productId || 1),
-    productTemplateId: Number(template && template.id || 1),
-    widthMm: clamp(100, Number(template && template.widthMin || 20), Number(template && template.widthMax || 500)),
-    heightMm: clamp(80, Number(template && template.heightMin || 20), Number(template && template.heightMax || 500)),
-    quantity: clamp(5000, Number(template && template.quantityMin || 100), Number(template && template.quantityMax || 100000)),
-    materialId: Number(firstMaterial.optionValue || 2),
-    printMode: firstPrint.optionValue || 'four_color',
-    shapeType: firstShape.optionValue || 'rectangle',
+    productId: Number((product && product.id) || template.productId),
+    productTemplateId: Number(template.id),
+    widthMm: clamp(Math.round((widthMin + widthMax) / 2), widthMin, widthMax),
+    heightMm: clamp(Math.round((heightMin + heightMax) / 2), heightMin, heightMax),
+    quantity: clamp(Math.max(1000, qtyMin), qtyMin, qtyMax),
+    materialId: Number(firstMaterial.optionValue || 0),
+    printMode: firstPrint.optionValue || '',
+    shapeType: firstShape.optionValue || '',
     processCodes: options.processes.slice(0, 2).map((item) => item.optionValue),
     isProofing: false,
     isUrgent: false,
@@ -242,13 +348,23 @@ function normalizeQuoteInput(input) {
 }
 
 function getTemplateOptions(template) {
-  const options = template && template.options && template.options.length ? template.options : sampleTemplates[0].options || [];
+  const options = template && Array.isArray(template.options) ? template.options : [];
   return {
     materials: options.filter((item) => item.optionType === 'material'),
     processes: options.filter((item) => item.optionType === 'process'),
     printModes: options.filter((item) => item.optionType === 'print_mode'),
     shapes: options.filter((item) => item.optionType === 'shape')
   };
+}
+
+function getProductAnchor(productId) {
+  return `product-${productId}`;
+}
+
+function getStoredQuoteProductId() {
+  const value = wx.getStorageSync('yinshua_quote_product');
+  const productId = Number(value);
+  return Number.isFinite(productId) && productId > 0 ? productId : null;
 }
 
 function clamp(value, min, max) {

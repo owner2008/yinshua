@@ -12,6 +12,10 @@ export class CreateProcessDto {
 
   @IsString()
   feeMode!: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
 
 export class UpdateProcessDto {

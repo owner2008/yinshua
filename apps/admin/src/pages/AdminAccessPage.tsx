@@ -5,6 +5,17 @@ import { AdminPermission, AdminRole, AdminUser } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
 
+const permissionModuleLabels: Record<string, string> = {
+  product: '产品管理',
+  pricing: '价格管理',
+  'quote-rule': '报价规则',
+  quote: '报价单',
+  member: '会员管理',
+  inventory: '库存管理',
+  'audit-log': '操作日志',
+  permission: '权限管理',
+};
+
 export function AdminAccessPage() {
   const { message } = App.useApp();
   const users = useRemoteList<AdminUser>('/admin/admin-users');
@@ -173,7 +184,7 @@ export function AdminAccessPage() {
                 loading={permissions.loading}
                 dataSource={permissions.data}
                 columns={[
-                  { title: '模块', dataIndex: 'module', width: 140 },
+                  { title: '模块', dataIndex: 'module', width: 140, render: renderPermissionModule },
                   { title: '权限码', dataIndex: 'code', width: 220 },
                   { title: '名称', dataIndex: 'name', width: 180 },
                   { title: '说明', dataIndex: 'description' },
@@ -249,4 +260,8 @@ const statusOptions = [
 
 function renderStatus(value: string) {
   return <Tag color={value === 'active' ? 'green' : 'default'}>{value === 'active' ? '启用' : '停用'}</Tag>;
+}
+
+function renderPermissionModule(value?: string): string {
+  return value ? permissionModuleLabels[value] ?? value : '-';
 }

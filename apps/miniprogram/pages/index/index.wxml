@@ -1,0 +1,56 @@
+<view class="page">
+  <view class="hero card">
+    <view>
+      <text class="eyebrow">不干胶印刷</text>
+      <view class="title">参数化在线报价</view>
+      <view class="muted">{{notice}}</view>
+    </view>
+    <button class="primary-button" size="mini" bindtap="gotoQuote">去报价</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>产品分类</text>
+      <text class="link" bindtap="openAllProducts">全部 ›</text>
+    </view>
+    <view class="chip-row">
+      <block wx:for="{{categories}}" wx:key="id">
+        <view class="chip" data-id="{{item.id}}" bindtap="openCategory">{{item.name}}</view>
+      </block>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>热门产品</text>
+      <text class="muted">{{hotProducts.length}} 款</text>
+    </view>
+    <view class="product-grid">
+      <block wx:for="{{hotProducts}}" wx:key="id">
+        <view class="product-tile" data-id="{{item.id}}" bindtap="openDetail">
+          <image wx:if="{{item.coverImage}}" class="tile-thumb cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
+          <view wx:else class="tile-thumb tone-{{index % 3}}"></view>
+          <view class="tile-name">{{item.name}}</view>
+          <view class="tile-meta muted">{{item.applicationScenario || '可按需定制'}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>最新上架</text>
+      <text class="link" bindtap="openAllProducts">全部 ›</text>
+    </view>
+    <view class="product-grid">
+      <block wx:for="{{latestProducts}}" wx:key="id">
+        <view class="product-tile" data-id="{{item.id}}" bindtap="openDetail">
+          <image wx:if="{{item.coverImage}}" class="tile-thumb cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
+          <view wx:else class="tile-thumb tone-{{index % 3}}"></view>
+          <view class="tile-name">{{item.name}}</view>
+          <view class="tile-meta muted">{{item.applicationScenario || '可按需定制'}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

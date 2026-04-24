@@ -70,8 +70,8 @@ button {
 }
 
 .tabs {
-  display: inline-grid;
-  grid-template-columns: 1fr 1fr;
+  display: inline-flex;
+  flex-wrap: wrap;
   gap: 4px;
   padding: 4px;
   margin-bottom: 16px;
@@ -81,18 +81,27 @@ button {
 }
 
 .tabs button,
+.tabs a,
 .action-bar button,
+.action-bar a,
 .history-view button {
   min-height: 40px;
+  padding: 0 16px;
   border: 1px solid transparent;
   border-radius: 7px;
   background: transparent;
   color: #314857;
   font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tabs button.active,
-.action-bar .primary {
+.tabs a.active,
+.action-bar .primary,
+a.action-bar-link.primary {
   background: #12384a;
   color: #fff;
 }
@@ -107,6 +116,11 @@ button {
 .product-list {
   display: grid;
   gap: 12px;
+  max-height: calc(100vh - 128px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
 .product-card {
@@ -145,6 +159,12 @@ button {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 45%),
     #83b7c8;
+}
+
+.product-cover {
+  display: block;
+  object-fit: cover;
+  background: #eef3f6;
 }
 
 .tone-1 {
@@ -195,6 +215,12 @@ button {
   color: #24495b;
   font-size: 12px;
   font-weight: 800;
+}
+
+.product-detail-cover {
+  width: 100%;
+  height: 132px;
+  object-fit: cover;
 }
 
 .form-grid {
@@ -357,13 +383,176 @@ button {
   font-size: 13px;
 }
 
+.home-view,
+.product-list-view,
+.product-detail-view,
+.member-center {
+  display: grid;
+  gap: 16px;
+}
+
+.hero {
+  display: grid;
+  gap: 10px;
+  background:
+    linear-gradient(135deg, #153448 0%, #1f6fa6 100%);
+  color: #f2f7fa;
+  border-color: #153448;
+}
+
+.hero h1,
+.hero p,
+.hero .eyebrow {
+  color: #f2f7fa;
+}
+
+.hero .action-bar a,
+.hero .action-bar button {
+  color: #0f3a4e;
+  background: #ffffff;
+}
+
+.hero .action-bar a.primary {
+  background: #f4b400;
+  color: #1a2940;
+  border-color: #f4b400;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.product-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-card-link .product-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 8px;
+  padding: 14px;
+}
+
+.product-card-link .product-image {
+  grid-row: auto;
+  width: 100%;
+  height: 96px;
+  border-radius: 8px;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.gallery img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #d7e3e8;
+}
+
+.template-list,
+.address-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.template-list li,
+.address-list li {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #d7e3e8;
+  border-radius: 7px;
+  background: #f8fbfc;
+}
+
+.template-list li span,
+.address-list li span {
+  color: #5d7889;
+  font-size: 13px;
+}
+
+.address-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.address-actions button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #c2d2da;
+  border-radius: 6px;
+  background: #fff;
+  color: #314857;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-style: normal;
+  border-radius: 999px;
+  background: #f4b400;
+  color: #1a2940;
+  font-weight: 800;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #344d5d;
+  font-weight: 700;
+}
+
+.action-bar.full {
+  grid-column: 1 / -1;
+  align-items: center;
+}
+
+.link {
+  color: #12384a;
+  font-weight: 700;
+}
+
+.error-copy {
+  color: #b13626;
+}
+
 @media (max-width: 980px) {
   .quote-layout {
     grid-template-columns: 1fr;
   }
 
   .product-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
+    max-height: none;
+    margin: 0 -20px;
+    padding: 0 20px 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+  }
+
+  .product-list .product-card {
+    flex: 0 0 min(280px, 78vw);
+    scroll-snap-align: center;
   }
 
   .result-panel {
@@ -389,7 +578,6 @@ button {
     width: 100%;
   }
 
-  .product-list,
   .form-grid,
   .product-hero {
     grid-template-columns: 1fr;

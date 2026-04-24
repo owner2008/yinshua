@@ -16,6 +16,10 @@ export class CreateQuoteRuleSetDto {
 
   @IsString()
   versionNo!: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
 
 export class UpdateQuoteRuleSetDto {

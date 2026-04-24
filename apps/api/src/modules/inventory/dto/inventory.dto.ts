@@ -13,6 +13,10 @@ export class CreateWarehouseDto {
   @IsOptional()
   @IsInt()
   managerId?: number;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
 
 export class UpdateWarehouseDto {

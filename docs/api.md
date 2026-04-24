@@ -100,9 +100,25 @@ Authorization: Bearer <member-token>
 - 最低收费。
 - 最终计算结果。
 
-## 4. 后续待实现 API
+## 4. 产品展示（用户端公开只读）
 
-## 4. 数据库相关命令
+### `GET /api/catalog/home`
+
+首页聚合数据：返回分类、热门产品（`isHot=true`，不足时用最新产品填充）、最新产品。
+
+### `GET /api/catalog/categories`
+
+启用状态的产品分类列表，按 `sort` 升序。
+
+### `GET /api/catalog/products?categoryId=1`
+
+按分类查询启用状态的产品；不带 `categoryId` 返回全部启用产品。
+
+### `GET /api/catalog/products/:id`
+
+返回产品详情，包含启用的报价模板及模板选项。停用或不存在的产品返回 404。
+
+## 4.1 数据库相关命令
 
 在 `apps/api/.env` 中配置 `DATABASE_URL` 后执行：
 
@@ -132,11 +148,17 @@ pnpm --dir apps/api db:seed
 - `GET /api/member/quotes/:id`
 - `GET /api/member/addresses`
 - `POST /api/member/addresses`
+- `PUT /api/member/addresses/:id`
+- `PUT /api/member/addresses/:id/default`
+- `DELETE /api/member/addresses/:id`
 
 说明：`wx-login` 会返回会员 token。未配置 `WECHAT_APPID` / `WECHAT_APP_SECRET` 或传入 `mock_` 前缀 code 时，会使用开发期 mock openid；配置正式小程序密钥后会调用微信 code2Session。会员资料、地址、历史报价与保存报价接口需要携带 `Authorization: Bearer <member-token>`。
 
 后台配置：
 
+- `GET /api/admin/product-categories`
+- `POST /api/admin/product-categories`
+- `PUT /api/admin/product-categories/:id`
 - `GET /api/admin/products`
 - `POST /api/admin/products`
 - `PUT /api/admin/products/:id`

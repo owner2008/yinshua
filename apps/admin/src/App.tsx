@@ -5,20 +5,24 @@ import { AdminSession, clearAdminSession, getAdminSession, loginAdmin, saveAdmin
 const { Header, Sider, Content } = Layout;
 
 const ProductsPage = lazy(() => import('./pages/ProductsPage').then((module) => ({ default: module.ProductsPage })));
+const ProductCategoriesPage = lazy(() => import('./pages/ProductCategoriesPage').then((module) => ({ default: module.ProductCategoriesPage })));
 const MaterialsPage = lazy(() => import('./pages/MaterialsPage').then((module) => ({ default: module.MaterialsPage })));
 const ProcessesPage = lazy(() => import('./pages/ProcessesPage').then((module) => ({ default: module.ProcessesPage })));
 const QuoteRulesPage = lazy(() => import('./pages/QuoteRulesPage').then((module) => ({ default: module.QuoteRulesPage })));
 const QuotesPage = lazy(() => import('./pages/QuotesPage').then((module) => ({ default: module.QuotesPage })));
+const MembersPage = lazy(() => import('./pages/MembersPage').then((module) => ({ default: module.MembersPage })));
 const InventoryPage = lazy(() => import('./pages/InventoryPage').then((module) => ({ default: module.InventoryPage })));
 const OperationLogsPage = lazy(() => import('./pages/OperationLogsPage').then((module) => ({ default: module.OperationLogsPage })));
 const AdminAccessPage = lazy(() => import('./pages/AdminAccessPage').then((module) => ({ default: module.AdminAccessPage })));
 
 const menuItems = [
+  { key: 'categories', label: '产品分类', permission: 'admin:product' },
   { key: 'products', label: '产品与模板', permission: 'admin:product' },
   { key: 'materials', label: '材料与价格', permission: 'admin:pricing' },
   { key: 'processes', label: '工艺与印刷', permission: 'admin:pricing' },
   { key: 'rules', label: '报价规则', permission: 'admin:quote-rule' },
   { key: 'quotes', label: '报价单', permission: 'admin:quote' },
+  { key: 'members', label: '会员管理', permission: 'admin:member' },
   { key: 'inventory', label: '库存', permission: 'admin:inventory' },
   { key: 'logs', label: '操作日志', permission: 'admin:audit-log' },
   { key: 'access', label: '权限管理', permission: 'admin:permission' },
@@ -27,7 +31,10 @@ const menuItems = [
 export default function App() {
   const [activeKey, setActiveKey] = useState('products');
   const [session, setSession] = useState<AdminSession | null>(() => getAdminSession());
-  const visibleMenuItems = useMemo(() => menuItems.filter((item) => !item.permission || session?.user.permissions.includes(item.permission)), [session]);
+  const visibleMenuItems = useMemo(
+    () => menuItems.filter((item) => !item.permission || session?.user.permissions.includes(item.permission)),
+    [session],
+  );
 
   useEffect(() => {
     const listener = () => setSession(null);
@@ -43,6 +50,8 @@ export default function App() {
 
   const page = useMemo(() => {
     switch (activeKey) {
+      case 'categories':
+        return <ProductCategoriesPage />;
       case 'products':
         return <ProductsPage />;
       case 'materials':
@@ -53,6 +62,8 @@ export default function App() {
         return <QuoteRulesPage />;
       case 'quotes':
         return <QuotesPage />;
+      case 'members':
+        return <MembersPage />;
       case 'inventory':
         return <InventoryPage />;
       case 'logs':

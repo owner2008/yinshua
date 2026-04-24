@@ -1,0 +1,109 @@
+<view class="page">
+  <view class="card header-card">
+    <view>
+      <view class="title">会员中心</view>
+      <view class="muted">{{session.user.nickname || '未登录'}} / #{{session.user.id || '-'}}</view>
+      <view wx:if="{{notice}}" class="notice">{{notice}}</view>
+    </view>
+    <view class="action-row">
+      <button class="ghost-button" size="mini" bindtap="reload" disabled="{{loading}}">{{loading ? '刷新中' : '刷新'}}</button>
+      <button class="ghost-button" size="mini" bindtap="logout">退出登录</button>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">{{profile.memberNo ? '会员资料' : '会员注册'}}</view>
+    <view class="field two">
+      <label>
+        <text>昵称</text>
+        <input value="{{profile.nickname}}" data-field="nickname" bindinput="changeProfileField" />
+      </label>
+      <label>
+        <text>手机号</text>
+        <input value="{{profile.mobile}}" data-field="mobile" bindinput="changeProfileField" />
+      </label>
+    </view>
+    <view class="field">
+      <text>客户类型</text>
+      <picker range="{{customerTypeLabels}}" value="{{selectedCustomerTypeIndex}}" bindchange="changeCustomerType">
+        <view class="picker-value">{{customerTypeLabels[selectedCustomerTypeIndex]}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <text>联系人</text>
+      <input value="{{profile.contactName}}" data-field="contactName" bindinput="changeProfileField" />
+    </view>
+    <view class="field">
+      <text>企业名称</text>
+      <input value="{{profile.companyName}}" data-field="companyName" bindinput="changeProfileField" />
+    </view>
+    <view class="field">
+      <text>税号</text>
+      <input value="{{profile.taxNo}}" data-field="taxNo" bindinput="changeProfileField" />
+    </view>
+    <view class="field">
+      <text>所属行业</text>
+      <input value="{{profile.industry}}" data-field="industry" bindinput="changeProfileField" />
+    </view>
+    <view class="field">
+      <text>备注</text>
+      <input value="{{profile.remark}}" data-field="remark" bindinput="changeProfileField" />
+    </view>
+    <button class="primary-button" loading="{{savingProfile}}" bindtap="saveProfile">{{profile.memberNo ? '更新资料' : '注册会员'}}</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>收货地址</text>
+      <text class="muted">{{addresses.length}} 条</text>
+    </view>
+    <view wx:if="{{!addresses.length}}" class="muted">暂无地址</view>
+    <block wx:for="{{addresses}}" wx:key="id">
+      <view class="address-item" data-id="{{item.id}}" bindlongpress="addressActions">
+        <view class="address-title">
+          <text>{{item.consignee}} / {{item.mobile}}</text>
+          <text wx:if="{{item.isDefault}}" class="badge">默认</text>
+        </view>
+        <view class="muted">{{item.province}} {{item.city}} {{item.district || ''}} {{item.detail}}</view>
+        <view class="muted hint">长按可设默认或删除</view>
+      </view>
+    </block>
+
+    <view class="section-title" style="margin-top: 24rpx;">新增地址</view>
+    <view class="field two">
+      <label>
+        <text>收件人</text>
+        <input value="{{addressDraft.consignee}}" data-field="consignee" bindinput="changeAddressField" />
+      </label>
+      <label>
+        <text>手机号</text>
+        <input value="{{addressDraft.mobile}}" data-field="mobile" bindinput="changeAddressField" />
+      </label>
+    </view>
+    <view class="field two">
+      <label>
+        <text>省</text>
+        <input value="{{addressDraft.province}}" data-field="province" bindinput="changeAddressField" />
+      </label>
+      <label>
+        <text>市</text>
+        <input value="{{addressDraft.city}}" data-field="city" bindinput="changeAddressField" />
+      </label>
+    </view>
+    <view class="field two">
+      <label>
+        <text>区/县</text>
+        <input value="{{addressDraft.district}}" data-field="district" bindinput="changeAddressField" />
+      </label>
+      <label>
+        <text>详细地址</text>
+        <input value="{{addressDraft.detail}}" data-field="detail" bindinput="changeAddressField" />
+      </label>
+    </view>
+    <view class="switch-row">
+      <text>设为默认</text>
+      <switch checked="{{addressDraft.isDefault}}" bindchange="toggleDefault" />
+    </view>
+    <button class="primary-button" loading="{{savingAddress}}" bindtap="saveAddress">新增地址</button>
+  </view>
+</view>

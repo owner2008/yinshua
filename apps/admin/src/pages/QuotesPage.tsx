@@ -40,7 +40,7 @@ export function QuotesPage() {
       <div className="filter-bar">
         <Input.Search
           allowClear
-          placeholder="搜索报价单号、产品ID或模板ID"
+          placeholder="搜索报价单号、产品编号或模板编号"
           value={keyword}
           onChange={(event) => setKeyword(event.target.value)}
           style={{ width: 320 }}
@@ -52,8 +52,8 @@ export function QuotesPage() {
         dataSource={filteredData}
         columns={[
           { title: '报价单号', dataIndex: 'quoteNo' },
-          { title: '产品ID', dataIndex: 'productId', width: 100 },
-          { title: '模板ID', dataIndex: 'productTemplateId', width: 100 },
+          { title: '产品编号', dataIndex: 'productId', width: 100 },
+          { title: '模板编号', dataIndex: 'productTemplateId', width: 100 },
           { title: '数量', dataIndex: 'quantity', width: 120 },
           { title: '基础成本', render: (_, r) => r.summary?.baseCost, width: 120 },
           { title: '最终报价', render: (_, r) => <Tag color="green">{r.summary?.finalPrice}</Tag>, width: 120 },
@@ -69,8 +69,8 @@ export function QuotesPage() {
             loading={detailLoading}
             pagination={false}
             dataSource={[
-              { label: '产品ID', value: detail?.productId },
-              { label: '模板ID', value: detail?.productTemplateId },
+              { label: '产品编号', value: detail?.productId },
+              { label: '模板编号', value: detail?.productTemplateId },
               { label: '数量', value: detail?.quantity },
               { label: '基础成本', value: detail?.summary?.baseCost },
               { label: '最终报价', value: detail?.summary?.finalPrice },

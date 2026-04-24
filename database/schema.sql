@@ -56,7 +56,7 @@ CREATE TABLE product_categories (
 
 CREATE TABLE products (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  category_id BIGINT NOT NULL,
+  category_id BIGINT NULL,
   name VARCHAR(128) NOT NULL,
   code VARCHAR(64) NOT NULL,
   cover_image VARCHAR(512) NULL,
@@ -64,6 +64,8 @@ CREATE TABLE products (
   description TEXT NULL,
   application_scenario TEXT NULL,
   status VARCHAR(32) NOT NULL DEFAULT 'active',
+  sort INT NOT NULL DEFAULT 0,
+  is_hot BOOLEAN NOT NULL DEFAULT FALSE,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uk_products_code (code),

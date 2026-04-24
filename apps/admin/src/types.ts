@@ -5,8 +5,21 @@ export interface Product {
   status: string;
   description?: string;
   coverImage?: string;
+  galleryJson?: string[] | null;
   applicationScenario?: string;
+  categoryId?: string | null;
+  category?: ProductCategory | null;
+  sort?: number;
+  isHot?: boolean;
   templates?: ProductTemplate[];
+}
+
+export interface ProductCategory {
+  id: string;
+  parentId?: string | null;
+  name: string;
+  sort: number;
+  status: string;
 }
 
 export interface ProductTemplate {
@@ -127,6 +140,57 @@ export interface Quote {
   };
 }
 
+export interface MemberLevel {
+  id: string;
+  name: string;
+  code: string;
+  discountRate: string;
+  priority: number;
+  remark?: string;
+}
+
+export interface MemberProfile {
+  id: string;
+  userId: string;
+  memberNo: string;
+  customerType: 'personal' | 'company' | string;
+  companyName?: string;
+  contactName?: string;
+  taxNo?: string;
+  industry?: string;
+  source?: string;
+  levelId?: string | null;
+  level?: MemberLevel | null;
+  remark?: string;
+}
+
+export interface MemberAddress {
+  id: string;
+  consignee: string;
+  mobile: string;
+  province: string;
+  city: string;
+  district?: string;
+  detail: string;
+  isDefault: boolean;
+}
+
+export interface Member {
+  id: string;
+  wxOpenid?: string;
+  mobile?: string;
+  nickname?: string;
+  avatar?: string;
+  status: string;
+  createdAt?: string;
+  profile?: MemberProfile | null;
+  addresses?: MemberAddress[];
+  _count?: {
+    quotes?: number;
+    addresses?: number;
+  };
+}
+
 export interface Warehouse {
   id: string;
   name: string;
@@ -211,4 +275,3 @@ export interface AdminUser {
   createdAt?: string;
   roles?: AdminUserRole[];
 }
-

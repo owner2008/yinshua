@@ -24,6 +24,7 @@ export class InventoryService {
         code: dto.code,
         type: dto.type,
         managerId: dto.managerId ? BigInt(dto.managerId) : undefined,
+        status: dto.status,
       },
     });
   }

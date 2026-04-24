@@ -1,7 +1,11 @@
 {
   "pages": [
+    "pages/index/index",
+    "pages/product-list/index",
+    "pages/product-detail/index",
     "pages/quote/index",
-    "pages/history/index"
+    "pages/history/index",
+    "pages/member/index"
   ],
   "window": {
     "navigationBarTitleText": "不干胶在线报价",
@@ -16,12 +20,24 @@
     "borderStyle": "black",
     "list": [
       {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/product-list/index",
+        "text": "产品"
+      },
+      {
         "pagePath": "pages/quote/index",
         "text": "报价"
       },
       {
         "pagePath": "pages/history/index",
         "text": "历史"
+      },
+      {
+        "pagePath": "pages/member/index",
+        "text": "我的"
       }
     ]
   },

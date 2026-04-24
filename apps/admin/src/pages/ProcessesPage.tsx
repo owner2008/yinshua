@@ -5,6 +5,24 @@ import { PrintPrice, Process, ProcessPrice } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
 
+const processTypeOptions = [
+  { label: '表面工艺', value: 'surface' },
+  { label: '模切加工', value: 'cutting' },
+  { label: '打样服务', value: 'proof' },
+];
+
+const feeModeOptions = [
+  { label: '按面积计费', value: 'per_area' },
+  { label: '按数量计费', value: 'per_qty' },
+  { label: '固定费用', value: 'fixed' },
+  { label: '固定费加数量费', value: 'fixed_plus_qty' },
+];
+
+const printModeLabelOptions = [
+  { label: '四色印刷', value: 'four_color' },
+  { label: '单色印刷', value: 'single_color' },
+];
+
 export function ProcessesPage() {
   return (
     <div className="page-card">
@@ -97,11 +115,11 @@ function ProcessList() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
+        { title: '编号', dataIndex: 'id' },
         { title: '编码', dataIndex: 'code' },
         { title: '名称', dataIndex: 'name' },
-        { title: '类型', dataIndex: 'processType' },
-        { title: '计费方式', dataIndex: 'feeMode' },
+        { title: '类型', dataIndex: 'processType', render: renderProcessType },
+        { title: '计费方式', dataIndex: 'feeMode', render: renderFeeMode },
         {
           title: '状态',
           dataIndex: 'status',
@@ -123,8 +141,12 @@ function ProcessList() {
         <Form form={form} layout="vertical">
           <Form.Item name="code" label="编码" rules={[{ required: true }]}><Input /></Form.Item>
           <Form.Item name="name" label="名称" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="processType" label="类型" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="feeMode" label="计费方式" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="processType" label="类型" rules={[{ required: true }]}>
+            <Select options={processTypeOptions} />
+          </Form.Item>
+          <Form.Item name="feeMode" label="计费方式" rules={[{ required: true }]}>
+            <Select options={feeModeOptions} />
+          </Form.Item>
           <Form.Item name="status" label="状态" rules={[{ required: true }]}>
             <Select
               options={[
@@ -197,9 +219,9 @@ function ProcessPriceTable() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
+        { title: '编号', dataIndex: 'id' },
         { title: '工艺', render: (_, record) => record.process ? `${record.process.name} (${record.process.code})` : record.processId },
-        { title: '计费方式', dataIndex: 'feeMode' },
+        { title: '计费方式', dataIndex: 'feeMode', render: renderFeeMode },
         { title: '单价', dataIndex: 'unitPrice' },
         { title: '固定费', dataIndex: 'setupFee' },
         { title: '最低收费', dataIndex: 'minFee' },
@@ -210,7 +232,9 @@ function ProcessPriceTable() {
           <Form.Item name="processId" label="工艺" rules={[{ required: true }]}>
             <Select options={processes.map((item) => ({ label: `${item.name} (${item.code})`, value: Number(item.id) }))} />
           </Form.Item>
-          <Form.Item name="feeMode" label="计费方式" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="feeMode" label="计费方式" rules={[{ required: true }]}>
+            <Select options={feeModeOptions} />
+          </Form.Item>
           <Form.Item name="unitPrice" label="单价" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
           <Form.Item name="setupFee" label="固定费"><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
           <Form.Item name="minFee" label="最低收费"><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
@@ -229,7 +253,14 @@ function PrintPriceTable() {
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:pricing');
 
-  const printModeOptions = useMemo(() => Array.from(new Set(data.map((item) => item.printMode))).map((value) => ({ label: value, value })), [data]);
+  const visiblePrintModeOptions = useMemo(
+    () =>
+      Array.from(new Set(data.map((item) => item.printMode))).map((value) => ({
+        label: renderPrintMode(value),
+        value,
+      })),
+    [data],
+  );
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       const matchedCurrent = currentOnly === 'current' ? item.isCurrent : true;
@@ -251,7 +282,7 @@ function PrintPriceTable() {
     <>
       <PageHeader title="印刷价格" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={() => setOpen(true)}>新增价格</Button> : null} />
       <div className="filter-bar">
-        <Select allowClear placeholder="印刷方式" value={printMode} onChange={setPrintMode} style={{ width: 180 }} options={printModeOptions} />
+        <Select allowClear placeholder="印刷方式" value={printMode} onChange={setPrintMode} style={{ width: 180 }} options={visiblePrintModeOptions} />
         <Select
           value={currentOnly}
           onChange={setCurrentOnly}
@@ -263,21 +294,37 @@ function PrintPriceTable() {
         />
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
-        { title: 'ID', dataIndex: 'id' },
-        { title: '印刷方式', dataIndex: 'printMode' },
-        { title: '计费方式', dataIndex: 'feeMode' },
+        { title: '编号', dataIndex: 'id' },
+        { title: '印刷方式', dataIndex: 'printMode', render: renderPrintMode },
+        { title: '计费方式', dataIndex: 'feeMode', render: renderFeeMode },
         { title: '单价', dataIndex: 'unitPrice' },
         { title: '开机费', dataIndex: 'setupFee' },
         { title: '当前', dataIndex: 'isCurrent', render: (value: boolean) => <Tag color={value ? 'green' : 'default'}>{value ? '当前' : '历史'}</Tag> },
       ]} />
       <Modal title="新增印刷价格" open={open} onOk={submit} onCancel={() => setOpen(false)}>
         <Form form={form} layout="vertical" initialValues={{ feeMode: 'per_area', setupFee: 0 }}>
-          <Form.Item name="printMode" label="印刷方式" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="feeMode" label="计费方式" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="printMode" label="印刷方式" rules={[{ required: true }]}>
+            <Select options={printModeLabelOptions} />
+          </Form.Item>
+          <Form.Item name="feeMode" label="计费方式" rules={[{ required: true }]}>
+            <Select options={feeModeOptions} />
+          </Form.Item>
           <Form.Item name="unitPrice" label="单价" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
           <Form.Item name="setupFee" label="开机费"><InputNumber style={{ width: '100%' }} step={0.01} /></Form.Item>
         </Form>
       </Modal>
     </>
   );
+}
+
+function renderProcessType(value?: string): string {
+  return processTypeOptions.find((option) => option.value === value)?.label ?? value ?? '-';
+}
+
+function renderFeeMode(value?: string): string {
+  return feeModeOptions.find((option) => option.value === value)?.label ?? value ?? '-';
+}
+
+function renderPrintMode(value?: string): string {
+  return printModeLabelOptions.find((option) => option.value === value)?.label ?? value ?? '-';
 }

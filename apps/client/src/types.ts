@@ -2,11 +2,57 @@ export interface Product {
   id: string;
   name: string;
   code: string;
+  categoryId?: string | number | null;
   description?: string;
   applicationScenario?: string;
   coverImage?: string;
+  galleryJson?: string[] | null;
   status?: string;
+  isHot?: boolean;
+  sort?: number;
   templates?: ProductTemplate[];
+  category?: ProductCategory | null;
+}
+
+export interface ProductCategory {
+  id: string | number;
+  name: string;
+  sort?: number;
+  status?: string;
+  parentId?: string | number | null;
+}
+
+export interface CatalogHome {
+  categories: ProductCategory[];
+  hotProducts: Product[];
+  latestProducts: Product[];
+}
+
+export interface MemberProfile {
+  id?: string | number;
+  userId?: string | number;
+  memberNo?: string;
+  mobile?: string;
+  nickname?: string;
+  customerType?: 'personal' | 'company';
+  companyName?: string;
+  contactName?: string;
+  taxNo?: string;
+  industry?: string;
+  source?: string;
+  remark?: string;
+  levelId?: string | number | null;
+}
+
+export interface MemberAddress {
+  id: string | number;
+  consignee: string;
+  mobile: string;
+  province: string;
+  city: string;
+  district?: string;
+  detail: string;
+  isDefault?: boolean;
 }
 
 export interface ProductTemplate {

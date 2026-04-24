@@ -1,0 +1,59 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="card">
+    <view class="muted">正在加载产品详情…</view>
+  </view>
+
+  <view wx:elif="{{error}}" class="card">
+    <view class="muted">{{error}}</view>
+    <button class="ghost-button" size="mini" bindtap="back">返回</button>
+  </view>
+
+  <block wx:else>
+    <view class="card hero">
+      <image wx:if="{{product.coverImage}}" class="hero-thumb cover" src="{{product.coverImage}}" mode="aspectFill" />
+      <view wx:else class="hero-thumb tone-{{(product.id || 0) % 3}}">
+        <text>{{product.name}}</text>
+      </view>
+      <view class="hero-body">
+        <text class="eyebrow">{{(product.category && product.category.name) || '产品'}}</text>
+        <view class="title">{{product.name}}</view>
+        <view class="muted">{{product.description}}</view>
+        <view class="action-row">
+          <button class="primary-button" size="mini" bindtap="gotoQuote">在线报价</button>
+          <button class="ghost-button" size="mini" bindtap="back">返回</button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{gallery.length}}" class="card">
+      <view class="section-title">
+        <text>案例图集</text>
+        <text class="muted">{{gallery.length}} 张</text>
+      </view>
+      <view class="gallery">
+        <block wx:for="{{gallery}}" wx:key="*this">
+          <image class="gallery-img" src="{{item}}" mode="aspectFill" lazy-load="true" />
+        </block>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="section-title">应用场景</view>
+      <view class="muted">{{product.applicationScenario || '—'}}</view>
+    </view>
+
+    <view class="card">
+      <view class="section-title">
+        <text>报价模板</text>
+        <text class="muted">{{templates.length}} 个</text>
+      </view>
+      <view wx:if="{{!templates.length}}" class="muted">暂未配置报价模板。</view>
+      <block wx:for="{{templates}}" wx:key="id">
+        <view class="template-item">
+          <view class="template-name">{{item.templateName}}</view>
+          <view class="muted">宽 {{item.widthMin}}–{{item.widthMax}} 毫米 · 高 {{item.heightMin}}–{{item.heightMax}} 毫米 · 数量 {{item.quantityMin}}–{{item.quantityMax}}</view>
+        </view>
+      </block>
+    </view>
+  </block>
+</view>

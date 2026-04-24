@@ -10,84 +10,90 @@
 
   <view class="card">
     <view class="section-title">产品</view>
-    <scroll-view scroll-x class="product-scroll">
+    <scroll-view scroll-x scroll-with-animation scroll-into-view="{{selectedProductAnchor}}" class="product-scroll">
       <block wx:for="{{products}}" wx:key="id">
-        <view class="product-chip {{item.id == selectedProductId ? 'active' : ''}}" data-id="{{item.id}}" bindtap="selectProduct">
+        <view id="product-{{item.id}}" class="product-chip {{item.id == selectedProductId ? 'active' : ''}}" data-id="{{item.id}}" bindtap="selectProduct">
           <view class="product-name">{{item.name}}</view>
-          <view class="product-code">{{item.applicationScenario || item.code}}</view>
+          <view class="product-code">{{item.applicationScenario || '可按需定制'}}</view>
         </view>
       </block>
     </scroll-view>
   </view>
 
-  <view class="card form-card">
-    <view class="section-title">报价参数</view>
-    <view class="field">
-      <text>报价模板</text>
-      <picker range="{{templateNames}}" value="{{selectedTemplateIndex}}" bindchange="changeTemplate">
-        <view class="picker-value">{{selectedTemplate.templateName}}</view>
-      </picker>
+  <block wx:if="{{hasTemplate}}">
+    <view class="card form-card">
+      <view class="section-title">报价参数</view>
+      <view class="field">
+        <text>报价模板</text>
+        <picker range="{{templateNames}}" value="{{selectedTemplateIndex}}" bindchange="changeTemplate">
+          <view class="picker-value">{{selectedTemplate.templateName}}</view>
+        </picker>
+      </view>
+      <view class="field two">
+        <label>
+          <text>宽度（毫米）</text>
+          <input type="number" value="{{quoteInput.widthMm}}" data-field="widthMm" bindinput="changeNumber" />
+        </label>
+        <label>
+          <text>高度（毫米）</text>
+          <input type="number" value="{{quoteInput.heightMm}}" data-field="heightMm" bindinput="changeNumber" />
+        </label>
+      </view>
+      <view class="field">
+        <text>数量</text>
+        <input type="number" value="{{quoteInput.quantity}}" data-field="quantity" bindinput="changeNumber" />
+      </view>
+      <view class="field">
+        <text>材料</text>
+        <picker range="{{materialLabels}}" value="{{selectedMaterialIndex}}" bindchange="changeMaterial">
+          <view class="picker-value">{{selectedMaterialLabel}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>印刷</text>
+        <picker range="{{printLabels}}" value="{{selectedPrintIndex}}" bindchange="changePrint">
+          <view class="picker-value">{{selectedPrintLabel}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>形状</text>
+        <picker range="{{shapeLabels}}" value="{{selectedShapeIndex}}" bindchange="changeShape">
+          <view class="picker-value">{{selectedShapeLabel}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>客户类型</text>
+        <picker range="{{customerTypeLabels}}" value="{{selectedCustomerTypeIndex}}" bindchange="changeCustomerType">
+          <view class="picker-value">{{selectedCustomerTypeLabel}}</view>
+        </picker>
+      </view>
     </view>
-    <view class="field two">
-      <label>
-        <text>宽度 mm</text>
-        <input type="number" value="{{quoteInput.widthMm}}" data-field="widthMm" bindinput="changeNumber" />
-      </label>
-      <label>
-        <text>高度 mm</text>
-        <input type="number" value="{{quoteInput.heightMm}}" data-field="heightMm" bindinput="changeNumber" />
-      </label>
-    </view>
-    <view class="field">
-      <text>数量</text>
-      <input type="number" value="{{quoteInput.quantity}}" data-field="quantity" bindinput="changeNumber" />
-    </view>
-    <view class="field">
-      <text>材料</text>
-      <picker range="{{materialLabels}}" value="{{selectedMaterialIndex}}" bindchange="changeMaterial">
-        <view class="picker-value">{{selectedMaterialLabel}}</view>
-      </picker>
-    </view>
-    <view class="field">
-      <text>印刷</text>
-      <picker range="{{printLabels}}" value="{{selectedPrintIndex}}" bindchange="changePrint">
-        <view class="picker-value">{{selectedPrintLabel}}</view>
-      </picker>
-    </view>
-    <view class="field">
-      <text>形状</text>
-      <picker range="{{shapeLabels}}" value="{{selectedShapeIndex}}" bindchange="changeShape">
-        <view class="picker-value">{{selectedShapeLabel}}</view>
-      </picker>
-    </view>
-    <view class="field">
-      <text>客户类型</text>
-      <picker range="{{customerTypeLabels}}" value="{{selectedCustomerTypeIndex}}" bindchange="changeCustomerType">
-        <view class="picker-value">{{selectedCustomerTypeLabel}}</view>
-      </picker>
-    </view>
-  </view>
 
-  <view class="card">
-    <view class="section-title">工艺选择</view>
-    <view class="chip-row">
-      <block wx:for="{{processOptions}}" wx:key="optionValue">
-        <view class="process-chip {{item.selected ? 'active' : ''}}" data-code="{{item.optionValue}}" bindtap="toggleProcess">{{item.optionLabel}}</view>
-      </block>
+    <view class="card">
+      <view class="section-title">工艺选择</view>
+      <view wx:if="{{!processOptions.length}}" class="muted">该模板暂无可选工艺</view>
+      <view wx:else class="chip-row">
+        <block wx:for="{{processOptions}}" wx:key="optionValue">
+          <view class="process-chip {{item.selected ? 'active' : ''}}" data-code="{{item.optionValue}}" bindtap="toggleProcess">{{item.optionLabel}}</view>
+        </block>
+      </view>
+      <view class="switch-row">
+        <text>打样</text>
+        <switch checked="{{quoteInput.isProofing}}" data-field="isProofing" bindchange="changeBoolean" />
+      </view>
+      <view class="switch-row">
+        <text>加急</text>
+        <switch checked="{{quoteInput.isUrgent}}" data-field="isUrgent" bindchange="changeBoolean" />
+      </view>
     </view>
-    <view class="switch-row">
-      <text>打样</text>
-      <switch checked="{{quoteInput.isProofing}}" data-field="isProofing" bindchange="changeBoolean" />
-    </view>
-    <view class="switch-row">
-      <text>加急</text>
-      <switch checked="{{quoteInput.isUrgent}}" data-field="isUrgent" bindchange="changeBoolean" />
-    </view>
-  </view>
 
-  <view class="action-row">
-    <button class="primary-button" loading="{{busy}}" bindtap="calculate">计算报价</button>
-    <button class="ghost-button" loading="{{busy}}" disabled="{{!quoteResult}}" bindtap="saveQuote">保存报价</button>
+    <view class="action-row">
+      <button class="primary-button" loading="{{busy}}" bindtap="calculate">计算报价</button>
+      <button class="ghost-button" loading="{{busy}}" disabled="{{!quoteResult}}" bindtap="saveQuote">保存报价</button>
+    </view>
+  </block>
+  <view wx:else class="card">
+    <view class="muted">当前产品暂未配置报价模板，无法生成报价。</view>
   </view>
 
   <view wx:if="{{quoteResult}}" class="result-card card">

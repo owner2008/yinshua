@@ -3,7 +3,7 @@ import { IsArray, IsBoolean, IsInt, IsNumber, IsOptional, IsString, Min } from '
 export class CreateProductDto {
   @IsOptional()
   @IsInt()
-  categoryId?: number;
+  categoryId?: number | null;
 
   @IsString()
   name!: string;
@@ -16,18 +16,34 @@ export class CreateProductDto {
   coverImage?: string;
 
   @IsOptional()
+  @IsArray()
+  gallery?: string[];
+
+  @IsOptional()
   @IsString()
   description?: string;
 
   @IsOptional()
   @IsString()
   applicationScenario?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
+
+  @IsOptional()
+  @IsInt()
+  sort?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isHot?: boolean;
 }
 
 export class UpdateProductDto {
   @IsOptional()
   @IsInt()
-  categoryId?: number;
+  categoryId?: number | null;
 
   @IsOptional()
   @IsString()
@@ -42,6 +58,10 @@ export class UpdateProductDto {
   coverImage?: string;
 
   @IsOptional()
+  @IsArray()
+  gallery?: string[];
+
+  @IsOptional()
   @IsString()
   description?: string;
 
@@ -52,6 +72,14 @@ export class UpdateProductDto {
   @IsOptional()
   @IsString()
   status?: string;
+
+  @IsOptional()
+  @IsInt()
+  sort?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isHot?: boolean;
 }
 
 export class CreateProductTemplateDto {
