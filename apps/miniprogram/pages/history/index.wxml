@@ -20,7 +20,7 @@
         </view>
         <view class="quote-meta">
           <text>{{item.productName}}</text>
-          <text>{{item.quantity}} 个</text>
+          <text>{{item.quantity}} 件</text>
           <text>{{item.customerTypeText}}</text>
         </view>
       </view>

@@ -39,6 +39,22 @@ button {
   margin-bottom: 14px;
 }
 
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid #c6d7df;
+  background: #fff;
+  box-shadow: 0 12px 24px rgb(11 36 48 / 8%);
+}
+
 .topbar h1,
 .panel h2,
 .section-title h2 {
@@ -400,6 +416,44 @@ a.action-bar-link.primary {
   border-color: #153448;
 }
 
+.hero-rich {
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.9fr);
+  gap: 24px;
+  align-items: stretch;
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-copy {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+}
+
+.hero-side {
+  display: grid;
+  gap: 12px;
+}
+
+.hero-stat {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(6px);
+}
+
+.hero-stat strong {
+  font-size: 16px;
+}
+
+.hero-stat span {
+  color: rgb(242 247 250 / 88%);
+  line-height: 1.5;
+}
+
 .hero h1,
 .hero p,
 .hero .eyebrow {
@@ -422,6 +476,162 @@ a.action-bar-link.primary {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 14px;
+}
+
+.banner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.banner-card,
+.showcase-card {
+  overflow: hidden;
+  border: 1px solid #d7e3e8;
+  border-radius: 12px;
+  background: #fbfdfe;
+}
+
+.banner-card img,
+.showcase-image {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.banner-card-copy,
+.showcase-copy {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.banner-card-copy p,
+.showcase-copy p {
+  margin: 0;
+  color: #526c7c;
+  line-height: 1.6;
+}
+
+.company-section {
+  background:
+    radial-gradient(circle at top right, rgb(28 104 133 / 10%), transparent 42%),
+    #fff;
+}
+
+.company-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.company-visual {
+  display: grid;
+  gap: 12px;
+}
+
+.company-cover {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid #d7e3e8;
+}
+
+.company-cover-fallback,
+.showcase-placeholder {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 45%),
+    linear-gradient(135deg, #214d67, #78b6d0);
+}
+
+.company-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.company-gallery img {
+  width: 100%;
+  height: 94px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #d7e3e8;
+}
+
+.company-copy {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.company-copy p {
+  margin: 0;
+  line-height: 1.8;
+}
+
+.company-subtitle {
+  color: #2e617c;
+  font-weight: 700;
+}
+
+.company-contact {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f6fafb;
+  color: #36596d;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.showcase-card {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.82fr) minmax(0, 1fr);
+}
+
+.showcase-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.showcase-meta span {
+  color: #2a6986;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.spec-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.spec-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5edf1;
+}
+
+.spec-list dt {
+  color: #5d7889;
+}
+
+.spec-list dd {
+  margin: 0;
+  color: #183445;
+  font-weight: 700;
+  text-align: right;
 }
 
 .product-card-link {
@@ -569,6 +779,10 @@ a.action-bar-link.primary {
     display: grid;
   }
 
+   .brand-block {
+    align-items: flex-start;
+  }
+
   .status-dot {
     max-width: none;
     text-align: left;
@@ -579,7 +793,10 @@ a.action-bar-link.primary {
   }
 
   .form-grid,
-  .product-hero {
+  .product-hero,
+  .hero-rich,
+  .company-layout,
+  .showcase-card {
     grid-template-columns: 1fr;
   }
 
@@ -589,5 +806,9 @@ a.action-bar-link.primary {
 
   .label-preview {
     max-width: 180px;
+  }
+
+  .company-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

@@ -2,7 +2,7 @@ const { clearSession, del, loginMember, post, put, request } = require('../../ut
 
 const customerTypes = [
   { label: '个人客户', value: 'personal' },
-  { label: '企业客户', value: 'company' }
+  { label: '企业客户', value: 'company' },
 ];
 
 const emptyProfile = {
@@ -13,7 +13,7 @@ const emptyProfile = {
   companyName: '',
   taxNo: '',
   industry: '',
-  remark: ''
+  remark: '',
 };
 
 const emptyAddress = {
@@ -23,7 +23,7 @@ const emptyAddress = {
   city: '',
   district: '',
   detail: '',
-  isDefault: true
+  isDefault: true,
 };
 
 Page({
@@ -37,7 +37,7 @@ Page({
     addressDraft: emptyAddress,
     savingProfile: false,
     savingAddress: false,
-    loading: false
+    loading: false,
   },
 
   onShow() {
@@ -49,22 +49,19 @@ Page({
     loginMember()
       .then((session) => {
         this.setData({ session });
-        return Promise.all([
-          request('/member/profile').catch(() => null),
-          request('/member/addresses').catch(() => [])
-        ]);
+        return Promise.all([request('/member/profile').catch(() => null), request('/member/addresses').catch(() => [])]);
       })
       .then(([profile, addresses]) => {
         const nextProfile = Object.assign({}, emptyProfile, profile || {});
         const customerIndex = Math.max(
           0,
-          customerTypes.findIndex((item) => item.value === (nextProfile.customerType || 'personal'))
+          customerTypes.findIndex((item) => item.value === (nextProfile.customerType || 'personal')),
         );
         this.setData({
           profile: nextProfile,
           selectedCustomerTypeIndex: customerIndex,
           addresses: addresses || [],
-          loading: false
+          loading: false,
         });
       })
       .catch((error) => {
@@ -81,7 +78,7 @@ Page({
     const idx = Number(event.detail.value);
     this.setData({
       selectedCustomerTypeIndex: idx,
-      'profile.customerType': customerTypes[idx].value
+      'profile.customerType': customerTypes[idx].value,
     });
   },
 
@@ -92,7 +89,7 @@ Page({
         this.setData({
           profile: Object.assign({}, emptyProfile, saved),
           savingProfile: false,
-          notice: saved.memberNo ? '会员资料已保存' : '会员注册成功'
+          notice: saved.memberNo ? '会员资料已保存' : '会员注册成功',
         });
         wx.showToast({ title: '已保存', icon: 'success' });
       })
@@ -121,9 +118,9 @@ Page({
       .then((created) => {
         this.setData({
           addresses: [created].concat(this.data.addresses),
-          addressDraft: emptyAddress,
+          addressDraft: Object.assign({}, emptyAddress),
           savingAddress: false,
-          notice: '地址已新增'
+          notice: '地址已新增',
         });
         wx.showToast({ title: '已新增地址', icon: 'success' });
       })
@@ -136,9 +133,9 @@ Page({
     clearSession();
     this.setData({
       session: null,
-      profile: emptyProfile,
+      profile: Object.assign({}, emptyProfile),
       addresses: [],
-      notice: '已退出登录'
+      notice: '已退出登录',
     });
   },
 
@@ -166,7 +163,7 @@ Page({
         } else if (label === '删除') {
           this.deleteAddress(id);
         }
-      }
+      },
     });
   },
 
@@ -176,9 +173,9 @@ Page({
         this.setData({
           addresses: this.data.addresses.map((item) => ({
             ...item,
-            isDefault: String(item.id) === String(id)
+            isDefault: String(item.id) === String(id),
           })),
-          notice: '已设为默认地址'
+          notice: '已设为默认地址',
         });
       })
       .catch((error) => {
@@ -198,13 +195,13 @@ Page({
           .then(() => {
             this.setData({
               addresses: this.data.addresses.filter((item) => String(item.id) !== String(id)),
-              notice: '地址已删除'
+              notice: '地址已删除',
             });
           })
           .catch((error) => {
             wx.showToast({ title: error.message || '删除失败', icon: 'none' });
           });
-      }
+      },
     });
-  }
+  },
 });

@@ -4,6 +4,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  MaxLength,
   Max,
   Min,
 } from 'class-validator';
@@ -242,4 +243,17 @@ export class UpdateCategoryEquipmentShowcaseDto {
   @IsOptional()
   @IsString()
   status?: string;
+}
+
+export class UploadContentAssetDto {
+  @IsString()
+  @MaxLength(255)
+  fileName!: string;
+
+  @IsString()
+  @MaxLength(128)
+  mimeType!: string;
+
+  @IsString()
+  contentBase64!: string;
 }

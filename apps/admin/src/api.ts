@@ -86,7 +86,36 @@ export function hasAdminPermission(permission: string): boolean {
   return getAdminSession()?.user.permissions.includes(permission) ?? false;
 }
 
+export function toAbsoluteAssetUrl(path?: string | null) {
+  if (!path) {
+    return '';
+  }
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  return `${origin}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+export async function uploadContentAsset(file: File) {
+  const contentBase64 = await readFileAsDataUrl(file);
+  return post<{ url: string; fileName: string; size: number }>('/admin/content-assets', {
+    fileName: file.name,
+    mimeType: file.type || 'application/octet-stream',
+    contentBase64,
+  });
+}
+
 function authHeader(): Record<string, string> {
   const session = getAdminSession();
   return session ? { Authorization: `Bearer ${session.token}` } : {};
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+    reader.onerror = () => reject(reader.error ?? new Error('Failed to read file.'));
+    reader.readAsDataURL(file);
+  });
 }

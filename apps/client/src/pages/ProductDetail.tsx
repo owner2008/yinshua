@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { fetchCatalogProduct } from '../api';
+import { fetchCatalogProduct, toAssetUrl } from '../api';
 import { useCatalog } from '../catalogContext';
 import type { Product } from '../types';
 
@@ -52,7 +52,7 @@ export function ProductDetailPage() {
     <div className="product-detail-view">
       <section className="panel product-hero">
         {product.coverImage ? (
-          <img className="label-preview product-detail-cover" src={product.coverImage} alt={product.name} />
+          <img className="label-preview product-detail-cover" src={toAssetUrl(product.coverImage)} alt={product.name} />
         ) : (
           <div className="label-preview" aria-hidden="true">
             <span>{product.name}</span>
@@ -79,7 +79,7 @@ export function ProductDetailPage() {
           </div>
           <div className="gallery">
             {gallery.map((src) => (
-              <img key={src} src={src} alt={product.name} loading="lazy" />
+              <img key={src} src={toAssetUrl(src)} alt={product.name} loading="lazy" />
             ))}
           </div>
         </section>
@@ -89,7 +89,7 @@ export function ProductDetailPage() {
         <div className="section-title">
           <h2>应用场景</h2>
         </div>
-        <p>{product.applicationScenario ?? '—'}</p>
+        <p>{product.applicationScenario ?? '支持按需配置规格和工艺组合。'}</p>
       </section>
 
       <section className="panel">
@@ -105,9 +105,8 @@ export function ProductDetailPage() {
               <li key={template.id}>
                 <strong>{template.templateName}</strong>
                 <span>
-                  宽 {String(template.widthMin)}–{String(template.widthMax)} 毫米 · 高{' '}
-                  {String(template.heightMin)}–{String(template.heightMax)} 毫米 · 数量{' '}
-                  {template.quantityMin}–{template.quantityMax}
+                  宽 {String(template.widthMin)}- {String(template.widthMax)} 毫米 · 高 {String(template.heightMin)}-
+                  {String(template.heightMax)} 毫米 · 数量 {template.quantityMin}-{template.quantityMax}
                 </span>
               </li>
             ))}

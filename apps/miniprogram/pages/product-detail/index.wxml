@@ -39,7 +39,7 @@
 
     <view class="card">
       <view class="section-title">应用场景</view>
-      <view class="muted">{{product.applicationScenario || '—'}}</view>
+      <view class="muted">{{product.applicationScenario || '支持按需配置规格和工艺组合。'}}</view>
     </view>
 
     <view class="card">
@@ -51,7 +51,7 @@
       <block wx:for="{{templates}}" wx:key="id">
         <view class="template-item">
           <view class="template-name">{{item.templateName}}</view>
-          <view class="muted">宽 {{item.widthMin}}–{{item.widthMax}} 毫米 · 高 {{item.heightMin}}–{{item.heightMax}} 毫米 · 数量 {{item.quantityMin}}–{{item.quantityMax}}</view>
+          <view class="muted">宽 {{item.widthMin}}-{{item.widthMax}} 毫米 · 高 {{item.heightMin}}-{{item.heightMax}} 毫米 · 数量 {{item.quantityMin}}-{{item.quantityMax}}</view>
         </view>
       </block>
     </view>

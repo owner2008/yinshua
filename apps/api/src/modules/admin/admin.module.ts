@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AdminAccessController } from './controllers/admin-access.controller';
+import { AdminContentAssetsController } from './controllers/admin-content-assets.controller';
 import { AdminContentController } from './controllers/admin-content.controller';
 import { AdminMaterialsController } from './controllers/admin-materials.controller';
 import { AdminMembersController } from './controllers/admin-members.controller';
@@ -28,6 +29,7 @@ import { AuditLogService } from './services/audit-log.service';
     AdminQuoteRulesController,
     AdminOperationLogsController,
     AdminAccessController,
+    AdminContentAssetsController,
     AdminContentController,
   ],
   providers: [

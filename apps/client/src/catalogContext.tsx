@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import {
   fetchCatalogCategories,
   fetchCatalogHome,
@@ -9,13 +9,7 @@ import {
   saveMemberSession,
 } from './api';
 import { sampleCategories, sampleProducts, sampleTemplates } from './sampleData';
-import type {
-  CatalogHome,
-  MemberSession,
-  Product,
-  ProductCategory,
-  ProductTemplate,
-} from './types';
+import type { CatalogHome, MemberSession, Product, ProductCategory, ProductTemplate } from './types';
 
 interface CatalogContextValue {
   categories: ProductCategory[];
@@ -53,8 +47,8 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         fetchCatalogProducts().catch(() => [] as Product[]),
         request<ProductTemplate[]>('/admin/product-templates').catch(() => [] as ProductTemplate[]),
       ]);
-      const hasRemote =
-        (productList && productList.length > 0) || (categoryList && categoryList.length > 0);
+      const hasRemote = (productList && productList.length > 0) || (categoryList && categoryList.length > 0);
+
       if (hasRemote) {
         setCategories(categoryList.length > 0 ? categoryList : sampleCategories);
         setProducts(productList.length > 0 ? productList : sampleProducts);
@@ -68,7 +62,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         setTemplates(sampleTemplates);
         setHome(null);
         setUsingFallback(true);
-        setNotice('使用内置样例配置');
+        setNotice('正在使用内置样例配置');
       }
     } finally {
       setLoading(false);

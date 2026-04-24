@@ -13,7 +13,7 @@ function request(path, options = {}) {
       header: {
         'Content-Type': 'application/json',
         ...(session ? { Authorization: `Bearer ${session.token}` } : {}),
-        ...(options.header || {})
+        ...(options.header || {}),
       },
       success(response) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -32,7 +32,7 @@ function request(path, options = {}) {
         const message = formatNetworkError(error.errMsg || '请求失败');
         console.error('[api] request error', { url, error });
         reject(new Error(message));
-      }
+      },
     });
   });
 }
@@ -72,7 +72,7 @@ function loginMember() {
       },
       fail(error) {
         reject(new Error(error.errMsg || '微信登录失败'));
-      }
+      },
     });
   });
 }
@@ -94,6 +94,69 @@ function clearSession() {
   wx.removeStorageSync(SESSION_KEY);
 }
 
+function toAssetUrl(path) {
+  if (!path) {
+    return '';
+  }
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+  return `${apiBase.replace(/\/api$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+function normalizeProduct(product) {
+  if (!product) {
+    return product;
+  }
+
+  return {
+    ...product,
+    coverImage: toAssetUrl(product.coverImage),
+    galleryJson: Array.isArray(product.galleryJson) ? product.galleryJson.map(toAssetUrl) : [],
+  };
+}
+
+function normalizeHomePayload(payload) {
+  if (!payload) {
+    return payload;
+  }
+
+  return {
+    ...payload,
+    branding: payload.branding
+      ? {
+          ...payload.branding,
+          logoImage: toAssetUrl(payload.branding.logoImage),
+        }
+      : null,
+    banners: Array.isArray(payload.banners)
+      ? payload.banners.map((item) => ({
+          ...item,
+          imageUrl: toAssetUrl(item.imageUrl),
+          mobileImageUrl: toAssetUrl(item.mobileImageUrl),
+        }))
+      : [],
+    companyProfile: payload.companyProfile
+      ? {
+          ...payload.companyProfile,
+          coverImage: toAssetUrl(payload.companyProfile.coverImage),
+          galleryJson: Array.isArray(payload.companyProfile.galleryJson)
+            ? payload.companyProfile.galleryJson.map(toAssetUrl)
+            : [],
+        }
+      : null,
+    hotProducts: Array.isArray(payload.hotProducts) ? payload.hotProducts.map(normalizeProduct) : [],
+    latestProducts: Array.isArray(payload.latestProducts) ? payload.latestProducts.map(normalizeProduct) : [],
+    categoryEquipmentShowcases: Array.isArray(payload.categoryEquipmentShowcases)
+      ? payload.categoryEquipmentShowcases.map((item) => ({
+          ...item,
+          imageUrl: toAssetUrl(item.imageUrl),
+          galleryJson: Array.isArray(item.galleryJson) ? item.galleryJson.map(toAssetUrl) : [],
+        }))
+      : [],
+  };
+}
+
 function parseError(data) {
   if (!data) {
     return '';
@@ -102,7 +165,7 @@ function parseError(data) {
     return data;
   }
   if (Array.isArray(data.message)) {
-    return data.message.join('；');
+    return data.message.join('，');
   }
   return data.message || data.error || '';
 }
@@ -122,7 +185,10 @@ module.exports = {
   del,
   getSession,
   loginMember,
+  normalizeHomePayload,
+  normalizeProduct,
   post,
   put,
-  request
+  request,
+  toAssetUrl,
 };

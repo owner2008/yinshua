@@ -65,7 +65,7 @@
           <text wx:if="{{item.isDefault}}" class="badge">默认</text>
         </view>
         <view class="muted">{{item.province}} {{item.city}} {{item.district || ''}} {{item.detail}}</view>
-        <view class="muted hint">长按可设默认或删除</view>
+        <view class="muted hint">长按可设为默认或删除</view>
       </view>
     </block>
 
@@ -92,7 +92,7 @@
     </view>
     <view class="field two">
       <label>
-        <text>区/县</text>
+        <text>区 / 县</text>
         <input value="{{addressDraft.district}}" data-field="district" bindinput="changeAddressField" />
       </label>
       <label>

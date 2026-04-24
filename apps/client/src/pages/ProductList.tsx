@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { toAssetUrl } from '../api';
 import { useCatalog } from '../catalogContext';
 
 export function ProductListPage() {
@@ -11,9 +12,7 @@ export function ProductListPage() {
     if (!activeCategory) {
       return products;
     }
-    return products.filter(
-      (product) => String(product.categoryId ?? product.category?.id ?? '') === activeCategory,
-    );
+    return products.filter((product) => String(product.categoryId ?? product.category?.id ?? '') === activeCategory);
   }, [products, activeCategory]);
 
   return (
@@ -24,20 +23,14 @@ export function ProductListPage() {
           <span>{filteredProducts.length} 款产品</span>
         </div>
         <div className="chip-row">
-          <button
-            type="button"
-            className={activeCategory ? 'chip' : 'chip selected'}
-            onClick={() => setParams({})}
-          >
+          <button type="button" className={activeCategory ? 'chip' : 'chip selected'} onClick={() => setParams({})}>
             全部
           </button>
           {categories.map((category) => (
             <button
               key={category.id}
               type="button"
-              className={
-                activeCategory === String(category.id) ? 'chip selected' : 'chip'
-              }
+              className={activeCategory === String(category.id) ? 'chip selected' : 'chip'}
               onClick={() => setParams({ category: String(category.id) })}
             >
               {category.name}
@@ -48,18 +41,19 @@ export function ProductListPage() {
 
       <section className="panel">
         {filteredProducts.length === 0 ? (
-          <p className="empty-copy">该分类暂无产品</p>
+          <p className="empty-copy">该分类暂时没有产品</p>
         ) : (
           <div className="product-grid">
             {filteredProducts.map((product, index) => (
-              <Link
-                key={product.id}
-                to={`/products/${product.id}`}
-                className="product-card-link"
-              >
+              <Link key={product.id} to={`/products/${product.id}`} className="product-card-link">
                 <div className="product-card">
                   {product.coverImage ? (
-                    <img className="product-image product-cover" src={product.coverImage} alt={product.name} loading="lazy" />
+                    <img
+                      className="product-image product-cover"
+                      src={toAssetUrl(product.coverImage)}
+                      alt={product.name}
+                      loading="lazy"
+                    />
                   ) : (
                     <span className={`product-image tone-${index % 3}`} />
                   )}

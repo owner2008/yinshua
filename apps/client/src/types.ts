@@ -23,9 +23,65 @@ export interface ProductCategory {
 }
 
 export interface CatalogHome {
+  branding?: HomepageBranding | null;
+  banners?: HomepageBanner[];
+  companyProfile?: CompanyProfile | null;
   categories: ProductCategory[];
+  categoryEquipmentShowcases?: CategoryEquipmentShowcase[];
   hotProducts: Product[];
   latestProducts: Product[];
+}
+
+export interface HomepageBranding {
+  id: string | number;
+  siteName: string;
+  siteSubtitle?: string;
+  logoImage?: string;
+  headerNotice?: string;
+  status?: string;
+}
+
+export interface HomepageBanner {
+  id: string | number;
+  title: string;
+  subtitle?: string;
+  imageUrl: string;
+  mobileImageUrl?: string;
+  linkType?: string;
+  linkValue?: string;
+  buttonText?: string;
+  sort?: number;
+  status?: string;
+  startAt?: string | null;
+  endAt?: string | null;
+}
+
+export interface CompanyProfile {
+  id: string | number;
+  title: string;
+  subtitle?: string;
+  coverImage?: string;
+  galleryJson?: string[] | null;
+  content?: string;
+  contactPhone?: string;
+  contactWechat?: string;
+  address?: string;
+  sort?: number;
+  status?: string;
+}
+
+export interface CategoryEquipmentShowcase {
+  id: string | number;
+  categoryId: string | number;
+  category?: ProductCategory | null;
+  name: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  galleryJson?: string[] | null;
+  specsJson?: Record<string, unknown> | null;
+  sort?: number;
+  status?: string;
 }
 
 export interface MemberProfile {

@@ -18,6 +18,7 @@ project.private.config.json
 # logs
 *.log
 *.pid
+apps/api/uploads/
 
 # OS/editor
 .DS_Store

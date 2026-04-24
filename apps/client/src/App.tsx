@@ -1,5 +1,6 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
 import { CatalogProvider, useCatalog } from './catalogContext';
+import { toAssetUrl } from './api';
 import { HistoryPage } from './pages/History';
 import { HomePage } from './pages/Home';
 import { MemberCenterPage } from './pages/MemberCenter';
@@ -16,21 +17,30 @@ export function App() {
 }
 
 function Shell() {
-  const { notice, session } = useCatalog();
+  const { notice, session, home } = useCatalog();
+  const branding = home?.branding;
+
   return (
     <main className="app-shell">
       <header className="topbar">
-        <div>
-          <p className="eyebrow">不干胶印刷</p>
-          <h1>产品与在线报价</h1>
+        <div className="brand-block">
+          {branding?.logoImage ? (
+            <img className="brand-logo" src={toAssetUrl(branding.logoImage)} alt={branding.siteName} />
+          ) : null}
+          <div>
+            <p className="eyebrow">{branding?.siteSubtitle ?? '不干胶印刷解决方案'}</p>
+            <h1>{branding?.siteName ?? '产品展示与在线报价'}</h1>
+          </div>
         </div>
         <span className="status-dot">
-          {notice}
+          {branding?.headerNotice || notice}
           {session?.user?.nickname ? ` · ${session.user.nickname}` : ''}
         </span>
       </header>
       <nav className="tabs" aria-label="主导航">
-        <NavLink to="/" end>首页</NavLink>
+        <NavLink to="/" end>
+          首页
+        </NavLink>
         <NavLink to="/products">产品</NavLink>
         <NavLink to="/quote">在线报价</NavLink>
         <NavLink to="/history">历史报价</NavLink>

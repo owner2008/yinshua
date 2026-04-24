@@ -4,7 +4,7 @@ Page({
   data: {
     busy: false,
     notice: '正在读取历史报价',
-    quotes: []
+    quotes: [],
   },
 
   onShow() {
@@ -19,7 +19,7 @@ Page({
         const normalized = (quotes || []).map(normalizeQuote);
         this.setData({
           quotes: normalized,
-          notice: normalized.length ? `共 ${normalized.length} 条历史报价` : '暂无历史报价'
+          notice: normalized.length ? `共 ${normalized.length} 条历史报价` : '暂无历史报价',
         });
       })
       .catch((error) => {
@@ -36,7 +36,7 @@ Page({
 
   goQuote() {
     wx.switchTab({ url: '/pages/quote/index' });
-  }
+  },
 });
 
 function normalizeQuote(quote) {
@@ -51,7 +51,7 @@ function normalizeQuote(quote) {
     quantity: Number(input.quantity || quote.quantity || 0),
     customerTypeText: (input.customerType || quote.customerType) === 'personal' ? '个人客户' : '企业客户',
     finalPrice: formatMoney(summary.finalPrice || quote.finalPrice || 0),
-    createdAtText: formatDate(quote.createdAt)
+    createdAtText: formatDate(quote.createdAt),
   };
 }
 

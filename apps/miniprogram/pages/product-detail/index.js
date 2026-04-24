@@ -1,4 +1,4 @@
-const { request } = require('../../utils/api');
+const { normalizeProduct, request } = require('../../utils/api');
 const { sampleProducts } = require('../../utils/sample-data');
 
 Page({
@@ -7,7 +7,7 @@ Page({
     error: '',
     product: null,
     gallery: [],
-    templates: []
+    templates: [],
   },
 
   onLoad(query) {
@@ -23,12 +23,12 @@ Page({
     this.setData({ loading: true, error: '' });
     request(`/catalog/products/${id}`)
       .then((product) => {
-        this.applyProduct(product);
+        this.applyProduct(normalizeProduct(product));
       })
       .catch(() => {
         const fallback = sampleProducts.find((item) => String(item.id) === String(id));
         if (fallback) {
-          this.applyProduct(fallback);
+          this.applyProduct(normalizeProduct(fallback));
         } else {
           this.setData({ loading: false, error: '产品不存在或已下架' });
         }
@@ -41,7 +41,7 @@ Page({
       loading: false,
       product,
       gallery,
-      templates: product.templates || []
+      templates: product.templates || [],
     });
   },
 
@@ -55,5 +55,5 @@ Page({
 
   back() {
     wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/index/index' }) });
-  }
+  },
 });

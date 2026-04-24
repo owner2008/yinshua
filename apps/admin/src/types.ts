@@ -275,3 +275,61 @@ export interface AdminUser {
   createdAt?: string;
   roles?: AdminUserRole[];
 }
+
+export interface CompanyProfile {
+  id: string;
+  title: string;
+  subtitle?: string;
+  coverImage?: string;
+  galleryJson?: string[];
+  content?: string;
+  contactPhone?: string;
+  contactWechat?: string;
+  address?: string;
+  sort: number;
+  status: string;
+}
+
+export interface HomepageBranding {
+  id: string;
+  siteName: string;
+  siteSubtitle?: string;
+  logoImage?: string;
+  headerNotice?: string;
+  status: string;
+}
+
+export interface HomepageBanner {
+  id: string;
+  title: string;
+  subtitle?: string;
+  imageUrl: string;
+  mobileImageUrl?: string;
+  linkType: string;
+  linkValue?: string;
+  buttonText?: string;
+  sort: number;
+  status: string;
+  startAt?: string | null;
+  endAt?: string | null;
+}
+
+export interface CategoryEquipmentShowcase {
+  id: string;
+  categoryId: string;
+  category?: ProductCategory | null;
+  name: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  galleryJson?: string[];
+  specsJson?: Record<string, unknown>;
+  sort: number;
+  status: string;
+}
+
+export interface UploadedContentAsset {
+  url: string;
+  fileName: string;
+  size: number;
+}

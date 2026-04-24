@@ -101,7 +101,7 @@ export function fetchCatalogProduct(id: string | number) {
 }
 
 export function fetchTemplatesByProduct(productId: string | number) {
-  return request<ProductTemplate[]>(`/admin/product-templates`).then((list) =>
+  return request<ProductTemplate[]>('/admin/product-templates').then((list) =>
     list.filter((template) => Number(template.productId) === Number(productId)),
   );
 }
@@ -150,6 +150,16 @@ export function deleteMyAddress(id: string | number) {
   return request<{ success: boolean }>(`/member/addresses/${id}`, { method: 'DELETE' });
 }
 
+export function toAssetUrl(path?: string | null) {
+  if (!path) {
+    return '';
+  }
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+  return path.startsWith('/') ? path : `/${path}`;
+}
+
 function parseError(text: string): string {
   if (!text) {
     return '';
@@ -158,7 +168,7 @@ function parseError(text: string): string {
   try {
     const data = JSON.parse(text) as { message?: string | string[]; error?: string };
     if (Array.isArray(data.message)) {
-      return data.message.join('；');
+      return data.message.join('，');
     }
     return data.message ?? data.error ?? text;
   } catch {
