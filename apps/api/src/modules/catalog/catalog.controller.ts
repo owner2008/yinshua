@@ -10,6 +10,27 @@ export class CatalogController {
     return this.catalog.findHome();
   }
 
+  @Get('company-profile')
+  companyProfile() {
+    return this.catalog.findCompanyProfile();
+  }
+
+  @Get('homepage-branding')
+  homepageBranding() {
+    return this.catalog.findHomepageBranding();
+  }
+
+  @Get('homepage-banners')
+  homepageBanners() {
+    return this.catalog.findHomepageBanners();
+  }
+
+  @Get('category-equipment-showcases')
+  categoryEquipmentShowcases(@Query('categoryId') categoryId?: string) {
+    const parsed = categoryId ? Number(categoryId) : undefined;
+    return this.catalog.findCategoryEquipmentShowcases(Number.isFinite(parsed) ? parsed : undefined);
+  }
+
   @Get('categories')
   categories() {
     return this.catalog.findCategories();

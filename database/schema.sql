@@ -54,6 +54,53 @@ CREATE TABLE product_categories (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE company_profiles (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(128) NOT NULL,
+  subtitle VARCHAR(255) NULL,
+  cover_image VARCHAR(512) NULL,
+  gallery_json JSON NULL,
+  content TEXT NULL,
+  contact_phone VARCHAR(32) NULL,
+  contact_wechat VARCHAR(64) NULL,
+  address VARCHAR(255) NULL,
+  sort INT NOT NULL DEFAULT 0,
+  status VARCHAR(32) NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_company_profiles_status_sort (status, sort)
+);
+
+CREATE TABLE homepage_branding (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  site_name VARCHAR(128) NOT NULL,
+  site_subtitle VARCHAR(255) NULL,
+  logo_image VARCHAR(512) NULL,
+  header_notice VARCHAR(255) NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_homepage_branding_status (status)
+);
+
+CREATE TABLE homepage_banners (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(128) NOT NULL,
+  subtitle VARCHAR(255) NULL,
+  image_url VARCHAR(512) NOT NULL,
+  mobile_image_url VARCHAR(512) NULL,
+  link_type VARCHAR(32) NOT NULL DEFAULT 'none',
+  link_value VARCHAR(255) NULL,
+  button_text VARCHAR(64) NULL,
+  sort INT NOT NULL DEFAULT 0,
+  status VARCHAR(32) NOT NULL DEFAULT 'active',
+  start_at DATETIME NULL,
+  end_at DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_homepage_banners_status_sort (status, sort)
+);
+
 CREATE TABLE products (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   category_id BIGINT NULL,
@@ -70,6 +117,22 @@ CREATE TABLE products (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uk_products_code (code),
   KEY idx_products_category_id (category_id)
+);
+
+CREATE TABLE category_equipment_showcases (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  category_id BIGINT NOT NULL,
+  name VARCHAR(128) NOT NULL,
+  title VARCHAR(128) NULL,
+  description TEXT NULL,
+  image_url VARCHAR(512) NULL,
+  gallery_json JSON NULL,
+  specs_json JSON NULL,
+  sort INT NOT NULL DEFAULT 0,
+  status VARCHAR(32) NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_category_equipment_showcases_category_status_sort (category_id, status, sort)
 );
 
 CREATE TABLE product_templates (

@@ -5,6 +5,45 @@ import { PrismaService } from '../../database/prisma.service';
 export class CatalogService {
   constructor(private readonly prisma: PrismaService) {}
 
+  findCompanyProfile() {
+    return this.prisma.companyProfile
+      .findFirst({
+        where: { status: 'active' },
+        orderBy: [{ sort: 'asc' }, { id: 'asc' }],
+      })
+      .then((profile) => (profile ? normalizeCompanyProfile(profile) : null));
+  }
+
+  findHomepageBranding() {
+    return this.prisma.homepageBranding.findFirst({
+      where: { status: 'active' },
+      orderBy: { id: 'asc' },
+    });
+  }
+
+  findHomepageBanners() {
+    const now = new Date();
+    return this.prisma.homepageBanner.findMany({
+      where: {
+        status: 'active',
+        OR: [{ startAt: null }, { startAt: { lte: now } }],
+        AND: [{ OR: [{ endAt: null }, { endAt: { gte: now } }] }],
+      },
+      orderBy: [{ sort: 'asc' }, { id: 'asc' }],
+    });
+  }
+
+  findCategoryEquipmentShowcases(categoryId?: number) {
+    return this.prisma.categoryEquipmentShowcase.findMany({
+      where: {
+        status: 'active',
+        ...(categoryId ? { categoryId: BigInt(categoryId) } : {}),
+      },
+      orderBy: [{ sort: 'asc' }, { id: 'asc' }],
+      include: { category: true },
+    }).then((rows) => rows.map(normalizeEquipmentShowcase));
+  }
+
   findCategories() {
     return this.prisma.productCategory.findMany({
       where: { status: 'active' },
@@ -42,7 +81,7 @@ export class CatalogService {
   }
 
   async findHome() {
-    const [categories, hotProducts, latestProducts] = await Promise.all([
+    const [categories, hotProducts, latestProducts, branding, banners, companyProfile, categoryEquipmentShowcases] = await Promise.all([
       this.findCategories(),
       this.prisma.product.findMany({
         where: { status: 'active', isHot: true },
@@ -54,9 +93,17 @@ export class CatalogService {
         orderBy: [{ sort: 'asc' }, { id: 'desc' }],
         take: 8,
       }),
+      this.findHomepageBranding(),
+      this.findHomepageBanners(),
+      this.findCompanyProfile(),
+      this.findCategoryEquipmentShowcases(),
     ]);
     return {
+      branding,
+      banners,
+      companyProfile,
       categories,
+      categoryEquipmentShowcases,
       hotProducts: (hotProducts.length > 0 ? hotProducts : latestProducts.slice(0, 4)).map(normalizeProduct),
       latestProducts: latestProducts.map(normalizeProduct),
     };
@@ -70,5 +117,27 @@ function normalizeProduct<T extends { galleryJson: unknown }>(product: T) {
   return {
     ...product,
     galleryJson,
+  };
+}
+
+function normalizeCompanyProfile<T extends { galleryJson: unknown }>(profile: T) {
+  return {
+    ...profile,
+    galleryJson: Array.isArray(profile.galleryJson)
+      ? profile.galleryJson.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+      : [],
+  };
+}
+
+function normalizeEquipmentShowcase<T extends { galleryJson: unknown; specsJson: unknown }>(row: T) {
+  return {
+    ...row,
+    galleryJson: Array.isArray(row.galleryJson)
+      ? row.galleryJson.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+      : [],
+    specsJson:
+      row.specsJson && typeof row.specsJson === 'object' && !Array.isArray(row.specsJson)
+        ? row.specsJson
+        : {},
   };
 }

@@ -392,6 +392,7 @@ const TEMPLATES: TemplateSpec[] = [
 
 async function main() {
   await seedCategories();
+  await seedContentManagement();
   await seedProducts();
   await seedTemplates();
   await seedMaterials();
@@ -400,6 +401,205 @@ async function main() {
   await seedRules();
   await seedMemberLevels();
   await seedAdminAccount();
+}
+
+async function seedContentManagement() {
+  await prisma.companyProfile.upsert({
+    where: { id: 1n },
+    update: {
+      title: '专注不干胶印刷与标签解决方案',
+      subtitle: '支持多行业标签展示、在线报价与后台参数化管理',
+      coverImage: 'https://dummyimage.com/1200x600/0f172a/ffffff&text=Company+Profile',
+      galleryJson: [
+        'https://dummyimage.com/1200x600/1d4ed8/ffffff&text=Factory+View',
+        'https://dummyimage.com/1200x600/2563eb/ffffff&text=Production+Line',
+      ],
+      content:
+        '我们长期服务于食品饮料、日化美妆、物流快递、电子电器等行业，提供标签设计打样、材料选型、工艺组合与批量交付的一体化服务。',
+      contactPhone: '400-800-2026',
+      contactWechat: 'yinshua-service',
+      address: '广东省深圳市龙岗区印刷智造产业园 A 栋 3 楼',
+      sort: 1,
+      status: 'active',
+    },
+    create: {
+      id: 1n,
+      title: '专注不干胶印刷与标签解决方案',
+      subtitle: '支持多行业标签展示、在线报价与后台参数化管理',
+      coverImage: 'https://dummyimage.com/1200x600/0f172a/ffffff&text=Company+Profile',
+      galleryJson: [
+        'https://dummyimage.com/1200x600/1d4ed8/ffffff&text=Factory+View',
+        'https://dummyimage.com/1200x600/2563eb/ffffff&text=Production+Line',
+      ],
+      content:
+        '我们长期服务于食品饮料、日化美妆、物流快递、电子电器等行业，提供标签设计打样、材料选型、工艺组合与批量交付的一体化服务。',
+      contactPhone: '400-800-2026',
+      contactWechat: 'yinshua-service',
+      address: '广东省深圳市龙岗区印刷智造产业园 A 栋 3 楼',
+      sort: 1,
+      status: 'active',
+    },
+  });
+
+  await prisma.homepageBranding.upsert({
+    where: { id: 1n },
+    update: {
+      siteName: '印刷标签报价中心',
+      siteSubtitle: '企业定制标签在线展示与参数化报价',
+      logoImage: 'https://dummyimage.com/320x120/111827/ffffff&text=LOGO',
+      headerNotice: '支持微信小程序与 H5 在线询价，后台统一配置内容与价格规则',
+      status: 'active',
+    },
+    create: {
+      id: 1n,
+      siteName: '印刷标签报价中心',
+      siteSubtitle: '企业定制标签在线展示与参数化报价',
+      logoImage: 'https://dummyimage.com/320x120/111827/ffffff&text=LOGO',
+      headerNotice: '支持微信小程序与 H5 在线询价，后台统一配置内容与价格规则',
+      status: 'active',
+    },
+  });
+
+  const banners = [
+    {
+      id: 1n,
+      title: '多行业标签解决方案',
+      subtitle: '食品、日化、物流、电器行业标签一站式打样与报价',
+      imageUrl: 'https://dummyimage.com/1440x560/0f172a/ffffff&text=Industry+Solutions',
+      mobileImageUrl: 'https://dummyimage.com/720x960/0f172a/ffffff&text=Industry+Solutions',
+      linkType: 'category',
+      linkValue: '5',
+      buttonText: '查看方案',
+      sort: 10,
+    },
+    {
+      id: 2n,
+      title: '透明膜与合成纸工艺专区',
+      subtitle: '支持覆膜、烫金、局部 UV、异形模切等多种组合',
+      imageUrl: 'https://dummyimage.com/1440x560/1d4ed8/ffffff&text=Special+Processes',
+      mobileImageUrl: 'https://dummyimage.com/720x960/1d4ed8/ffffff&text=Special+Processes',
+      linkType: 'product',
+      linkValue: '3',
+      buttonText: '立即查看',
+      sort: 20,
+    },
+  ] as const;
+
+  for (const banner of banners) {
+    await prisma.homepageBanner.upsert({
+      where: { id: banner.id },
+      update: {
+        title: banner.title,
+        subtitle: banner.subtitle,
+        imageUrl: banner.imageUrl,
+        mobileImageUrl: banner.mobileImageUrl,
+        linkType: banner.linkType,
+        linkValue: banner.linkValue,
+        buttonText: banner.buttonText,
+        sort: banner.sort,
+        status: 'active',
+        startAt: startedAt,
+        endAt: null,
+      },
+      create: {
+        id: banner.id,
+        title: banner.title,
+        subtitle: banner.subtitle,
+        imageUrl: banner.imageUrl,
+        mobileImageUrl: banner.mobileImageUrl,
+        linkType: banner.linkType,
+        linkValue: banner.linkValue,
+        buttonText: banner.buttonText,
+        sort: banner.sort,
+        status: 'active',
+        startAt: startedAt,
+      },
+    });
+  }
+
+  const showcases = [
+    {
+      id: 1n,
+      categoryId: 5n,
+      name: '六色柔印设备',
+      title: '食品饮料标签专用印刷线',
+      description: '适合大批量卷标生产，支持防水、防油和耐摩擦工艺组合。',
+      imageUrl: 'https://dummyimage.com/960x640/0f766e/ffffff&text=Flexo+Press',
+      galleryJson: [
+        'https://dummyimage.com/960x640/115e59/ffffff&text=Flexo+Press+1',
+        'https://dummyimage.com/960x640/134e4a/ffffff&text=Flexo+Press+2',
+      ],
+      specsJson: {
+        maxWidthMm: 330,
+        maxSpeedPerMin: 120,
+        supportedProcesses: ['覆膜', '模切', '冷烫'],
+      },
+      sort: 10,
+    },
+    {
+      id: 2n,
+      categoryId: 4n,
+      name: '热敏标签模切机',
+      title: '物流热敏标签高速模切设备',
+      description: '适合快递面单、仓储标签等连续生产场景，支持高速走纸与自动收卷。',
+      imageUrl: 'https://dummyimage.com/960x640/7c3aed/ffffff&text=Thermal+Die-Cut',
+      galleryJson: [
+        'https://dummyimage.com/960x640/6d28d9/ffffff&text=Thermal+Die-Cut+1',
+      ],
+      specsJson: {
+        maxWidthMm: 220,
+        maxSpeedPerMin: 180,
+        supportedProcesses: ['模切', '分条'],
+      },
+      sort: 20,
+    },
+    {
+      id: 3n,
+      categoryId: 6n,
+      name: '数码烫金组合机',
+      title: '美妆标签高精度工艺设备',
+      description: '适合高颜值标签的小批量柔性生产，支持局部 UV、烫金与异形工艺。',
+      imageUrl: 'https://dummyimage.com/960x640/be123c/ffffff&text=Digital+Foil',
+      galleryJson: [
+        'https://dummyimage.com/960x640/9f1239/ffffff&text=Digital+Foil+1',
+      ],
+      specsJson: {
+        maxWidthMm: 320,
+        maxSpeedPerMin: 60,
+        supportedProcesses: ['烫金', '局部UV', '异形模切'],
+      },
+      sort: 30,
+    },
+  ] as const;
+
+  for (const showcase of showcases) {
+    await prisma.categoryEquipmentShowcase.upsert({
+      where: { id: showcase.id },
+      update: {
+        categoryId: showcase.categoryId,
+        name: showcase.name,
+        title: showcase.title,
+        description: showcase.description,
+        imageUrl: showcase.imageUrl,
+        galleryJson: showcase.galleryJson,
+        specsJson: showcase.specsJson,
+        sort: showcase.sort,
+        status: 'active',
+      },
+      create: {
+        id: showcase.id,
+        categoryId: showcase.categoryId,
+        name: showcase.name,
+        title: showcase.title,
+        description: showcase.description,
+        imageUrl: showcase.imageUrl,
+        galleryJson: showcase.galleryJson,
+        specsJson: showcase.specsJson,
+        sort: showcase.sort,
+        status: 'active',
+      },
+    });
+  }
 }
 
 async function seedCategories() {
@@ -819,6 +1019,7 @@ async function seedRules() {
 async function seedAdminAccount() {
   const permissions = [
     ['admin:product', '产品与模板管理', 'product'],
+    ['admin:content', '展示内容管理', 'content'],
     ['admin:pricing', '材料、工艺与价格管理', 'pricing'],
     ['admin:quote-rule', '报价规则管理', 'quote-rule'],
     ['admin:quote', '报价单查看', 'quote'],

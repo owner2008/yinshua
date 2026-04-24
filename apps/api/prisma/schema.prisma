@@ -143,19 +143,73 @@ model MemberAddress {
 }
 
 model ProductCategory {
-  id        BigInt            @id @default(autoincrement())
-  parentId  BigInt?           @map("parent_id")
-  name      String            @db.VarChar(128)
-  sort      Int               @default(0)
-  status    String            @default("active") @db.VarChar(32)
-  createdAt DateTime          @default(now()) @map("created_at")
-  updatedAt DateTime          @updatedAt @map("updated_at")
-  parent    ProductCategory?  @relation("CategoryParent", fields: [parentId], references: [id])
-  children  ProductCategory[] @relation("CategoryParent")
-  products  Product[]
+  id                 BigInt                      @id @default(autoincrement())
+  parentId           BigInt?                     @map("parent_id")
+  name               String                      @db.VarChar(128)
+  sort               Int                         @default(0)
+  status             String                      @default("active") @db.VarChar(32)
+  createdAt          DateTime                    @default(now()) @map("created_at")
+  updatedAt          DateTime                    @updatedAt @map("updated_at")
+  parent             ProductCategory?            @relation("CategoryParent", fields: [parentId], references: [id])
+  children           ProductCategory[]           @relation("CategoryParent")
+  products           Product[]
+  equipmentShowcases CategoryEquipmentShowcase[]
 
   @@index([parentId])
   @@map("product_categories")
+}
+
+model CompanyProfile {
+  id            BigInt   @id @default(autoincrement())
+  title         String   @db.VarChar(128)
+  subtitle      String?  @db.VarChar(255)
+  coverImage    String?  @map("cover_image") @db.VarChar(512)
+  galleryJson   Json?    @map("gallery_json")
+  content       String?  @db.Text
+  contactPhone  String?  @map("contact_phone") @db.VarChar(32)
+  contactWechat String?  @map("contact_wechat") @db.VarChar(64)
+  address       String?  @db.VarChar(255)
+  sort          Int      @default(0)
+  status        String   @default("active") @db.VarChar(32)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([status, sort])
+  @@map("company_profiles")
+}
+
+model HomepageBranding {
+  id           BigInt   @id @default(autoincrement())
+  siteName     String   @map("site_name") @db.VarChar(128)
+  siteSubtitle String?  @map("site_subtitle") @db.VarChar(255)
+  logoImage    String?  @map("logo_image") @db.VarChar(512)
+  headerNotice String?  @map("header_notice") @db.VarChar(255)
+  status       String   @default("active") @db.VarChar(32)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("homepage_branding")
+}
+
+model HomepageBanner {
+  id             BigInt    @id @default(autoincrement())
+  title          String    @db.VarChar(128)
+  subtitle       String?   @db.VarChar(255)
+  imageUrl       String    @map("image_url") @db.VarChar(512)
+  mobileImageUrl String?   @map("mobile_image_url") @db.VarChar(512)
+  linkType       String    @default("none") @map("link_type") @db.VarChar(32)
+  linkValue      String?   @map("link_value") @db.VarChar(255)
+  buttonText     String?   @map("button_text") @db.VarChar(64)
+  sort           Int       @default(0)
+  status         String    @default("active") @db.VarChar(32)
+  startAt        DateTime? @map("start_at")
+  endAt          DateTime? @map("end_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([status, sort])
+  @@map("homepage_banners")
 }
 
 model Product {
@@ -180,31 +234,50 @@ model Product {
   @@map("products")
 }
 
+model CategoryEquipmentShowcase {
+  id          BigInt          @id @default(autoincrement())
+  categoryId  BigInt          @map("category_id")
+  name        String          @db.VarChar(128)
+  title       String?         @db.VarChar(128)
+  description String?         @db.Text
+  imageUrl    String?         @map("image_url") @db.VarChar(512)
+  galleryJson Json?           @map("gallery_json")
+  specsJson   Json?           @map("specs_json")
+  sort        Int             @default(0)
+  status      String          @default("active") @db.VarChar(32)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  category    ProductCategory @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId, status, sort])
+  @@map("category_equipment_showcases")
+}
+
 model ProductTemplate {
-  id                BigInt                  @id @default(autoincrement())
-  productId         BigInt                  @map("product_id")
-  templateName      String                  @map("template_name") @db.VarChar(128)
-  widthMin          Decimal                 @map("width_min") @db.Decimal(10, 2)
-  widthMax          Decimal                 @map("width_max") @db.Decimal(10, 2)
-  heightMin         Decimal                 @map("height_min") @db.Decimal(10, 2)
-  heightMax         Decimal                 @map("height_max") @db.Decimal(10, 2)
-  quantityMin       Int                     @map("quantity_min")
-  quantityMax       Int                     @map("quantity_max")
-  allowCustomShape  Boolean                 @default(false) @map("allow_custom_shape")
-  allowLamination   Boolean                 @default(false) @map("allow_lamination")
-  allowHotStamping  Boolean                 @default(false) @map("allow_hot_stamping")
-  allowUv           Boolean                 @default(false) @map("allow_uv")
-  allowDieCut       Boolean                 @default(false) @map("allow_die_cut")
-  allowProofing     Boolean                 @default(false) @map("allow_proofing")
-  defaultLossRate   Decimal                 @default(1) @map("default_loss_rate") @db.Decimal(10, 4)
-  minPrice          Decimal                 @default(0) @map("min_price") @db.Decimal(12, 2)
-  status            String                  @default("active") @db.VarChar(32)
-  createdAt         DateTime                @default(now()) @map("created_at")
-  updatedAt         DateTime                @updatedAt @map("updated_at")
-  product           Product                 @relation(fields: [productId], references: [id])
-  options           ProductTemplateOption[]
-  ruleSets          QuoteRuleSet[]
-  quotes            Quote[]
+  id               BigInt                  @id @default(autoincrement())
+  productId        BigInt                  @map("product_id")
+  templateName     String                  @map("template_name") @db.VarChar(128)
+  widthMin         Decimal                 @map("width_min") @db.Decimal(10, 2)
+  widthMax         Decimal                 @map("width_max") @db.Decimal(10, 2)
+  heightMin        Decimal                 @map("height_min") @db.Decimal(10, 2)
+  heightMax        Decimal                 @map("height_max") @db.Decimal(10, 2)
+  quantityMin      Int                     @map("quantity_min")
+  quantityMax      Int                     @map("quantity_max")
+  allowCustomShape Boolean                 @default(false) @map("allow_custom_shape")
+  allowLamination  Boolean                 @default(false) @map("allow_lamination")
+  allowHotStamping Boolean                 @default(false) @map("allow_hot_stamping")
+  allowUv          Boolean                 @default(false) @map("allow_uv")
+  allowDieCut      Boolean                 @default(false) @map("allow_die_cut")
+  allowProofing    Boolean                 @default(false) @map("allow_proofing")
+  defaultLossRate  Decimal                 @default(1) @map("default_loss_rate") @db.Decimal(10, 4)
+  minPrice         Decimal                 @default(0) @map("min_price") @db.Decimal(12, 2)
+  status           String                  @default("active") @db.VarChar(32)
+  createdAt        DateTime                @default(now()) @map("created_at")
+  updatedAt        DateTime                @updatedAt @map("updated_at")
+  product          Product                 @relation(fields: [productId], references: [id])
+  options          ProductTemplateOption[]
+  ruleSets         QuoteRuleSet[]
+  quotes           Quote[]
 
   @@index([productId])
   @@map("product_templates")
@@ -226,19 +299,19 @@ model ProductTemplateOption {
 }
 
 model Material {
-  id        BigInt          @id @default(autoincrement())
-  code      String          @unique @db.VarChar(64)
-  name      String          @db.VarChar(128)
-  type      String          @map("material_type") @db.VarChar(32)
-  unit      String          @db.VarChar(32)
-  spec      String?         @db.VarChar(128)
-  brand     String?         @db.VarChar(128)
-  status    String          @default("active") @db.VarChar(32)
-  createdAt DateTime        @default(now()) @map("created_at")
-  updatedAt DateTime        @updatedAt @map("updated_at")
-  prices    MaterialPrice[]
-  quotes    Quote[]
-  stockItems StockItem[]
+  id             BigInt          @id @default(autoincrement())
+  code           String          @unique @db.VarChar(64)
+  name           String          @db.VarChar(128)
+  type           String          @map("material_type") @db.VarChar(32)
+  unit           String          @db.VarChar(32)
+  spec           String?         @db.VarChar(128)
+  brand          String?         @db.VarChar(128)
+  status         String          @default("active") @db.VarChar(32)
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  prices         MaterialPrice[]
+  quotes         Quote[]
+  stockItems     StockItem[]
   stockMovements StockMovement[]
 
   @@map("materials")
@@ -412,16 +485,16 @@ model OperationLog {
 }
 
 model Warehouse {
-  id          BigInt          @id @default(autoincrement())
-  name        String          @db.VarChar(128)
-  code        String          @unique @db.VarChar(64)
-  type        String          @map("warehouse_type") @db.VarChar(32)
-  managerId   BigInt?         @map("manager_id")
-  status      String          @default("active") @db.VarChar(32)
-  createdAt   DateTime        @default(now()) @map("created_at")
-  updatedAt   DateTime        @updatedAt @map("updated_at")
-  stockItems  StockItem[]
-  movements   StockMovement[]
+  id         BigInt          @id @default(autoincrement())
+  name       String          @db.VarChar(128)
+  code       String          @unique @db.VarChar(64)
+  type       String          @map("warehouse_type") @db.VarChar(32)
+  managerId  BigInt?         @map("manager_id")
+  status     String          @default("active") @db.VarChar(32)
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime        @updatedAt @map("updated_at")
+  stockItems StockItem[]
+  movements  StockMovement[]
 
   @@map("warehouses")
 }
