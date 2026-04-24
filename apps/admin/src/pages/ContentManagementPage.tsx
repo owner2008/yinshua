@@ -1,6 +1,8 @@
 import {
+  Alert,
   App,
   Button,
+  Card,
   Form,
   Input,
   InputNumber,
@@ -85,13 +87,12 @@ export function ContentManagementPage() {
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null);
   const [homepageBranding, setHomepageBranding] = useState<HomepageBranding | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
-  const { data: banners, loading: loadingBanners, reload: reloadBanners } = useRemoteList<HomepageBanner>('/admin/homepage-banners');
-  const {
-    data: showcases,
-    loading: loadingShowcases,
-    reload: reloadShowcases,
-  } = useRemoteList<CategoryEquipmentShowcase>('/admin/category-equipment-showcases');
-  const { data: categories, reload: reloadCategories } = useRemoteList<ProductCategory>('/admin/product-categories');
+  const { data: banners, loading: loadingBanners, reload: reloadBanners } =
+    useRemoteList<HomepageBanner>('/admin/homepage-banners');
+  const { data: showcases, loading: loadingShowcases, reload: reloadShowcases } =
+    useRemoteList<CategoryEquipmentShowcase>('/admin/category-equipment-showcases');
+  const { data: categories, reload: reloadCategories } =
+    useRemoteList<ProductCategory>('/admin/product-categories');
   const [companyForm] = Form.useForm<CompanyProfileFormValues>();
   const [brandingForm] = Form.useForm<BrandingFormValues>();
   const [bannerForm] = Form.useForm<BannerFormValues>();
@@ -104,6 +105,10 @@ export function ContentManagementPage() {
   const [savingBranding, setSavingBranding] = useState(false);
   const [savingBanner, setSavingBanner] = useState(false);
   const [savingShowcase, setSavingShowcase] = useState(false);
+  const [bannerKeyword, setBannerKeyword] = useState('');
+  const [bannerStatus, setBannerStatus] = useState<string>();
+  const [showcaseKeyword, setShowcaseKeyword] = useState('');
+  const [showcaseCategory, setShowcaseCategory] = useState<string>();
 
   useEffect(() => {
     void refreshSummary();
@@ -138,7 +143,7 @@ export function ContentManagementPage() {
         status: branding?.status ?? 'active',
       });
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Failed to load content settings.');
+      message.error(error instanceof Error ? error.message : '加载内容配置失败。');
     } finally {
       setLoadingSummary(false);
     }
@@ -162,7 +167,7 @@ export function ContentManagementPage() {
         ...values,
         gallery: payload.gallery,
       });
-      message.success('Company profile updated.');
+      message.success('企业介绍已更新。');
     } finally {
       setSavingCompany(false);
     }
@@ -174,7 +179,7 @@ export function ContentManagementPage() {
     try {
       const saved = await post<HomepageBranding>('/admin/homepage-branding', values);
       setHomepageBranding(saved);
-      message.success('Homepage branding updated.');
+      message.success('首页头部配置已更新。');
     } finally {
       setSavingBranding(false);
     }
@@ -198,7 +203,7 @@ export function ContentManagementPage() {
       subtitle: record.subtitle,
       imageUrl: record.imageUrl,
       mobileImageUrl: record.mobileImageUrl,
-      linkType: record.linkType,
+      linkType: record.linkType || 'none',
       linkValue: record.linkValue,
       buttonText: record.buttonText,
       sort: record.sort,
@@ -215,15 +220,16 @@ export function ContentManagementPage() {
     try {
       const payload = {
         ...values,
+        linkValue: values.linkType === 'none' ? undefined : values.linkValue,
         startAt: normalizeDateTimeInput(values.startAt),
         endAt: normalizeDateTimeInput(values.endAt),
       };
       if (editingBanner) {
         await put(`/admin/homepage-banners/${editingBanner.id}`, payload);
-        message.success('Banner updated.');
+        message.success('Banner 已更新。');
       } else {
         await post('/admin/homepage-banners', payload);
-        message.success('Banner created.');
+        message.success('Banner 已创建。');
       }
       setBannerModalOpen(false);
       setEditingBanner(null);
@@ -249,7 +255,7 @@ export function ContentManagementPage() {
   function openEditShowcase(record: CategoryEquipmentShowcase) {
     setEditingShowcase(record);
     showcaseForm.setFieldsValue({
-      categoryId: record.categoryId,
+      categoryId: String(record.categoryId),
       name: record.name,
       title: record.title,
       description: record.description,
@@ -279,10 +285,10 @@ export function ContentManagementPage() {
       };
       if (editingShowcase) {
         await put(`/admin/category-equipment-showcases/${editingShowcase.id}`, payload);
-        message.success('Equipment showcase updated.');
+        message.success('设备展示已更新。');
       } else {
         await post('/admin/category-equipment-showcases', payload);
-        message.success('Equipment showcase created.');
+        message.success('设备展示已创建。');
       }
       setShowcaseModalOpen(false);
       setEditingShowcase(null);
@@ -296,11 +302,38 @@ export function ContentManagementPage() {
   const categoryOptions = useMemo(
     () =>
       categories.map((item) => ({
-        value: item.id,
+        value: String(item.id),
         label: item.name,
       })),
     [categories],
   );
+
+  const filteredBanners = useMemo(() => {
+    const keyword = bannerKeyword.trim().toLowerCase();
+    return banners.filter((item) => {
+      const matchKeyword =
+        !keyword ||
+        item.title.toLowerCase().includes(keyword) ||
+        (item.subtitle ?? '').toLowerCase().includes(keyword);
+      const matchStatus = bannerStatus ? item.status === bannerStatus : true;
+      return matchKeyword && matchStatus;
+    });
+  }, [bannerKeyword, bannerStatus, banners]);
+
+  const filteredShowcases = useMemo(() => {
+    const keyword = showcaseKeyword.trim().toLowerCase();
+    return showcases.filter((item) => {
+      const matchKeyword =
+        !keyword ||
+        item.name.toLowerCase().includes(keyword) ||
+        (item.title ?? '').toLowerCase().includes(keyword) ||
+        (item.description ?? '').toLowerCase().includes(keyword);
+      const matchCategory = showcaseCategory ? String(item.categoryId) === showcaseCategory : true;
+      return matchKeyword && matchCategory;
+    });
+  }, [showcaseKeyword, showcaseCategory, showcases]);
+
+  const currentBannerLinkType = Form.useWatch('linkType', bannerForm);
 
   return (
     <div className="page-card">
@@ -309,6 +342,15 @@ export function ContentManagementPage() {
         description="统一维护企业介绍、首页头部配置和分类设备展示。"
         onRefresh={refreshAll}
       />
+
+      <Alert
+        className="inline-alert"
+        type="info"
+        showIcon
+        message="使用建议"
+        description="先维护首页 Logo 和 Banner，再补企业介绍和分类设备展示。图片支持直接上传，也支持粘贴已有地址。"
+      />
+
       <Tabs
         activeKey={activeTab}
         onChange={setActiveTab}
@@ -317,51 +359,65 @@ export function ContentManagementPage() {
             key: 'company',
             label: '企业介绍',
             children: (
-              <Form form={companyForm} layout="vertical" disabled={loadingSummary || !canWrite}>
-                <div className="content-grid">
-                  <Form.Item name="title" label="标题" rules={[{ required: true, message: '请输入标题' }]}>
-                    <Input maxLength={80} />
+              <Space direction="vertical" size={20} style={{ display: 'flex' }}>
+                <ContentPreviewCard
+                  title="前台预览"
+                  subtitle={companyProfile?.subtitle || '企业介绍'}
+                  image={companyProfile?.coverImage}
+                  lines={[
+                    companyProfile?.title || '未配置标题',
+                    companyProfile?.content || '企业介绍内容会显示在 H5 首页和小程序首页。',
+                    companyProfile?.contactPhone ? `电话：${companyProfile.contactPhone}` : '',
+                    companyProfile?.address ? `地址：${companyProfile.address}` : '',
+                  ]}
+                />
+
+                <Form form={companyForm} layout="vertical" disabled={loadingSummary || !canWrite}>
+                  <div className="content-grid">
+                    <Form.Item name="title" label="标题" rules={[{ required: true, message: '请输入标题' }]}>
+                      <Input maxLength={80} />
+                    </Form.Item>
+                    <Form.Item name="subtitle" label="副标题">
+                      <Input maxLength={120} />
+                    </Form.Item>
+                    <Form.Item name="contactPhone" label="联系电话">
+                      <Input maxLength={32} />
+                    </Form.Item>
+                    <Form.Item name="contactWechat" label="微信号">
+                      <Input maxLength={64} />
+                    </Form.Item>
+                    <Form.Item name="sort" label="排序">
+                      <InputNumber min={0} max={9999} style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item name="status" label="状态">
+                      <Select
+                        options={[
+                          { value: 'active', label: '启用' },
+                          { value: 'inactive', label: '停用' },
+                        ]}
+                      />
+                    </Form.Item>
+                  </div>
+                  <Form.Item name="coverImage" label="封面图">
+                    <SingleImageInput />
                   </Form.Item>
-                  <Form.Item name="subtitle" label="副标题">
-                    <Input maxLength={120} />
+                  <Form.Item name="gallery" label="图集">
+                    <MultiImageInput />
                   </Form.Item>
-                  <Form.Item name="contactPhone" label="联系电话">
-                    <Input maxLength={32} />
+                  <Form.Item name="address" label="地址">
+                    <Input.TextArea rows={2} />
                   </Form.Item>
-                  <Form.Item name="contactWechat" label="微信号">
-                    <Input maxLength={64} />
+                  <Form.Item name="content" label="介绍正文">
+                    <Input.TextArea rows={8} placeholder="可填写企业介绍、能力说明、服务优势等内容。" />
                   </Form.Item>
-                  <Form.Item name="sort" label="排序">
-                    <InputNumber min={0} max={9999} style={{ width: '100%' }} />
-                  </Form.Item>
-                  <Form.Item name="status" label="状态">
-                    <Select
-                      options={[
-                        { value: 'active', label: '启用' },
-                        { value: 'inactive', label: '停用' },
-                      ]}
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item name="coverImage" label="封面图">
-                  <SingleImageInput />
-                </Form.Item>
-                <Form.Item name="gallery" label="图集">
-                  <MultiImageInput />
-                </Form.Item>
-                <Form.Item name="address" label="地址">
-                  <Input.TextArea rows={2} />
-                </Form.Item>
-                <Form.Item name="content" label="介绍正文">
-                  <Input.TextArea rows={8} placeholder="支持输入企业介绍、能力说明、服务优势等内容。" />
-                </Form.Item>
-                <Space>
-                  <Button type="primary" onClick={submitCompanyProfile} loading={savingCompany} disabled={!canWrite}>
-                    保存企业介绍
-                  </Button>
-                  {companyProfile ? <Typography.Text className="muted">当前记录 ID: {companyProfile.id}</Typography.Text> : null}
-                </Space>
-              </Form>
+                  <Space>
+                    <Button type="primary" onClick={submitCompanyProfile} loading={savingCompany} disabled={!canWrite}>
+                      保存企业介绍
+                    </Button>
+                    {companyProfile ? <Typography.Text className="muted">当前记录 ID: {companyProfile.id}</Typography.Text> : null}
+                  </Space>
+                </Form>
+              </Space>
             ),
           },
           {
@@ -369,6 +425,15 @@ export function ContentManagementPage() {
             label: '首页头部',
             children: (
               <Space direction="vertical" size={24} style={{ display: 'flex' }}>
+                <ContentPreviewCard
+                  title={homepageBranding?.siteName || '未配置站点名称'}
+                  subtitle={homepageBranding?.siteSubtitle || '首页头部预览'}
+                  image={homepageBranding?.logoImage}
+                  lines={[
+                    homepageBranding?.headerNotice || '头部文案会显示在 H5 顶部和小程序首页。',
+                  ]}
+                />
+
                 <Form form={brandingForm} layout="vertical" disabled={loadingSummary || !canWrite}>
                   <div className="content-grid">
                     <Form.Item name="siteName" label="站点名称" rules={[{ required: true, message: '请输入站点名称' }]}>
@@ -396,9 +461,7 @@ export function ContentManagementPage() {
                     <Button type="primary" onClick={submitHomepageBranding} loading={savingBranding} disabled={!canWrite}>
                       保存头部配置
                     </Button>
-                    {homepageBranding ? (
-                      <Typography.Text className="muted">当前记录 ID: {homepageBranding.id}</Typography.Text>
-                    ) : null}
+                    {homepageBranding ? <Typography.Text className="muted">当前记录 ID: {homepageBranding.id}</Typography.Text> : null}
                   </Space>
                 </Form>
 
@@ -416,9 +479,31 @@ export function ContentManagementPage() {
                       </Button>
                     ) : null}
                   </div>
+
+                  <div className="filter-bar">
+                    <Input.Search
+                      allowClear
+                      style={{ width: 240 }}
+                      placeholder="搜索标题或副标题"
+                      value={bannerKeyword}
+                      onChange={(event) => setBannerKeyword(event.target.value)}
+                    />
+                    <Select
+                      allowClear
+                      placeholder="状态"
+                      style={{ width: 140 }}
+                      value={bannerStatus}
+                      onChange={(value) => setBannerStatus(value)}
+                      options={[
+                        { value: 'active', label: '启用' },
+                        { value: 'inactive', label: '停用' },
+                      ]}
+                    />
+                  </div>
+
                   <Table<HomepageBanner>
                     rowKey="id"
-                    dataSource={banners}
+                    dataSource={filteredBanners}
                     loading={loadingBanners}
                     pagination={{ pageSize: 10 }}
                     columns={[
@@ -427,14 +512,8 @@ export function ContentManagementPage() {
                         title: 'Banner',
                         dataIndex: 'title',
                         render: (_, record) => (
-                          <Space>
-                            {record.imageUrl ? (
-                              <img
-                                src={toAbsoluteAssetUrl(record.imageUrl)}
-                                alt={record.title}
-                                className="table-thumb"
-                              />
-                            ) : null}
+                          <Space align="start">
+                            {record.imageUrl ? <img src={toAbsoluteAssetUrl(record.imageUrl)} alt={record.title} className="table-thumb" /> : null}
                             <div>
                               <div>{record.title}</div>
                               <Typography.Text className="muted">{record.subtitle || '无副标题'}</Typography.Text>
@@ -442,7 +521,16 @@ export function ContentManagementPage() {
                           </Space>
                         ),
                       },
-                      { title: '跳转类型', dataIndex: 'linkType', width: 120 },
+                      {
+                        title: '跳转',
+                        width: 220,
+                        render: (_, record) => (
+                          <div>
+                            <div>{record.linkType || 'none'}</div>
+                            <Typography.Text className="muted">{record.linkValue || '无跳转值'}</Typography.Text>
+                          </div>
+                        ),
+                      },
                       { title: '排序', dataIndex: 'sort', width: 100 },
                       {
                         title: '状态',
@@ -485,9 +573,28 @@ export function ContentManagementPage() {
                     </Button>
                   ) : null}
                 </div>
+
+                <div className="filter-bar">
+                  <Input.Search
+                    allowClear
+                    style={{ width: 240 }}
+                    placeholder="搜索设备名称或说明"
+                    value={showcaseKeyword}
+                    onChange={(event) => setShowcaseKeyword(event.target.value)}
+                  />
+                  <Select
+                    allowClear
+                    placeholder="所属分类"
+                    style={{ width: 180 }}
+                    value={showcaseCategory}
+                    onChange={(value) => setShowcaseCategory(value)}
+                    options={categoryOptions}
+                  />
+                </div>
+
                 <Table<CategoryEquipmentShowcase>
                   rowKey="id"
-                  dataSource={showcases}
+                  dataSource={filteredShowcases}
                   loading={loadingShowcases}
                   pagination={{ pageSize: 10 }}
                   columns={[
@@ -496,14 +603,8 @@ export function ContentManagementPage() {
                       title: '设备',
                       dataIndex: 'name',
                       render: (_, record) => (
-                        <Space>
-                          {record.imageUrl ? (
-                            <img
-                              src={toAbsoluteAssetUrl(record.imageUrl)}
-                              alt={record.name}
-                              className="table-thumb"
-                            />
-                          ) : null}
+                        <Space align="start">
+                          {record.imageUrl ? <img src={toAbsoluteAssetUrl(record.imageUrl)} alt={record.name} className="table-thumb" /> : null}
                           <div>
                             <div>{record.name}</div>
                             <Typography.Text className="muted">{record.title || '未填写展示标题'}</Typography.Text>
@@ -516,6 +617,16 @@ export function ContentManagementPage() {
                       dataIndex: ['category', 'name'],
                       width: 180,
                       render: (_, record) => record.category?.name ?? record.categoryId,
+                    },
+                    {
+                      title: '图集 / 参数',
+                      width: 120,
+                      render: (_, record) => (
+                        <div>
+                          <div>{record.galleryJson?.length ?? 0} 张图</div>
+                          <Typography.Text className="muted">{Object.keys(record.specsJson ?? {}).length} 个参数</Typography.Text>
+                        </div>
+                      ),
                     },
                     { title: '排序', dataIndex: 'sort', width: 100 },
                     {
@@ -570,8 +681,24 @@ export function ContentManagementPage() {
                 ]}
               />
             </Form.Item>
-            <Form.Item name="linkValue" label="跳转值">
-              <Input maxLength={255} placeholder="产品 ID、分类 ID 或自定义链接" />
+            <Form.Item
+              name="linkValue"
+              label="跳转值"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (!currentBannerLinkType || currentBannerLinkType === 'none') {
+                      return Promise.resolve();
+                    }
+                    if (!value?.trim()) {
+                      return Promise.reject(new Error('当前跳转类型需要填写跳转值。'));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Input maxLength={255} placeholder="产品 ID、分类 ID 或自定义链接" disabled={!currentBannerLinkType || currentBannerLinkType === 'none'} />
             </Form.Item>
             <Form.Item name="buttonText" label="按钮文案">
               <Input maxLength={40} />
@@ -590,7 +717,24 @@ export function ContentManagementPage() {
             <Form.Item name="startAt" label="开始时间">
               <Input type="datetime-local" />
             </Form.Item>
-            <Form.Item name="endAt" label="结束时间">
+            <Form.Item
+              name="endAt"
+              label="结束时间"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    const startAt = bannerForm.getFieldValue('startAt');
+                    if (!startAt || !value) {
+                      return Promise.resolve();
+                    }
+                    if (new Date(value).getTime() < new Date(startAt).getTime()) {
+                      return Promise.reject(new Error('结束时间不能早于开始时间。'));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
               <Input type="datetime-local" />
             </Form.Item>
           </div>
@@ -644,16 +788,43 @@ export function ContentManagementPage() {
           <Form.Item name="description" label="说明">
             <Input.TextArea rows={4} />
           </Form.Item>
-          <Form.Item
-            name="specsText"
-            label="规格参数 JSON"
-            rules={[{ validator: validateJsonObjectField }]}
-          >
+          <Form.Item name="specsText" label="规格参数 JSON" rules={[{ validator: validateJsonObjectField }]}>
             <Input.TextArea rows={8} placeholder='{"speed":"120m/min","precision":"+-0.2mm"}' />
           </Form.Item>
         </Form>
       </Modal>
     </div>
+  );
+}
+
+function ContentPreviewCard({
+  title,
+  subtitle,
+  image,
+  lines,
+}: {
+  title: string;
+  subtitle: string;
+  image?: string;
+  lines: string[];
+}) {
+  return (
+    <Card size="small" className="preview-card">
+      <div className="preview-card-layout">
+        {image ? <img src={toAbsoluteAssetUrl(image)} alt={title} className="preview-card-image" /> : <div className="preview-card-image preview-card-placeholder" />}
+        <div className="preview-card-copy">
+          <Typography.Text className="muted">{subtitle}</Typography.Text>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            {title}
+          </Typography.Title>
+          {lines.filter(Boolean).map((line, index) => (
+            <Typography.Paragraph key={`${line}-${index}`} className="preview-line">
+              {line}
+            </Typography.Paragraph>
+          ))}
+        </div>
+      </div>
+    </Card>
   );
 }
 
@@ -680,21 +851,24 @@ function SingleImageInput({
     }
   }
 
+  function copyValue() {
+    if (!value) {
+      return;
+    }
+    navigator.clipboard
+      .writeText(value)
+      .then(() => message.success('图片地址已复制。'))
+      .catch(() => message.error('复制失败，请手动复制。'));
+  }
+
   return (
     <Space direction="vertical" style={{ display: 'flex' }}>
-      <Input
-        value={value}
-        onChange={(event) => onChange?.(event.target.value)}
-        placeholder="/uploads/content/example.png"
-      />
+      <Input value={value} onChange={(event) => onChange?.(event.target.value)} placeholder="/uploads/content/example.png" />
       <Space wrap>
-        <Upload
-          accept="image/*"
-          showUploadList={false}
-          customRequest={(options) => void runUploadRequest(options, handleFile)}
-        >
+        <Upload accept="image/*" showUploadList={false} customRequest={(options) => void runUploadRequest(options, handleFile)}>
           <Button loading={uploading}>上传图片</Button>
         </Upload>
+        {value ? <Button onClick={copyValue}>复制地址</Button> : null}
         {value ? <Button onClick={() => onChange?.('')}>清空</Button> : null}
       </Space>
       {value ? <img src={toAbsoluteAssetUrl(value)} alt="preview" className="content-image-preview" /> : null}
@@ -739,12 +913,7 @@ function MultiImageInput({
         tokenSeparators={[',']}
         placeholder="可粘贴图片地址，也可点击上传。"
       />
-      <Upload
-        accept="image/*"
-        multiple
-        showUploadList={false}
-        customRequest={(options) => void runUploadRequest(options, handleFile)}
-      >
+      <Upload accept="image/*" multiple showUploadList={false} customRequest={(options) => void runUploadRequest(options, handleFile)}>
         <Button loading={uploading}>上传图片到图集</Button>
       </Upload>
       <div className="image-grid">
@@ -813,10 +982,7 @@ function toDateTimeInput(value?: string | null) {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-async function runUploadRequest(
-  options: UploadRequestOptions,
-  handler: (file: File) => Promise<void>,
-) {
+async function runUploadRequest(options: UploadRequestOptions, handler: (file: File) => Promise<void>) {
   const file = options.file as File;
   try {
     await handler(file);

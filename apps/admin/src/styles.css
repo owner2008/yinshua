@@ -162,3 +162,44 @@ body {
   gap: 8px;
   width: 160px;
 }
+
+.preview-card {
+  border-radius: 10px;
+}
+
+.preview-card-layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.preview-card-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.preview-card-placeholder {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 45%),
+    linear-gradient(135deg, #14313f, #7eb5c7);
+}
+
+.preview-card-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.preview-line {
+  margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .preview-card-layout {
+    grid-template-columns: 1fr;
+  }
+}
