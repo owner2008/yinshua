@@ -184,6 +184,7 @@ model HomepageBranding {
   siteSubtitle String?  @map("site_subtitle") @db.VarChar(255)
   logoImage    String?  @map("logo_image") @db.VarChar(512)
   headerNotice String?  @map("header_notice") @db.VarChar(255)
+  themeMode    String?  @map("theme_mode") @db.VarChar(32)
   status       String   @default("active") @db.VarChar(32)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")

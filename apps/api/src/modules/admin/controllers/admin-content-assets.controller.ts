@@ -1,4 +1,13 @@
-import { Body, Controller, HttpCode, HttpStatus, PayloadTooLargeException, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  PayloadTooLargeException,
+  Post,
+  UnsupportedMediaTypeException,
+  UseGuards,
+} from '@nestjs/common';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -22,6 +31,10 @@ export class AdminContentAssetsController {
   @Post('content-assets')
   @HttpCode(HttpStatus.CREATED)
   async upload(@Body() dto: UploadContentAssetDto) {
+    if (!MIME_EXTENSION_MAP[dto.mimeType]) {
+      throw new UnsupportedMediaTypeException('Unsupported image type.');
+    }
+
     const buffer = decodeBase64(dto.contentBase64);
     if (buffer.byteLength > MAX_UPLOAD_BYTES) {
       throw new PayloadTooLargeException('Image file is too large.');

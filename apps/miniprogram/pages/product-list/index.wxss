@@ -9,70 +9,14 @@
   display: inline-flex;
   align-items: center;
   margin-right: 12rpx;
-  padding: 10rpx 22rpx;
-  border: 1rpx solid #bfd1d9;
-  border-radius: 999rpx;
-  background: #f6fafb;
-  color: #24495b;
+  padding: 12rpx 24rpx;
   font-size: 26rpx;
 }
 
-.filter-scroll .chip.active {
-  border-color: #12384a;
-  background: #e4f0f4;
-  color: #12384a;
-  font-weight: 700;
-}
-
 .section-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   margin-bottom: 18rpx;
-  font-size: 30rpx;
-  font-weight: 700;
 }
 
 .product-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18rpx;
-}
-
-.product-tile {
-  padding: 16rpx;
-  border: 1rpx solid #d7e3e8;
-  border-radius: 14rpx;
-  background: #fff;
-}
-
-.tile-thumb {
-  width: 100%;
-  height: 140rpx;
-  border-radius: 10rpx;
-  background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0) 45%), #83b7c8;
-  margin-bottom: 12rpx;
-}
-
-.tile-thumb.cover {
-  display: block;
-  background: #eef3f6;
-}
-
-.tile-thumb.tone-1 {
-  background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0) 45%), #c4b374;
-}
-
-.tile-thumb.tone-2 {
-  background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0) 45%), #9bb6a6;
-}
-
-.tile-name {
-  font-size: 28rpx;
-  font-weight: 700;
-}
-
-.tile-meta {
   margin-top: 6rpx;
-  font-size: 22rpx;
 }

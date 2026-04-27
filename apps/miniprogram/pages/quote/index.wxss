@@ -2,28 +2,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.eyebrow {
-  color: #2563eb;
-  font-size: 24rpx;
-  font-weight: 700;
+  gap: 16rpx;
 }
 
 .title {
   margin: 8rpx 0;
   font-size: 44rpx;
   font-weight: 800;
-}
-
-.mini-button {
-  margin: 0;
-}
-
-.section-title {
-  margin-bottom: 16rpx;
-  font-size: 30rpx;
-  font-weight: 700;
+  color: var(--text-color);
 }
 
 .product-scroll {
@@ -34,100 +20,78 @@
   display: inline-block;
   width: 260rpx;
   margin-right: 16rpx;
-  padding: 20rpx;
-  border: 1rpx solid #e5e7eb;
-  border-radius: 14rpx;
+  padding: 22rpx;
   vertical-align: top;
 }
 
-.product-chip.active {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
-
 .product-name {
+  color: var(--text-color);
   font-weight: 700;
 }
 
 .product-code {
   margin-top: 8rpx;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 24rpx;
   white-space: normal;
 }
 
-.field {
-  margin-bottom: 18rpx;
-}
-
-.field text,
-.field label text {
-  display: block;
-  margin-bottom: 8rpx;
-  color: #374151;
-  font-size: 24rpx;
-}
-
-.field.two {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16rpx;
-}
-
-input,
-.picker-value {
-  min-height: 76rpx;
-  box-sizing: border-box;
-  padding: 18rpx;
-  border: 1rpx solid #d1d5db;
-  border-radius: 12rpx;
-  background: #fff;
-}
-
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
+.form-card {
+  padding-bottom: 12rpx;
 }
 
 .process-chip {
   padding: 12rpx 18rpx;
-  border: 1rpx solid #d1d5db;
-  border-radius: 999rpx;
-  color: #374151;
   font-size: 24rpx;
-}
-
-.process-chip.active {
-  border-color: #2563eb;
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-.switch-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 16rpx;
-}
-
-.action-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16rpx;
-  margin: 24rpx 0;
 }
 
 .price {
   margin: 12rpx 0;
-  color: #111827;
+  color: var(--text-color);
   font-size: 52rpx;
   font-weight: 800;
+}
+
+.result-card {
+  padding-bottom: 16rpx;
 }
 
 .result-row {
   display: flex;
   justify-content: space-between;
   padding-top: 16rpx;
-  color: #374151;
+  color: var(--text-muted);
+  border-top: 1rpx solid var(--line-color);
+}
+
+.fee-note {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  border: 1rpx solid var(--line-color);
+  border-radius: 16rpx;
+  background: var(--card-bg);
+}
+
+.fee-note-title {
+  margin-bottom: 12rpx;
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+.fee-note-item {
+  display: grid;
+  gap: 4rpx;
+  padding-top: 12rpx;
+  color: var(--text-color);
+  font-size: 26rpx;
+}
+
+.fee-note-item + .fee-note-item {
+  border-top: 1rpx solid var(--line-color);
+}
+
+.fee-note-item text {
+  color: var(--text-muted);
+  font-size: 24rpx;
+  line-height: 1.6;
 }

@@ -41,7 +41,7 @@ export function ProductListPage() {
 
       <section className="panel">
         {filteredProducts.length === 0 ? (
-          <p className="empty-copy">该分类暂时没有产品</p>
+          <p className="empty-copy">该分类下暂时没有产品</p>
         ) : (
           <div className="product-grid">
             {filteredProducts.map((product, index) => (
@@ -58,7 +58,7 @@ export function ProductListPage() {
                     <span className={`product-image tone-${index % 3}`} />
                   )}
                   <strong>{product.name}</strong>
-                  <small>{product.applicationScenario ?? '可按需定制'}</small>
+                  <small>{product.applicationScenario ?? '支持按需定制'}</small>
                 </div>
               </Link>
             ))}

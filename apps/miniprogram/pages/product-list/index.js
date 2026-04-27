@@ -1,8 +1,9 @@
-const { normalizeProduct, request } = require('../../utils/api');
+const { applyStoredThemeMode, normalizeProduct, refreshThemeMode, request } = require('../../utils/api');
 const { sampleCategories, sampleProducts } = require('../../utils/sample-data');
 
 Page({
   data: {
+    themeMode: 'graphite',
     notice: '',
     categories: sampleCategories,
     products: sampleProducts,
@@ -10,6 +11,8 @@ Page({
   },
 
   onLoad(query) {
+    applyStoredThemeMode(this);
+    void refreshThemeMode(this);
     const activeCategory = query && query.category ? String(query.category) : '';
     this.setData({ activeCategory });
     this.loadCategories();
@@ -28,7 +31,7 @@ Page({
 
   loadProducts(categoryId) {
     const suffix = categoryId ? `?categoryId=${categoryId}` : '';
-    this.setData({ notice: '加载中' });
+    this.setData({ notice: '加载中…' });
     request(`/catalog/products${suffix}`)
       .then((list) => {
         const next = list && list.length ? list.map(normalizeProduct) : filterSample(categoryId);
@@ -36,7 +39,7 @@ Page({
       })
       .catch(() => {
         const next = filterSample(categoryId);
-        this.setData({ products: next, notice: next.length ? '使用样例数据' : '暂无产品' });
+        this.setData({ products: next, notice: next.length ? '当前使用示例数据' : '暂无产品' });
       });
   },
 

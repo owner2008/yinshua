@@ -296,6 +296,7 @@ export interface HomepageBranding {
   siteSubtitle?: string;
   logoImage?: string;
   headerNotice?: string;
+  themeMode?: 'graphite' | 'ivory' | 'forest' | string;
   status: string;
 }
 

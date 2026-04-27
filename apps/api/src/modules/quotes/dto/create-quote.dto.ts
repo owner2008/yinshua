@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  MaxLength,
   Min,
 } from 'class-validator';
 
@@ -81,4 +82,81 @@ export class CreateQuoteDto {
   @IsOptional()
   @IsIn(['personal', 'company'])
   customerType?: 'personal' | 'company';
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  deliveryForm?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  labelingMethod?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  rollDirection?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  rollCoreMm?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  piecesPerRoll?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  adhesiveType?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  usageEnvironment?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  surfaceFinish?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  colorMode?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  hasDesignFile?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(512)
+  designFileUrl?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  needDesignService?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  needSampleApproval?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  packagingMethod?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  expectedDeliveryDate?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  quoteRemark?: string;
 }

@@ -1,8 +1,8 @@
-<view class="page">
+<view class="page theme-{{themeMode}}">
   <view class="hero card">
     <view>
-      <text class="eyebrow">会员中心</text>
-      <view class="title">历史报价</view>
+      <text class="eyebrow">Member Center</text>
+      <view class="title">报价历史</view>
       <view class="muted">{{notice}}</view>
     </view>
     <button class="mini-button" size="mini" loading="{{busy}}" bindtap="loadHistory">刷新</button>
@@ -10,7 +10,7 @@
 
   <view wx:if="{{quotes.length}}" class="quote-list">
     <block wx:for="{{quotes}}" wx:key="id">
-      <view class="card quote-card" data-id="{{item.id}}" bindtap="openQuote">
+      <view class="card quote-card" data-quote-no="{{item.quoteNo}}" bindtap="openQuote">
         <view class="quote-top">
           <view>
             <view class="quote-no">{{item.quoteNo}}</view>
@@ -22,6 +22,25 @@
           <text>{{item.productName}}</text>
           <text>{{item.quantity}} 件</text>
           <text>{{item.customerTypeText}}</text>
+        </view>
+        <view wx:if="{{openedQuoteNo === item.quoteNo}}" class="requirement-panel">
+          <view class="requirement-title">询价需求</view>
+          <view wx:if="{{item.requirements.length}}" class="requirement-list">
+            <block wx:for="{{item.requirements}}" wx:key="key">
+              <view class="requirement-item">
+                <text class="muted">{{item.label}}</text>
+                <text>{{item.value}}</text>
+              </view>
+            </block>
+          </view>
+          <view wx:else class="muted">暂无额外询价项</view>
+          <view wx:if="{{item.feeNotes.length}}" class="fee-note">
+            <view class="fee-note-title">费用说明</view>
+            <view wx:for="{{item.feeNotes}}" wx:key="code" class="fee-note-item">
+              <view>{{item.title}}</view>
+              <text>{{item.description}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </block>

@@ -93,7 +93,10 @@ export class QuoteService {
             height: new Prisma.Decimal(dto.heightMm),
             quantity: dto.quantity,
             materialId: BigInt(dto.materialId),
-            processOptionsJson: jsonValue(dto.processCodes),
+            processOptionsJson: jsonValue({
+              processCodes: dto.processCodes,
+              requirements: pickQuoteRequirements(dto),
+            }),
             priceSubtotal: new Prisma.Decimal(result.summary.baseCost),
             fixedFeeTotal: new Prisma.Decimal(
               result.extraFees.reduce((total, fee) => total + fee.amount, 0),
@@ -183,4 +186,25 @@ function quoteFromDatabase(quote: QuoteWithSnapshot): QuoteResult {
 
 function jsonValue(value: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+function pickQuoteRequirements(dto: CreateQuoteDto) {
+  return {
+    deliveryForm: dto.deliveryForm,
+    labelingMethod: dto.labelingMethod,
+    rollDirection: dto.rollDirection,
+    rollCoreMm: dto.rollCoreMm,
+    piecesPerRoll: dto.piecesPerRoll,
+    adhesiveType: dto.adhesiveType,
+    usageEnvironment: dto.usageEnvironment,
+    surfaceFinish: dto.surfaceFinish,
+    colorMode: dto.colorMode,
+    hasDesignFile: dto.hasDesignFile,
+    designFileUrl: dto.designFileUrl,
+    needDesignService: dto.needDesignService,
+    needSampleApproval: dto.needSampleApproval,
+    packagingMethod: dto.packagingMethod,
+    expectedDeliveryDate: dto.expectedDeliveryDate,
+    quoteRemark: dto.quoteRemark,
+  };
 }

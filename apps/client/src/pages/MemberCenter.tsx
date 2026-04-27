@@ -110,7 +110,7 @@ export function MemberCenterPage() {
   }
 
   async function removeAddress(id: string | number) {
-    if (!window.confirm('确认删除这条地址？')) {
+    if (!window.confirm('确认删除这条地址吗？')) {
       return;
     }
     try {
@@ -146,7 +146,7 @@ export function MemberCenterPage() {
         {notice && <p className="status-dot">{notice}</p>}
         <div className="action-bar">
           <button type="button" onClick={load} disabled={loading}>
-            {loading ? '刷新中' : '刷新'}
+            {loading ? '刷新中…' : '刷新'}
           </button>
           <button type="button" onClick={logout}>
             退出登录
@@ -163,17 +163,13 @@ export function MemberCenterPage() {
           <Field label="昵称">
             <input
               value={profile.nickname ?? session?.user?.nickname ?? ''}
-              onChange={(event) =>
-                setProfile((current) => ({ ...current, nickname: event.target.value }))
-              }
+              onChange={(event) => setProfile((current) => ({ ...current, nickname: event.target.value }))}
             />
           </Field>
           <Field label="手机号">
             <input
               value={profile.mobile ?? ''}
-              onChange={(event) =>
-                setProfile((current) => ({ ...current, mobile: event.target.value }))
-              }
+              onChange={(event) => setProfile((current) => ({ ...current, mobile: event.target.value }))}
             />
           </Field>
           <Field label="客户类型">
@@ -193,46 +189,36 @@ export function MemberCenterPage() {
           <Field label="联系人">
             <input
               value={profile.contactName ?? ''}
-              onChange={(event) =>
-                setProfile((current) => ({ ...current, contactName: event.target.value }))
-              }
+              onChange={(event) => setProfile((current) => ({ ...current, contactName: event.target.value }))}
             />
           </Field>
           <Field label="企业名称">
             <input
               value={profile.companyName ?? ''}
-              onChange={(event) =>
-                setProfile((current) => ({ ...current, companyName: event.target.value }))
-              }
+              onChange={(event) => setProfile((current) => ({ ...current, companyName: event.target.value }))}
             />
           </Field>
           <Field label="税号">
             <input
               value={profile.taxNo ?? ''}
-              onChange={(event) =>
-                setProfile((current) => ({ ...current, taxNo: event.target.value }))
-              }
+              onChange={(event) => setProfile((current) => ({ ...current, taxNo: event.target.value }))}
             />
           </Field>
           <Field label="所属行业">
             <input
               value={profile.industry ?? ''}
-              onChange={(event) =>
-                setProfile((current) => ({ ...current, industry: event.target.value }))
-              }
+              onChange={(event) => setProfile((current) => ({ ...current, industry: event.target.value }))}
             />
           </Field>
           <Field label="备注">
             <input
               value={profile.remark ?? ''}
-              onChange={(event) =>
-                setProfile((current) => ({ ...current, remark: event.target.value }))
-              }
+              onChange={(event) => setProfile((current) => ({ ...current, remark: event.target.value }))}
             />
           </Field>
           <div className="action-bar full">
             <button className="primary" type="submit" disabled={savingProfile}>
-              {savingProfile ? '保存中' : profile.memberNo ? '更新资料' : '注册会员'}
+              {savingProfile ? '保存中…' : profile.memberNo ? '更新资料' : '注册会员'}
             </button>
           </div>
         </form>
@@ -275,53 +261,41 @@ export function MemberCenterPage() {
             <input
               required
               value={addressDraft.consignee}
-              onChange={(event) =>
-                setAddressDraft((current) => ({ ...current, consignee: event.target.value }))
-              }
+              onChange={(event) => setAddressDraft((current) => ({ ...current, consignee: event.target.value }))}
             />
           </Field>
           <Field label="手机号">
             <input
               required
               value={addressDraft.mobile}
-              onChange={(event) =>
-                setAddressDraft((current) => ({ ...current, mobile: event.target.value }))
-              }
+              onChange={(event) => setAddressDraft((current) => ({ ...current, mobile: event.target.value }))}
             />
           </Field>
           <Field label="省">
             <input
               required
               value={addressDraft.province}
-              onChange={(event) =>
-                setAddressDraft((current) => ({ ...current, province: event.target.value }))
-              }
+              onChange={(event) => setAddressDraft((current) => ({ ...current, province: event.target.value }))}
             />
           </Field>
           <Field label="市">
             <input
               required
               value={addressDraft.city}
-              onChange={(event) =>
-                setAddressDraft((current) => ({ ...current, city: event.target.value }))
-              }
+              onChange={(event) => setAddressDraft((current) => ({ ...current, city: event.target.value }))}
             />
           </Field>
-          <Field label="区/县">
+          <Field label="区 / 县">
             <input
               value={addressDraft.district ?? ''}
-              onChange={(event) =>
-                setAddressDraft((current) => ({ ...current, district: event.target.value }))
-              }
+              onChange={(event) => setAddressDraft((current) => ({ ...current, district: event.target.value }))}
             />
           </Field>
           <Field label="详细地址">
             <input
               required
               value={addressDraft.detail}
-              onChange={(event) =>
-                setAddressDraft((current) => ({ ...current, detail: event.target.value }))
-              }
+              onChange={(event) => setAddressDraft((current) => ({ ...current, detail: event.target.value }))}
             />
           </Field>
           <div className="action-bar full">
@@ -336,7 +310,7 @@ export function MemberCenterPage() {
               设为默认
             </label>
             <button className="primary" type="submit" disabled={savingAddress}>
-              {savingAddress ? '保存中' : '新增地址'}
+              {savingAddress ? '保存中…' : '新增地址'}
             </button>
           </div>
         </form>

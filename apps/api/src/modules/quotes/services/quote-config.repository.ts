@@ -232,6 +232,19 @@ const fallbackProcessPrices: ProcessPriceConfig[] = [
   },
 ];
 
+const defaultRequirementFeeConfig = {
+  whiteInkUnitPrice: 0.35,
+  whiteInkSetupFee: 50,
+  whiteInkMinFee: 80,
+  variableDataUnitPrice: 0.006,
+  variableDataMinFee: 80,
+  protectiveFinishUnitPrice: 0.08,
+  protectiveFinishMinFee: 30,
+  rollSplitFeePerRoll: 2,
+  sheetCuttingFee: 30,
+  fanFoldFee: 50,
+};
+
 @Injectable()
 export class QuoteConfigRepository {
   private readonly logger = new Logger(QuoteConfigRepository.name);
@@ -397,6 +410,25 @@ export class QuoteConfigRepository {
       minPrice: jsonNumber(config.minPrice, 300),
       packageFee: jsonNumber(config.packageFee, 20),
       urgentFeeRate: jsonNumber(config.urgentFeeRate, 0.15),
+      whiteInkUnitPrice: jsonNumber(config.whiteInkUnitPrice, defaultRequirementFeeConfig.whiteInkUnitPrice),
+      whiteInkSetupFee: jsonNumber(config.whiteInkSetupFee, defaultRequirementFeeConfig.whiteInkSetupFee),
+      whiteInkMinFee: jsonNumber(config.whiteInkMinFee, defaultRequirementFeeConfig.whiteInkMinFee),
+      variableDataUnitPrice: jsonNumber(
+        config.variableDataUnitPrice,
+        defaultRequirementFeeConfig.variableDataUnitPrice,
+      ),
+      variableDataMinFee: jsonNumber(config.variableDataMinFee, defaultRequirementFeeConfig.variableDataMinFee),
+      protectiveFinishUnitPrice: jsonNumber(
+        config.protectiveFinishUnitPrice,
+        defaultRequirementFeeConfig.protectiveFinishUnitPrice,
+      ),
+      protectiveFinishMinFee: jsonNumber(
+        config.protectiveFinishMinFee,
+        defaultRequirementFeeConfig.protectiveFinishMinFee,
+      ),
+      rollSplitFeePerRoll: jsonNumber(config.rollSplitFeePerRoll, defaultRequirementFeeConfig.rollSplitFeePerRoll),
+      sheetCuttingFee: jsonNumber(config.sheetCuttingFee, defaultRequirementFeeConfig.sheetCuttingFee),
+      fanFoldFee: jsonNumber(config.fanFoldFee, defaultRequirementFeeConfig.fanFoldFee),
     };
   }
 
@@ -436,6 +468,7 @@ export class QuoteConfigRepository {
         minPrice: 300,
         packageFee: 20,
         urgentFeeRate: 0.15,
+        ...defaultRequirementFeeConfig,
       },
     };
   }

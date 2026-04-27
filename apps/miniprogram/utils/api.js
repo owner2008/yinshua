@@ -1,6 +1,7 @@
 const { apiBase } = require('../config');
 
 const SESSION_KEY = 'yinshua_member_session';
+const THEME_MODE_KEY = 'yinshua_theme_mode';
 
 function request(path, options = {}) {
   const session = getSession();
@@ -127,6 +128,7 @@ function normalizeHomePayload(payload) {
       ? {
           ...payload.branding,
           logoImage: toAssetUrl(payload.branding.logoImage),
+          themeMode: normalizeThemeMode(payload.branding.themeMode),
         }
       : null,
     banners: Array.isArray(payload.banners)
@@ -157,6 +159,72 @@ function normalizeHomePayload(payload) {
   };
 }
 
+function normalizeThemeMode(value) {
+  return value === 'ivory' || value === 'forest' ? value : 'graphite';
+}
+
+function saveThemeMode(themeMode) {
+  wx.setStorageSync(THEME_MODE_KEY, normalizeThemeMode(themeMode));
+}
+
+function getThemeMode() {
+  return normalizeThemeMode(wx.getStorageSync(THEME_MODE_KEY));
+}
+
+function applyThemeMode(page, themeMode) {
+  const nextTheme = normalizeThemeMode(themeMode);
+  page.setData({ themeMode: nextTheme });
+  saveThemeMode(nextTheme);
+  applyNavigationBar(nextTheme);
+  return nextTheme;
+}
+
+function applyStoredThemeMode(page) {
+  return applyThemeMode(page, getThemeMode());
+}
+
+function syncThemeModeFromBranding(page, branding) {
+  return applyThemeMode(page, branding && branding.themeMode);
+}
+
+function refreshThemeMode(page) {
+  return request('/catalog/home')
+    .then((payload) => normalizeHomePayload(payload))
+    .then((payload) => applyThemeMode(page, payload && payload.branding && payload.branding.themeMode))
+    .catch(() => applyStoredThemeMode(page));
+}
+
+function applyNavigationBar(themeMode) {
+  const palette = getThemePalette(themeMode);
+  wx.setNavigationBarColor({
+    frontColor: palette.frontColor,
+    backgroundColor: palette.backgroundColor,
+    animation: {
+      duration: 120,
+      timingFunc: 'easeIn',
+    },
+  });
+}
+
+function getThemePalette(themeMode) {
+  if (themeMode === 'ivory') {
+    return {
+      frontColor: '#000000',
+      backgroundColor: '#efe5d8',
+    };
+  }
+  if (themeMode === 'forest') {
+    return {
+      frontColor: '#ffffff',
+      backgroundColor: '#14211c',
+    };
+  }
+  return {
+    frontColor: '#ffffff',
+    backgroundColor: '#111827',
+  };
+}
+
 function parseError(data) {
   if (!data) {
     return '';
@@ -165,7 +233,7 @@ function parseError(data) {
     return data;
   }
   if (Array.isArray(data.message)) {
-    return data.message.join('，');
+    return data.message.join('；');
   }
   return data.message || data.error || '';
 }
@@ -181,14 +249,21 @@ function formatNetworkError(message) {
 }
 
 module.exports = {
+  applyStoredThemeMode,
+  applyThemeMode,
   clearSession,
   del,
   getSession,
+  getThemeMode,
   loginMember,
   normalizeHomePayload,
   normalizeProduct,
+  normalizeThemeMode,
   post,
   put,
+  refreshThemeMode,
   request,
+  saveThemeMode,
+  syncThemeModeFromBranding,
   toAssetUrl,
 };

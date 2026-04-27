@@ -1,7 +1,16 @@
 import { Link } from 'react-router-dom';
 import { toAssetUrl } from '../api';
 import { useCatalog } from '../catalogContext';
-import type { CategoryEquipmentShowcase, CompanyProfile, HomepageBanner, Product } from '../types';
+import type { CategoryEquipmentShowcase, CompanyProfile, HomepageBanner, Product, ProductCategory } from '../types';
+
+const MATERIALS = ['铜版纸', 'PET / 透明膜', 'PVC / 合成纸', '热敏纸', '亮银 / 哑银', '可移胶'];
+const PROCESSES = ['覆膜', '模切', '烫金', '局部 UV', '白墨打底', '可变数据'];
+const SERVICE_STEPS = [
+  ['01', '选择产品', '按应用场景或材料类型找到合适标签。'],
+  ['02', '填写参数', '输入尺寸、数量、材料、工艺与贴标要求。'],
+  ['03', '确认样稿', '上传设计文件，确认电子样或实物样。'],
+  ['04', '生产交付', '按交期生产、分卷包装并发货。'],
+];
 
 export function HomePage() {
   const { home, categories, products, loading } = useCatalog();
@@ -12,169 +21,315 @@ export function HomePage() {
   const companyProfile = home?.companyProfile ?? null;
   const equipmentShowcases = home?.categoryEquipmentShowcases ?? [];
   const primaryBanner = banners[0];
+  const featuredCategories = categories.slice(0, 8);
 
   return (
-    <div className="home-view">
-      <HeroSection banner={primaryBanner} />
-
-      {banners.length > 1 ? (
-        <section className="panel">
-          <div className="section-title">
-            <h2>首页 Banner</h2>
-            <span>{banners.length} 组展示内容</span>
-          </div>
-          <div className="banner-grid">
-            {banners.slice(1).map((banner) => (
-              <article key={banner.id} className="banner-card">
-                <img src={toAssetUrl(banner.imageUrl)} alt={banner.title} loading="lazy" />
-                <div className="banner-card-copy">
-                  <strong>{banner.title}</strong>
-                  <p>{banner.subtitle || '支持后台自定义文案与跳转配置。'}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      <section className="panel">
-        <div className="section-title">
-          <h2>产品分类</h2>
-          <Link to="/products">全部产品</Link>
-        </div>
-        <div className="chip-row">
-          {categories.map((category) => (
-            <Link key={category.id} to={`/products?category=${category.id}`} className="chip">
-              {category.name}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {companyProfile ? <CompanyProfileSection profile={companyProfile} /> : null}
-
-      {equipmentShowcases.length > 0 ? (
-        <section className="panel">
-          <div className="section-title">
-            <h2>分类设备展示</h2>
-            <span>{equipmentShowcases.length} 台设备能力</span>
-          </div>
-          <div className="showcase-grid">
-            {equipmentShowcases.map((item) => (
-              <article key={item.id} className="showcase-card">
-                {item.imageUrl ? (
-                  <img className="showcase-image" src={toAssetUrl(item.imageUrl)} alt={item.name} loading="lazy" />
-                ) : (
-                  <div className="showcase-image showcase-placeholder" aria-hidden="true" />
-                )}
-                <div className="showcase-copy">
-                  <div className="showcase-meta">
-                    <span>{item.category?.name ?? '设备展示'}</span>
-                    <strong>{item.title || item.name}</strong>
-                  </div>
-                  <p>{item.description || '支持后台配置设备介绍、主图、图集与参数说明。'}</p>
-                  <SpecList showcase={item} />
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      <section className="panel">
-        <div className="section-title">
-          <h2>热门产品</h2>
-          <span>{loading ? '加载中…' : `${hotProducts.length} 款`}</span>
-        </div>
-        <ProductGrid products={hotProducts} />
-      </section>
-
-      <section className="panel">
-        <div className="section-title">
-          <h2>最新上架</h2>
-          <Link to="/products">查看全部</Link>
-        </div>
-        <ProductGrid products={latestProducts} />
-      </section>
+    <div className="home-view home-redesign">
+      <HeroSection banner={primaryBanner} categoryCount={categories.length} productCount={products.length} />
+      <QuickCategorySection categories={featuredCategories} />
+      <FeaturedProductsSection loading={loading} products={hotProducts.length > 0 ? hotProducts : latestProducts.slice(0, 4)} />
+      <QuickQuoteSection categories={featuredCategories} />
+      <MaterialProcessSection />
+      <TrustSection profile={companyProfile} showcases={equipmentShowcases} />
+      {banners.length > 1 ? <CampaignSection banners={banners.slice(1, 4)} /> : null}
+      <LatestProductsSection products={latestProducts} loading={loading} />
     </div>
   );
 }
 
-function HeroSection({ banner }: { banner?: HomepageBanner }) {
+function HeroSection({
+  banner,
+  categoryCount,
+  productCount,
+}: {
+  banner?: HomepageBanner;
+  categoryCount: number;
+  productCount: number;
+}) {
   const style = banner?.imageUrl
     ? {
-        backgroundImage: `linear-gradient(130deg, rgba(8, 32, 46, 0.82), rgba(22, 94, 124, 0.52)), url("${toAssetUrl(
-          banner.imageUrl,
-        )}")`,
+        backgroundImage: `var(--hero-banner-overlay), url("${toAssetUrl(banner.imageUrl)}")`,
       }
     : undefined;
 
   return (
-    <section className="hero panel hero-rich" style={style}>
-      <div className="hero-copy">
-        <p className="eyebrow">首页头部内容已支持后台配置</p>
-        <h1>{banner?.title ?? '参数化在线报价与印刷内容展示'}</h1>
-        <p>
+    <section className="home-hero panel" style={style}>
+      <div className="home-hero-copy">
+        <p className="eyebrow">Label Printing</p>
+        <h1>{banner?.title ?? '不干胶标签印刷，从产品展示到在线报价一步到位'}</h1>
+        <p className="home-hero-desc">
           {banner?.subtitle ??
-            '首页 Banner、企业介绍与分类设备展示都已经接入动态数据，前台可以直接展示后台配置的图片与文本。'}
+            '支持铜版纸、PET、PVC、热敏纸等常用材料，覆盖覆膜、模切、烫金、白墨与可变数据等工艺，适合食品、日化、物流、电子与医药标签。'}
         </p>
         <div className="action-bar">
+          <Link className="primary" to="/quote">
+            立即报价
+          </Link>
           <BannerAction banner={banner} />
-          <Link to="/quote">直接报价</Link>
+        </div>
+        <div className="home-hero-points">
+          <span>低起订量</span>
+          <span>支持打样</span>
+          <span>卷装 / 张装</span>
+          <span>多工艺组合</span>
         </div>
       </div>
-      <div className="hero-side">
-        <div className="hero-stat">
-          <strong>Banner</strong>
-          <span>图片、标题、副标题、跳转按钮均支持后台维护</span>
+      <aside className="home-quote-card" aria-label="快速报价入口">
+        <span className="card-tag">Quick Quote</span>
+        <strong>先算一个大概价格</strong>
+        <p>选择产品、填写尺寸和数量后，系统会按后台规则返回报价明细。</p>
+        <div className="quote-mini-grid">
+          <div>
+            <span>产品分类</span>
+            <strong>{categoryCount || 0}</strong>
+          </div>
+          <div>
+            <span>可选产品</span>
+            <strong>{productCount || 0}</strong>
+          </div>
         </div>
-        <div className="hero-stat">
-          <strong>企业介绍</strong>
-          <span>封面图、图集、正文、联系方式与地址同步展示</span>
+        <Link to="/quote" className="quote-card-action">
+          开始填写参数
+        </Link>
+      </aside>
+    </section>
+  );
+}
+
+function QuickCategorySection({ categories }: { categories: ProductCategory[] }) {
+  return (
+    <section className="panel home-section compact-section">
+      <div className="section-title">
+        <div>
+          <p className="section-kicker">Product Types</p>
+          <h2>按标签类型快速进入</h2>
         </div>
-        <div className="hero-stat">
-          <strong>设备展示</strong>
-          <span>按分类展示设备主图、说明和参数卡片</span>
-        </div>
+        <Link to="/products">全部产品</Link>
+      </div>
+      <div className="category-strip">
+        {categories.map((category, index) => (
+          <Link key={category.id} to={`/products?category=${category.id}`} className="category-entry">
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong>{category.name}</strong>
+          </Link>
+        ))}
       </div>
     </section>
   );
 }
 
-function CompanyProfileSection({ profile }: { profile: CompanyProfile }) {
-  const gallery = profile.galleryJson ?? [];
+function FeaturedProductsSection({ products, loading }: { products: Product[]; loading: boolean }) {
+  return (
+    <section className="panel home-section">
+      <div className="section-title">
+        <div>
+          <p className="section-kicker">Popular Labels</p>
+          <h2>常用产品与应用</h2>
+        </div>
+        <span>{loading ? '加载中...' : `${products.length} 款推荐`}</span>
+      </div>
+      <div className="feature-product-grid">
+        {products.slice(0, 4).map((product, index) => (
+          <article key={product.id} className="feature-product-card">
+            <ProductThumb product={product} tone={index % 3} />
+            <div>
+              <strong>{product.name}</strong>
+              <p>{product.applicationScenario ?? product.description ?? '适合多行业产品包装、识别与物流场景。'}</p>
+            </div>
+            <div className="feature-actions">
+              <Link to={`/products/${product.id}`}>看详情</Link>
+              <Link className="primary" to={`/quote?productId=${product.id}`}>
+                按此报价
+              </Link>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function QuickQuoteSection({ categories }: { categories: ProductCategory[] }) {
+  const firstCategory = categories[0];
 
   return (
-    <section className="panel company-section">
-      <div className="section-title">
-        <h2>{profile.title}</h2>
-        <span>{profile.subtitle || '企业介绍'}</span>
+    <section className="quick-quote-band panel">
+      <div>
+        <p className="section-kicker">Instant Quote</p>
+        <h2>已有尺寸和数量？直接进入在线报价</h2>
+        <p>常规报价先填写产品、尺寸、数量、材料、印刷和工艺；卷标或自动贴标需求可在备注中补充出标方向、卷芯和每卷数量。</p>
       </div>
-      <div className="company-layout">
-        <div className="company-visual">
-          {profile.coverImage ? (
-            <img src={toAssetUrl(profile.coverImage)} alt={profile.title} className="company-cover" loading="lazy" />
-          ) : (
-            <div className="company-cover company-cover-fallback" aria-hidden="true" />
-          )}
-          {gallery.length > 0 ? (
-            <div className="company-gallery">
-              {gallery.slice(0, 3).map((src) => (
-                <img key={src} src={toAssetUrl(src)} alt={profile.title} loading="lazy" />
-              ))}
-            </div>
-          ) : null}
+      <div className="quote-shortcuts">
+        {firstCategory ? <Link to={`/products?category=${firstCategory.id}`}>先看{firstCategory.name}</Link> : null}
+        <Link className="primary" to="/quote">
+          打开报价系统
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function MaterialProcessSection() {
+  return (
+    <section className="material-process-grid">
+      <InfoPanel title="材料选择" kicker="Materials" items={MATERIALS} />
+      <InfoPanel title="工艺能力" kicker="Finishing" items={PROCESSES} />
+      <section className="panel home-section service-panel">
+        <div className="section-title">
+          <div>
+            <p className="section-kicker">Workflow</p>
+            <h2>服务流程</h2>
+          </div>
         </div>
-        <div className="company-copy">
-          <p className="company-subtitle">{profile.subtitle || '支持后台图文编辑'}</p>
-          <p>{profile.content || '企业介绍内容可通过后台配置后自动同步到首页。'}</p>
-          <div className="company-contact">
+        <div className="service-steps">
+          {SERVICE_STEPS.map(([index, title, desc]) => (
+            <article key={index}>
+              <span>{index}</span>
+              <strong>{title}</strong>
+              <p>{desc}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </section>
+  );
+}
+
+function InfoPanel({ title, kicker, items }: { title: string; kicker: string; items: string[] }) {
+  return (
+    <section className="panel home-section info-panel">
+      <div className="section-title">
+        <div>
+          <p className="section-kicker">{kicker}</p>
+          <h2>{title}</h2>
+        </div>
+      </div>
+      <div className="capability-list">
+        {items.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TrustSection({
+  profile,
+  showcases,
+}: {
+  profile: CompanyProfile | null;
+  showcases: CategoryEquipmentShowcase[];
+}) {
+  if (!profile && showcases.length === 0) {
+    return null;
+  }
+
+  const firstShowcase = showcases[0];
+
+  return (
+    <section className="trust-layout">
+      {profile ? <CompanyProfileSection profile={profile} /> : null}
+      {firstShowcase ? <EquipmentSummary item={firstShowcase} count={showcases.length} /> : null}
+    </section>
+  );
+}
+
+function CompanyProfileSection({ profile }: { profile: CompanyProfile }) {
+  return (
+    <section className="panel home-section company-summary">
+      <div className="section-title">
+        <div>
+          <p className="section-kicker">Company</p>
+          <h2>{profile.title}</h2>
+        </div>
+      </div>
+      <div className="company-summary-body">
+        {profile.coverImage ? <img src={toAssetUrl(profile.coverImage)} alt={profile.title} loading="lazy" /> : null}
+        <div>
+          <p>{profile.content || profile.subtitle || '支持后台维护企业介绍、生产能力、联系方式与图集。'}</p>
+          <div className="company-contact compact-contact">
             {profile.contactPhone ? <span>电话：{profile.contactPhone}</span> : null}
             {profile.contactWechat ? <span>微信：{profile.contactWechat}</span> : null}
             {profile.address ? <span>地址：{profile.address}</span> : null}
           </div>
         </div>
       </div>
+    </section>
+  );
+}
+
+function EquipmentSummary({ item, count }: { item: CategoryEquipmentShowcase; count: number }) {
+  return (
+    <section className="panel home-section equipment-summary">
+      <div className="section-title">
+        <div>
+          <p className="section-kicker">Production</p>
+          <h2>设备与产能</h2>
+        </div>
+        <span>{count} 项能力</span>
+      </div>
+      {item.imageUrl ? <img src={toAssetUrl(item.imageUrl)} alt={item.name} loading="lazy" /> : null}
+      <strong>{item.title || item.name}</strong>
+      <p>{item.description || '支持按分类展示设备、主图、参数与生产能力说明。'}</p>
+      <SpecList showcase={item} />
+    </section>
+  );
+}
+
+function CampaignSection({ banners }: { banners: HomepageBanner[] }) {
+  return (
+    <section className="panel home-section compact-section">
+      <div className="section-title">
+        <div>
+          <p className="section-kicker">Campaigns</p>
+          <h2>更多推荐</h2>
+        </div>
+      </div>
+      <div className="campaign-row">
+        {banners.map((banner) => (
+          <CampaignLink key={banner.id} banner={banner} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CampaignLink({ banner }: { banner: HomepageBanner }) {
+  const href = resolveBannerLink(banner);
+  const content = (
+    <>
+      <img src={toAssetUrl(banner.imageUrl)} alt={banner.title} loading="lazy" />
+      <strong>{banner.title}</strong>
+      <span>{banner.subtitle || '查看相关产品与服务'}</span>
+    </>
+  );
+
+  if (/^https?:\/\//i.test(href)) {
+    return (
+      <a href={href} className="campaign-card" target="_blank" rel="noreferrer">
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link to={href} className="campaign-card">
+      {content}
+    </Link>
+  );
+}
+
+function LatestProductsSection({ products, loading }: { products: Product[]; loading: boolean }) {
+  return (
+    <section className="panel home-section compact-section">
+      <div className="section-title">
+        <div>
+          <p className="section-kicker">New Arrivals</p>
+          <h2>最新上架</h2>
+        </div>
+        <span>{loading ? '加载中...' : `${products.length} 款`}</span>
+      </div>
+      <ProductGrid products={products} />
     </section>
   );
 }
@@ -188,7 +343,7 @@ function SpecList({ showcase }: { showcase: CategoryEquipmentShowcase }) {
 
   return (
     <dl className="spec-list">
-      {entries.slice(0, 4).map(([key, value]) => (
+      {entries.slice(0, 3).map(([key, value]) => (
         <div key={key}>
           <dt>{key}</dt>
           <dd>{String(value)}</dd>
@@ -202,14 +357,15 @@ function ProductGrid({ products }: { products: Product[] }) {
   if (products.length === 0) {
     return <p className="empty-copy">暂无产品</p>;
   }
+
   return (
     <div className="product-grid">
       {products.map((product, index) => (
         <Link key={product.id} to={`/products/${product.id}`} className="product-card-link">
-          <div className="product-card">
+          <div className="product-card product-card-vertical">
             <ProductThumb product={product} tone={index % 3} />
             <strong>{product.name}</strong>
-            <small>{product.applicationScenario ?? '可按需定制'}</small>
+            <small>{product.applicationScenario ?? '支持按需定制'}</small>
           </div>
         </Link>
       ))}
@@ -243,19 +399,15 @@ function resolveBannerLink(banner?: HomepageBanner) {
 
 function BannerAction({ banner }: { banner?: HomepageBanner }) {
   const href = resolveBannerLink(banner);
-  const label = banner?.buttonText ?? '浏览产品';
+  const label = banner?.buttonText ?? '查看产品';
 
   if (/^https?:\/\//i.test(href)) {
     return (
-      <a className="primary" href={href} target="_blank" rel="noreferrer">
+      <a href={href} target="_blank" rel="noreferrer">
         {label}
       </a>
     );
   }
 
-  return (
-    <Link className="primary" to={href}>
-      {label}
-    </Link>
-  );
+  return <Link to={href}>{label}</Link>;
 }

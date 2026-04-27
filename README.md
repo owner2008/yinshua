@@ -74,7 +74,9 @@ scripts/    本地开发环境脚本
 
 详细进度见：
 
+- [当前开发进度与后续计划](docs/current-development-progress.md)
 - [执行状态](docs/execution-status.md)
+- [H5 与小程序首页及报价体验重设计需求](docs/frontend-home-quote-redesign-requirements.md)
 - [开发落地执行文档](开发落地执行文档.md)
 
 ## 开发环境

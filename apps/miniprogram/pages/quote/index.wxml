@@ -1,7 +1,7 @@
-<view class="page">
+<view class="page theme-{{themeMode}}">
   <view class="hero card">
     <view>
-      <text class="eyebrow">不干胶印刷</text>
+      <text class="eyebrow">Premium Printing</text>
       <view class="title">在线报价</view>
       <view class="muted">{{notice}}</view>
     </view>
@@ -14,7 +14,7 @@
       <block wx:for="{{products}}" wx:key="id">
         <view id="product-{{item.id}}" class="product-chip {{item.id == selectedProductId ? 'active' : ''}}" data-id="{{item.id}}" bindtap="selectProduct">
           <view class="product-name">{{item.name}}</view>
-          <view class="product-code">{{item.applicationScenario || '可按需定制'}}</view>
+          <view class="product-code">{{item.applicationScenario || '支持按需定制'}}</view>
         </view>
       </block>
     </scroll-view>
@@ -50,7 +50,7 @@
         </picker>
       </view>
       <view class="field">
-        <text>印刷</text>
+        <text>印刷方式</text>
         <picker range="{{printLabels}}" value="{{selectedPrintIndex}}" bindchange="changePrint">
           <view class="picker-value">{{selectedPrintLabel}}</view>
         </picker>
@@ -71,7 +71,7 @@
 
     <view class="card">
       <view class="section-title">工艺选择</view>
-      <view wx:if="{{!processOptions.length}}" class="muted">该模板暂无可选工艺</view>
+      <view wx:if="{{!processOptions.length}}" class="muted">该模板暂时没有可选工艺</view>
       <view wx:else class="chip-row">
         <block wx:for="{{processOptions}}" wx:key="optionValue">
           <view class="process-chip {{item.selected ? 'active' : ''}}" data-code="{{item.optionValue}}" bindtap="toggleProcess">{{item.optionLabel}}</view>
@@ -87,21 +87,115 @@
       </view>
     </view>
 
+    <view class="card form-card">
+      <view class="section-title">交付与贴标</view>
+      <view class="field">
+        <text>交付形式</text>
+        <picker range="{{requirementOptions.deliveryForm}}" data-field="deliveryForm" bindchange="changeRequirementPicker">
+          <view class="picker-value">{{quoteInput.deliveryForm}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>贴标方式</text>
+        <picker range="{{requirementOptions.labelingMethod}}" data-field="labelingMethod" bindchange="changeRequirementPicker">
+          <view class="picker-value">{{quoteInput.labelingMethod}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>出标 / 卷标方向</text>
+        <picker range="{{requirementOptions.rollDirection}}" data-field="rollDirection" bindchange="changeRequirementPicker">
+          <view class="picker-value">{{quoteInput.rollDirection}}</view>
+        </picker>
+      </view>
+      <view class="field two">
+        <label>
+          <text>卷芯内径（毫米）</text>
+          <input type="number" value="{{quoteInput.rollCoreMm}}" data-field="rollCoreMm" bindinput="changeNumber" />
+        </label>
+        <label>
+          <text>每卷数量</text>
+          <input type="number" value="{{quoteInput.piecesPerRoll}}" data-field="piecesPerRoll" bindinput="changeNumber" />
+        </label>
+      </view>
+    </view>
+
+    <view class="card form-card">
+      <view class="section-title">材料环境与文件</view>
+      <view class="field">
+        <text>胶性</text>
+        <picker range="{{requirementOptions.adhesiveType}}" data-field="adhesiveType" bindchange="changeRequirementPicker">
+          <view class="picker-value">{{quoteInput.adhesiveType}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>表面处理</text>
+        <picker range="{{requirementOptions.surfaceFinish}}" data-field="surfaceFinish" bindchange="changeRequirementPicker">
+          <view class="picker-value">{{quoteInput.surfaceFinish}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>印刷颜色</text>
+        <picker range="{{requirementOptions.colorMode}}" data-field="colorMode" bindchange="changeRequirementPicker">
+          <view class="picker-value">{{quoteInput.colorMode}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text>使用环境说明</text>
+        <input value="{{quoteInput.usageEnvironment}}" placeholder="如冷冻、户外、防水、耐油等" data-field="usageEnvironment" bindinput="changeText" />
+      </view>
+      <view class="field">
+        <text>设计文件地址</text>
+        <input value="{{quoteInput.designFileUrl}}" placeholder="可填写网盘、图片或文件链接" data-field="designFileUrl" bindinput="changeText" />
+      </view>
+      <view class="field">
+        <text>包装与发货要求</text>
+        <input value="{{quoteInput.packagingMethod}}" placeholder="如按卷分装、纸箱、发货地区等" data-field="packagingMethod" bindinput="changeText" />
+      </view>
+      <view class="field">
+        <text>期望交期</text>
+        <input value="{{quoteInput.expectedDeliveryDate}}" placeholder="如 3 天内、下周五前" data-field="expectedDeliveryDate" bindinput="changeText" />
+      </view>
+      <view class="field">
+        <text>补充说明</text>
+        <textarea value="{{quoteInput.quoteRemark}}" placeholder="补充贴标设备、卷外径、特殊工艺等信息" data-field="quoteRemark" bindinput="changeText" />
+      </view>
+      <view class="switch-row">
+        <text>已有设计文件</text>
+        <switch checked="{{quoteInput.hasDesignFile}}" data-field="hasDesignFile" bindchange="changeBoolean" />
+      </view>
+      <view class="switch-row">
+        <text>需要设计协助</text>
+        <switch checked="{{quoteInput.needDesignService}}" data-field="needDesignService" bindchange="changeBoolean" />
+      </view>
+      <view class="switch-row">
+        <text>需要样稿确认</text>
+        <switch checked="{{quoteInput.needSampleApproval}}" data-field="needSampleApproval" bindchange="changeBoolean" />
+      </view>
+    </view>
+
     <view class="action-row">
       <button class="primary-button" loading="{{busy}}" bindtap="calculate">计算报价</button>
       <button class="ghost-button" loading="{{busy}}" disabled="{{!quoteResult}}" bindtap="saveQuote">保存报价</button>
     </view>
   </block>
   <view wx:else class="card">
-    <view class="muted">当前产品暂未配置报价模板，无法生成报价。</view>
+    <view class="muted">当前产品暂未配置报价模板，暂时无法生成报价。</view>
   </view>
 
   <view wx:if="{{quoteResult}}" class="result-card card">
     <view class="muted">报价单 {{quoteResult.quoteNo}}</view>
     <view class="price">¥{{quoteResult.summary.finalPrice}}</view>
-    <view class="muted">单价 ¥{{quoteResult.summary.unitPrice}} / 个</view>
+    <view class="muted">单价 ¥{{quoteResult.summary.unitPrice}} / 件</view>
     <view class="result-row"><text>基础成本</text><text>¥{{quoteResult.summary.baseCost}}</text></view>
     <view class="result-row"><text>材料成本</text><text>¥{{quoteResult.material.cost}}</text></view>
     <view class="result-row"><text>印刷成本</text><text>¥{{quoteResult.print.cost}}</text></view>
+    <view wx:for="{{quoteResult.extraFees}}" wx:key="code" class="result-row"><text>{{item.name}}</text><text>¥{{item.amount}}</text></view>
+    <view wx:if="{{quoteResult.feeNotes.length}}" class="fee-note">
+      <view class="fee-note-title">费用说明</view>
+      <view wx:for="{{quoteResult.feeNotes}}" wx:key="code" class="fee-note-item">
+        <view>{{item.title}}</view>
+        <text>{{item.description}}</text>
+      </view>
+    </view>
   </view>
 </view>

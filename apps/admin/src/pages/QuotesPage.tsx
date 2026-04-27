@@ -1,6 +1,7 @@
-import { Button, Input, Modal, Space, Table, Tag } from 'antd';
+import { Button, Descriptions, Empty, Input, Modal, Space, Table, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { request } from '../api';
+import { getQuoteRequirementItems } from '../quoteRequirements';
 import { Quote } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
@@ -18,6 +19,7 @@ export function QuotesPage() {
       String(value).toLowerCase().includes(keyword.trim().toLowerCase()),
     ));
   }, [data, keyword]);
+  const requirementItems = useMemo(() => getQuoteRequirementItems(snapshot), [snapshot]);
 
   async function openDetail(record: Quote) {
     setDetailOpen(true);
@@ -81,6 +83,20 @@ export function QuotesPage() {
               { title: '值', dataIndex: 'value' },
             ]}
           />
+          <div>
+            <h3 style={{ margin: '0 0 12px' }}>询价需求</h3>
+            {requirementItems.length === 0 ? (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无额外询价项" />
+            ) : (
+              <Descriptions bordered size="small" column={2}>
+                {requirementItems.map((item) => (
+                  <Descriptions.Item key={item.key} label={item.label}>
+                    {item.value}
+                  </Descriptions.Item>
+                ))}
+              </Descriptions>
+            )}
+          </div>
           <pre className="json-block">{JSON.stringify(snapshot ?? detail?.snapshot ?? {}, null, 2)}</pre>
         </Space>
       </Modal>

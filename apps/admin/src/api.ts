@@ -1,5 +1,6 @@
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api';
 export const ADMIN_SESSION_KEY = 'yinshua_admin_session';
+const CONTENT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
 export interface AdminSession {
   token: string;
@@ -93,17 +94,29 @@ export function toAbsoluteAssetUrl(path?: string | null) {
   if (/^https?:\/\//i.test(path)) {
     return path;
   }
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  return `${origin}${path.startsWith('/') ? path : `/${path}`}`;
+  const baseOrigin = resolveApiOrigin();
+  return `${baseOrigin}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 export async function uploadContentAsset(file: File) {
+  if (file.size > CONTENT_IMAGE_MAX_BYTES) {
+    throw new Error('图片大小不能超过 5MB，请压缩后再上传。');
+  }
+
   const contentBase64 = await readFileAsDataUrl(file);
-  return post<{ url: string; fileName: string; size: number }>('/admin/content-assets', {
-    fileName: file.name,
-    mimeType: file.type || 'application/octet-stream',
-    contentBase64,
-  });
+
+  try {
+    return await post<{ url: string; fileName: string; size: number }>('/admin/content-assets', {
+      fileName: file.name,
+      mimeType: file.type || 'application/octet-stream',
+      contentBase64,
+    });
+  } catch (error) {
+    if (error instanceof Error && (error.message.includes('413') || error.message.includes('request entity too large'))) {
+      throw new Error('上传图片过大，请控制在 5MB 内，或先压缩图片后再上传。');
+    }
+    throw error;
+  }
 }
 
 function authHeader(): Record<string, string> {
@@ -118,4 +131,14 @@ function readFileAsDataUrl(file: File) {
     reader.onerror = () => reject(reader.error ?? new Error('Failed to read file.'));
     reader.readAsDataURL(file);
   });
+}
+
+function resolveApiOrigin() {
+  if (/^https?:\/\//i.test(API_BASE)) {
+    return API_BASE.replace(/\/api\/?$/, '');
+  }
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  return window.location.origin;
 }
