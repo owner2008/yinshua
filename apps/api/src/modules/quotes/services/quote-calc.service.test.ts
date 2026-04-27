@@ -25,6 +25,66 @@ describe('QuoteCalcService', () => {
     assert.equal(result.summary.finalPrice, 542.24);
     assert.equal(result.summary.unitPrice, 0.1084);
   });
+
+  it('adds requirement-based extra fees without changing core process matching', () => {
+    const service = new QuoteCalcService();
+    const result = service.calculate(
+      {
+        ...sampleInput,
+        colorMode: '四色 + 白墨',
+        surfaceFinish: '防水',
+        deliveryForm: '卷装',
+        piecesPerRoll: 1000,
+      },
+      sampleConfig,
+    );
+
+    assert.deepEqual(
+      result.extraFees.map((item) => [item.code, item.amount]),
+      [
+        ['package', 20],
+        ['white_ink', 80],
+        ['protective_finish', 30],
+        ['roll_split', 10],
+      ],
+    );
+    assert.equal(result.summary.baseCost, 542.8);
+    assert.equal(result.summary.finalPrice, 696.14);
+  });
+
+  it('uses rule-configured requirement fee overrides', () => {
+    const service = new QuoteCalcService();
+    const result = service.calculate(
+      {
+        ...sampleInput,
+        colorMode: '四色 + 白墨',
+        surfaceFinish: '防水',
+        deliveryForm: '卷装',
+        piecesPerRoll: 1000,
+      },
+      {
+        ...sampleConfig,
+        rule: {
+          ...sampleConfig.rule,
+          whiteInkMinFee: 120,
+          protectiveFinishMinFee: 45,
+          rollSplitFeePerRoll: 3,
+        },
+      },
+    );
+
+    assert.deepEqual(
+      result.extraFees.map((item) => [item.code, item.amount]),
+      [
+        ['package', 20],
+        ['white_ink', 120],
+        ['protective_finish', 45],
+        ['roll_split', 15],
+      ],
+    );
+    assert.equal(result.summary.baseCost, 602.8);
+    assert.equal(result.summary.finalPrice, 773.09);
+  });
 });
 
 const sampleInput: CreateQuoteDto = {
@@ -95,5 +155,15 @@ const sampleConfig: MatchedQuoteConfig = {
     minPrice: 300,
     packageFee: 20,
     urgentFeeRate: 0.15,
+    whiteInkUnitPrice: 0.35,
+    whiteInkSetupFee: 50,
+    whiteInkMinFee: 80,
+    variableDataUnitPrice: 0.006,
+    variableDataMinFee: 80,
+    protectiveFinishUnitPrice: 0.08,
+    protectiveFinishMinFee: 30,
+    rollSplitFeePerRoll: 2,
+    sheetCuttingFee: 30,
+    fanFoldFee: 50,
   },
 };

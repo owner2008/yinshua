@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../database/prisma.service';
 import {
@@ -75,6 +75,7 @@ export class AdminContentService {
   async upsertHomepageBranding(dto: UpsertHomepageBrandingDto) {
     const before = await this.getHomepageBranding();
     const targetId = before?.id ?? 1n;
+    const themeMode = normalizeThemeMode(dto.themeMode);
     const after = await this.prisma.homepageBranding.upsert({
       where: { id: targetId },
       update: {
@@ -82,6 +83,7 @@ export class AdminContentService {
         siteSubtitle: dto.siteSubtitle,
         logoImage: dto.logoImage,
         headerNotice: dto.headerNotice,
+        themeMode,
         status: dto.status ?? 'active',
       },
       create: {
@@ -90,6 +92,7 @@ export class AdminContentService {
         siteSubtitle: dto.siteSubtitle,
         logoImage: dto.logoImage,
         headerNotice: dto.headerNotice,
+        themeMode,
         status: dto.status ?? 'active',
       },
     });
@@ -111,6 +114,7 @@ export class AdminContentService {
   }
 
   async createHomepageBanner(dto: CreateHomepageBannerDto) {
+    validateHomepageBannerInput(dto);
     const after = await this.prisma.homepageBanner.create({
       data: toCreateHomepageBannerData(dto),
     });
@@ -126,6 +130,7 @@ export class AdminContentService {
 
   async updateHomepageBanner(id: number, dto: UpdateHomepageBannerDto) {
     const before = await this.ensureHomepageBanner(id);
+    validateHomepageBannerInput({ ...before, ...dto });
     const after = await this.prisma.homepageBanner.update({
       where: { id: BigInt(id) },
       data: toUpdateHomepageBannerData(dto),
@@ -235,6 +240,25 @@ function toCreateHomepageBannerData(dto: CreateHomepageBannerDto): Prisma.Homepa
   };
 }
 
+function validateHomepageBannerInput(dto: {
+  linkType?: string | null;
+  linkValue?: string | null;
+  startAt?: string | Date | null;
+  endAt?: string | Date | null;
+}) {
+  const linkType = dto.linkType ?? 'none';
+  const linkValue = dto.linkValue?.trim();
+  if (linkType !== 'none' && !linkValue) {
+    throw new BadRequestException('Banner 跳转类型不是无跳转时，必须填写跳转值');
+  }
+
+  const startAt = parseDateInput(dto.startAt);
+  const endAt = parseDateInput(dto.endAt);
+  if (startAt && endAt && endAt.getTime() < startAt.getTime()) {
+    throw new BadRequestException('Banner 结束时间不能早于开始时间');
+  }
+}
+
 function toUpdateHomepageBannerData(dto: UpdateHomepageBannerDto): Prisma.HomepageBannerUncheckedUpdateInput {
   return {
     title: dto.title,
@@ -296,11 +320,15 @@ function normalizeEquipmentShowcase<T extends { galleryJson: unknown; specsJson:
   };
 }
 
-function parseDateInput(value?: string | null) {
+function parseDateInput(value?: string | Date | null) {
   if (!value) {
     return undefined;
   }
-  return new Date(value);
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    throw new BadRequestException('时间格式不正确');
+  }
+  return date;
 }
 
 function toJsonValue(value?: Record<string, unknown>) {
@@ -308,4 +336,8 @@ function toJsonValue(value?: Record<string, unknown>) {
     return undefined;
   }
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+function normalizeThemeMode(value?: string | null) {
+  return value === 'ivory' || value === 'forest' ? value : 'graphite';
 }

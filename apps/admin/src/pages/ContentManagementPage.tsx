@@ -45,6 +45,7 @@ type BrandingFormValues = {
   siteSubtitle?: string;
   logoImage?: string;
   headerNotice?: string;
+  themeMode?: 'graphite' | 'ivory' | 'forest' | string;
   status?: string;
 };
 
@@ -140,6 +141,7 @@ export function ContentManagementPage() {
         siteSubtitle: branding?.siteSubtitle ?? '',
         logoImage: branding?.logoImage ?? '',
         headerNotice: branding?.headerNotice ?? '',
+        themeMode: branding?.themeMode ?? 'graphite',
         status: branding?.status ?? 'active',
       });
     } catch (error) {
@@ -339,7 +341,7 @@ export function ContentManagementPage() {
     <div className="page-card">
       <PageHeader
         title="内容管理"
-        description="统一维护企业介绍、首页头部配置和分类设备展示。"
+        description="统一维护企业介绍、首页主题配置和分类设备展示。"
         onRefresh={refreshAll}
       />
 
@@ -348,7 +350,7 @@ export function ContentManagementPage() {
         type="info"
         showIcon
         message="使用建议"
-        description="先维护首页 Logo 和 Banner，再补企业介绍和分类设备展示。图片支持直接上传，也支持粘贴已有地址。"
+        description="首页主题由后台统一控制，保存后会同步影响 H5 与小程序；前台不再提供切换入口。"
       />
 
       <Tabs
@@ -422,20 +424,37 @@ export function ContentManagementPage() {
           },
           {
             key: 'homepage',
-            label: '首页头部',
+            label: '首页与主题',
             children: (
               <Space direction="vertical" size={24} style={{ display: 'flex' }}>
                 <ContentPreviewCard
                   title={homepageBranding?.siteName || '未配置站点名称'}
-                  subtitle={homepageBranding?.siteSubtitle || '首页头部预览'}
+                  subtitle={homepageBranding?.siteSubtitle || '首页主题预览'}
                   image={homepageBranding?.logoImage}
                   lines={[
+                    `当前主题：${formatThemeLabel(homepageBranding?.themeMode)}`,
                     homepageBranding?.headerNotice || '头部文案会显示在 H5 顶部和小程序首页。',
                   ]}
                 />
 
+                <Alert
+                  type="success"
+                  showIcon
+                  message="站点主题"
+                  description="这里设置的是全站统一主题，保存后 H5 与小程序首页、产品、报价、会员等页面会一起切换。"
+                />
+
                 <Form form={brandingForm} layout="vertical" disabled={loadingSummary || !canWrite}>
                   <div className="content-grid">
+                    <Form.Item name="themeMode" label="站点主题">
+                      <Select
+                        options={[
+                          { value: 'graphite', label: '曜石 Graphite' },
+                          { value: 'ivory', label: '象牙 Ivory' },
+                          { value: 'forest', label: '松影 Forest' },
+                        ]}
+                      />
+                    </Form.Item>
                     <Form.Item name="siteName" label="站点名称" rules={[{ required: true, message: '请输入站点名称' }]}>
                       <Input maxLength={80} />
                     </Form.Item>
@@ -813,8 +832,8 @@ function ContentPreviewCard({
       <div className="preview-card-layout">
         {image ? <img src={toAbsoluteAssetUrl(image)} alt={title} className="preview-card-image" /> : <div className="preview-card-image preview-card-placeholder" />}
         <div className="preview-card-copy">
-          <Typography.Text className="muted">{subtitle}</Typography.Text>
-          <Typography.Title level={5} style={{ margin: 0 }}>
+          <Typography.Text className="preview-card-subtitle">{subtitle}</Typography.Text>
+          <Typography.Title level={5} className="preview-card-title" style={{ margin: 0 }}>
             {title}
           </Typography.Title>
           {lines.filter(Boolean).map((line, index) => (
@@ -932,6 +951,16 @@ function MultiImageInput({
 
 function StatusTag({ value }: { value?: string }) {
   return <Tag color={value === 'active' ? 'green' : 'default'}>{value === 'active' ? '启用' : '停用'}</Tag>;
+}
+
+function formatThemeLabel(value?: string) {
+  if (value === 'ivory') {
+    return '象牙 Ivory';
+  }
+  if (value === 'forest') {
+    return '松影 Forest';
+  }
+  return '曜石 Graphite';
 }
 
 function normalizeStringArray(value?: string[]) {

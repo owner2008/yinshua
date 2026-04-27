@@ -8,15 +8,15 @@
     "pages/member/index"
   ],
   "window": {
-    "navigationBarTitleText": "不干胶在线报价",
+    "navigationBarTitleText": "印刷在线报价",
     "navigationBarBackgroundColor": "#111827",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#f5f7fb"
+    "backgroundColor": "#0f1418"
   },
   "tabBar": {
-    "color": "#6b7280",
-    "selectedColor": "#2563eb",
-    "backgroundColor": "#ffffff",
+    "color": "#8da0ad",
+    "selectedColor": "#d0a95f",
+    "backgroundColor": "#131a21",
     "borderStyle": "black",
     "list": [
       {

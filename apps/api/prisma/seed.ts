@@ -448,6 +448,7 @@ async function seedContentManagement() {
       siteSubtitle: '企业定制标签在线展示与参数化报价',
       logoImage: 'https://dummyimage.com/320x120/111827/ffffff&text=LOGO',
       headerNotice: '支持微信小程序与 H5 在线询价，后台统一配置内容与价格规则',
+      themeMode: 'graphite',
       status: 'active',
     },
     create: {
@@ -456,6 +457,7 @@ async function seedContentManagement() {
       siteSubtitle: '企业定制标签在线展示与参数化报价',
       logoImage: 'https://dummyimage.com/320x120/111827/ffffff&text=LOGO',
       headerNotice: '支持微信小程序与 H5 在线询价，后台统一配置内容与价格规则',
+      themeMode: 'graphite',
       status: 'active',
     },
   });
@@ -1009,6 +1011,16 @@ async function seedRules() {
             minPrice: spec.minPrice,
             packageFee: 20,
             urgentFeeRate: 0.15,
+            whiteInkUnitPrice: 0.35,
+            whiteInkSetupFee: 50,
+            whiteInkMinFee: 80,
+            variableDataUnitPrice: 0.006,
+            variableDataMinFee: 80,
+            protectiveFinishUnitPrice: 0.08,
+            protectiveFinishMinFee: 30,
+            rollSplitFeePerRoll: 2,
+            sheetCuttingFee: 30,
+            fanFoldFee: 50,
           },
         },
       });

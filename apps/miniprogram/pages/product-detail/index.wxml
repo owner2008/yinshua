@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page theme-{{themeMode}}">
   <view wx:if="{{loading}}" class="card">
     <view class="muted">正在加载产品详情…</view>
   </view>

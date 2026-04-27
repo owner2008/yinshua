@@ -1,8 +1,9 @@
-const { normalizeHomePayload, request } = require('../../utils/api');
+const { applyStoredThemeMode, normalizeHomePayload, request, syncThemeModeFromBranding } = require('../../utils/api');
 const { sampleCategories, sampleProducts } = require('../../utils/sample-data');
 
 Page({
   data: {
+    themeMode: 'graphite',
     notice: '正在加载首页',
     branding: null,
     banners: [],
@@ -14,6 +15,7 @@ Page({
   },
 
   onShow() {
+    applyStoredThemeMode(this);
     this.loadHome();
   },
 
@@ -35,6 +37,7 @@ Page({
           latestProducts: (latestProducts.length ? latestProducts : sampleProducts).slice(0, 8),
           notice: data.branding?.headerNotice || '产品目录已同步',
         });
+        syncThemeModeFromBranding(this, data.branding);
       })
       .catch(() => {
         this.setData({
@@ -45,7 +48,7 @@ Page({
           equipmentShowcases: [],
           hotProducts: sampleProducts.filter((item) => item.isHot).slice(0, 4),
           latestProducts: sampleProducts.slice(0, 6),
-          notice: '使用内置样例数据',
+          notice: '当前使用内置示例数据',
         });
       });
   },
@@ -62,6 +65,14 @@ Page({
   openDetail(event) {
     const id = event.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/product-detail/index?id=${id}` });
+  },
+
+  quoteProduct(event) {
+    const id = event.currentTarget.dataset.id;
+    wx.switchTab({ url: '/pages/quote/index' });
+    if (id) {
+      wx.setStorageSync('yinshua_quote_product', String(id));
+    }
   },
 
   gotoQuote() {

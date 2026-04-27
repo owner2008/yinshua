@@ -1,4 +1,4 @@
-import { App, Button, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tabs, Tag } from 'antd';
+import { App, Button, Divider, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tabs, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { hasAdminPermission, post, put } from '../api';
 import { QuoteRule, QuoteRuleSet } from '../types';
@@ -11,6 +11,31 @@ const sceneOptions = [
   { label: '批量客户', value: 'bulk' },
   { label: '打样场景', value: 'proofing' },
 ];
+
+const baseQuoteConfigFields = [
+  { name: 'lossRate', label: '损耗系数', step: 0.01, defaultValue: 1.08 },
+  { name: 'profitRate', label: '利润系数', step: 0.01, defaultValue: 1.35 },
+  { name: 'memberRate', label: '会员系数', step: 0.01, defaultValue: 1 },
+  { name: 'minPrice', label: '最低报价', step: 1, defaultValue: 300 },
+  { name: 'packageFee', label: '包装费', step: 1, defaultValue: 20 },
+  { name: 'urgentFeeRate', label: '加急费率', step: 0.01, defaultValue: 0.15 },
+];
+
+const requirementFeeConfigFields = [
+  { name: 'whiteInkUnitPrice', label: '白墨面积单价', step: 0.01, defaultValue: 0.35 },
+  { name: 'whiteInkSetupFee', label: '白墨开机费', step: 1, defaultValue: 50 },
+  { name: 'whiteInkMinFee', label: '白墨最低费', step: 1, defaultValue: 80 },
+  { name: 'variableDataUnitPrice', label: '可变数据单价', step: 0.001, defaultValue: 0.006 },
+  { name: 'variableDataMinFee', label: '可变数据最低费', step: 1, defaultValue: 80 },
+  { name: 'protectiveFinishUnitPrice', label: '防护处理面积单价', step: 0.01, defaultValue: 0.08 },
+  { name: 'protectiveFinishMinFee', label: '防护处理最低费', step: 1, defaultValue: 30 },
+  { name: 'rollSplitFeePerRoll', label: '分卷每卷费用', step: 1, defaultValue: 2 },
+  { name: 'sheetCuttingFee', label: '单张裁切整理费', step: 1, defaultValue: 30 },
+  { name: 'fanFoldFee', label: '折叠整理费', step: 1, defaultValue: 50 },
+];
+
+const quoteConfigFields = [...baseQuoteConfigFields, ...requirementFeeConfigFields];
+const quoteConfigFieldNames = new Set(quoteConfigFields.map((field) => field.name));
 
 export function QuoteRulesPage() {
   return (
@@ -154,15 +179,26 @@ function renderScene(value?: string): string {
   return sceneOptions.find((option) => option.value === value)?.label ?? value ?? '-';
 }
 
+function formatRuleSetOption(ruleSet: QuoteRuleSet): string {
+  return `#${ruleSet.id} ${ruleSet.name} / ${renderScene(ruleSet.scene)} / 模板 ${ruleSet.productTemplateId}`;
+}
+
+function findRuleSetLabel(ruleSets: QuoteRuleSet[], ruleSetId: string | number): string {
+  const ruleSet = ruleSets.find((item) => String(item.id) === String(ruleSetId));
+  return ruleSet ? formatRuleSetOption(ruleSet) : String(ruleSetId);
+}
+
 function Rules() {
   const { message } = App.useApp();
   const { data, loading, reload } = useRemoteList<QuoteRule>('/admin/quote-rules');
+  const { data: ruleSets, reload: reloadRuleSets } = useRemoteList<QuoteRuleSet>('/admin/quote-rule-sets');
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<QuoteRule | null>(null);
   const [enabled, setEnabled] = useState<string>('all');
   const [ruleSetId, setRuleSetId] = useState<string>();
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:quote-rule');
+  const reloadAll = () => Promise.all([reload(), reloadRuleSets()]);
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
@@ -172,37 +208,55 @@ function Rules() {
     });
   }, [data, enabled, ruleSetId]);
 
-  const ruleSetOptions = useMemo(() => Array.from(new Set(data.map((item) => String(item.ruleSetId)))).map((value) => ({ label: value, value })), [data]);
+  const ruleSetOptions = useMemo(
+    () =>
+      ruleSets.map((item) => ({
+        label: formatRuleSetOption(item),
+        value: Number(item.id),
+      })),
+    [ruleSets],
+  );
+  const ruleSetFilterOptions = useMemo(
+    () => ruleSetOptions.map((item) => ({ ...item, value: String(item.value) })),
+    [ruleSetOptions],
+  );
 
   function openCreate() {
     setEditing(null);
     form.resetFields();
     form.setFieldsValue({
-      ruleSetId: 1,
+      ruleSetId: ruleSetOptions[0]?.value ?? 1,
       enabled: true,
       conditionJson: '{"quantityRange":[100,100000],"widthRange":[20,500],"heightRange":[20,500],"customerTypes":["personal"]}',
-      configJson: '{"lossRate":1.08,"profitRate":1.35,"memberRate":1,"minPrice":300,"packageFee":20,"urgentFeeRate":0.15}',
+      configJsonExtra: '{}',
+      ...getDefaultQuoteConfigValues(),
     });
     setOpen(true);
   }
 
   function openEdit(record: QuoteRule) {
     setEditing(record);
+    const configJson = record.configJson ?? {};
     form.setFieldsValue({
       ruleSetId: Number(record.ruleSetId),
       enabled: record.enabled,
       conditionJson: JSON.stringify(record.conditionJson, null, 2),
-      configJson: JSON.stringify(record.configJson, null, 2),
+      configJsonExtra: JSON.stringify(getExtraQuoteConfig(configJson), null, 2),
+      ...getQuoteConfigFormValues(configJson),
     });
     setOpen(true);
   }
 
   async function submit() {
     const values = await form.validateFields();
+    const extraConfig = JSON.parse(values.configJsonExtra || '{}') as Record<string, unknown>;
     const payload = {
       ruleSetId: values.ruleSetId,
       conditionJson: JSON.parse(values.conditionJson),
-      configJson: JSON.parse(values.configJson),
+      configJson: {
+        ...extraConfig,
+        ...getQuoteConfigPayload(values),
+      },
       enabled: values.enabled,
     };
     if (editing) {
@@ -215,7 +269,7 @@ function Rules() {
     setOpen(false);
     setEditing(null);
     form.resetFields();
-    await reload();
+    await Promise.all([reload(), reloadRuleSets()]);
   }
 
   async function toggle(record: QuoteRule, nextEnabled: boolean) {
@@ -226,9 +280,9 @@ function Rules() {
 
   return (
     <>
-      <PageHeader title="报价规则" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={openCreate}>新增规则</Button> : null} />
+      <PageHeader title="报价规则" onRefresh={reloadAll} extra={canWrite ? <Button type="primary" onClick={openCreate}>新增规则</Button> : null} />
       <div className="filter-bar">
-        <Select allowClear placeholder="规则集编号" value={ruleSetId} onChange={setRuleSetId} style={{ width: 160 }} options={ruleSetOptions} />
+        <Select allowClear placeholder="规则集" value={ruleSetId} onChange={setRuleSetId} style={{ width: 260 }} options={ruleSetFilterOptions} />
         <Select
           value={enabled}
           onChange={setEnabled}
@@ -242,7 +296,7 @@ function Rules() {
       </div>
       <Table rowKey="id" loading={loading} dataSource={filteredData} columns={[
         { title: '编号', dataIndex: 'id' },
-        { title: '规则集编号', dataIndex: 'ruleSetId' },
+        { title: '规则集', dataIndex: 'ruleSetId', render: (value) => findRuleSetLabel(ruleSets, value) },
         { title: '启用', dataIndex: 'enabled', render: (value: boolean) => <Tag color={value ? 'green' : 'default'}>{value ? '启用' : '停用'}</Tag> },
         { title: '条件', dataIndex: 'conditionJson', ellipsis: true, render: (value) => JSON.stringify(value) },
         { title: '配置', dataIndex: 'configJson', ellipsis: true, render: (value) => JSON.stringify(value) },
@@ -260,12 +314,84 @@ function Rules() {
       ]} />
       <Modal title={editing ? '编辑规则' : '新增规则'} open={open} onOk={submit} onCancel={() => setOpen(false)} width={760}>
         <Form form={form} layout="vertical">
-          {!editing ? <Form.Item name="ruleSetId" label="规则集编号" rules={[{ required: true }]}><InputNumber style={{ width: '100%' }} /></Form.Item> : null}
+          {!editing ? (
+            <Form.Item name="ruleSetId" label="规则集" rules={[{ required: true }]}>
+              <Select
+                showSearch
+                optionFilterProp="label"
+                placeholder="选择规则集"
+                options={ruleSetOptions}
+              />
+            </Form.Item>
+          ) : null}
           <Form.Item name="conditionJson" label="条件配置" rules={[{ required: true }]}><Input.TextArea rows={4} /></Form.Item>
-          <Form.Item name="configJson" label="报价配置" rules={[{ required: true }]}><Input.TextArea rows={4} /></Form.Item>
+          <Divider orientation="left">基础报价配置</Divider>
+          <div className="quote-rule-config-grid">
+            {baseQuoteConfigFields.map((field) => (
+              <Form.Item key={field.name} name={field.name} label={field.label} rules={[{ required: true }]}>
+                <InputNumber style={{ width: '100%' }} step={field.step} />
+              </Form.Item>
+            ))}
+          </div>
+          <Divider orientation="left">行业询价附加费</Divider>
+          <div className="quote-rule-config-grid">
+            {requirementFeeConfigFields.map((field) => (
+              <Form.Item key={field.name} name={field.name} label={field.label} rules={[{ required: true }]}>
+                <InputNumber style={{ width: '100%' }} step={field.step} />
+              </Form.Item>
+            ))}
+          </div>
+          <Form.Item
+            name="configJsonExtra"
+            label="其他配置 JSON"
+            tooltip="保留未结构化展示的扩展配置，保存时会与上方字段合并。"
+            rules={[{ required: true }, { validator: validateJsonObject }]}
+          >
+            <Input.TextArea rows={3} />
+          </Form.Item>
           <Form.Item name="enabled" label="启用" valuePropName="checked"><Switch /></Form.Item>
         </Form>
       </Modal>
     </>
   );
+}
+
+function getDefaultQuoteConfigValues() {
+  return Object.fromEntries(quoteConfigFields.map((field) => [field.name, field.defaultValue]));
+}
+
+function getQuoteConfigFormValues(configJson: Record<string, unknown>) {
+  return Object.fromEntries(
+    quoteConfigFields.map((field) => [
+      field.name,
+      typeof configJson[field.name] === 'number' ? configJson[field.name] : field.defaultValue,
+    ]),
+  );
+}
+
+function getQuoteConfigPayload(values: Record<string, unknown>) {
+  return Object.fromEntries(
+    quoteConfigFields.map((field) => [
+      field.name,
+      typeof values[field.name] === 'number' ? values[field.name] : field.defaultValue,
+    ]),
+  );
+}
+
+function getExtraQuoteConfig(configJson: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(configJson).filter(([key]) => !quoteConfigFieldNames.has(key)),
+  );
+}
+
+function validateJsonObject(_: unknown, value?: string) {
+  try {
+    const parsed = JSON.parse(value || '{}');
+    if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') {
+      return Promise.reject(new Error('请输入 JSON 对象'));
+    }
+    return Promise.resolve();
+  } catch {
+    return Promise.reject(new Error('JSON 格式不正确'));
+  }
 }

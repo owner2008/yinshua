@@ -91,6 +91,12 @@ body {
   margin-bottom: 16px;
 }
 
+.quote-rule-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0 16px;
+}
+
 .inline-alert {
   margin-bottom: 16px;
 }
@@ -194,8 +200,19 @@ body {
   gap: 8px;
 }
 
+.preview-card-subtitle,
+.preview-card-subtitle.ant-typography {
+  color: #6b7280;
+}
+
+.preview-card-title,
+.preview-card-title.ant-typography {
+  color: #111827;
+}
+
 .preview-line {
   margin-bottom: 0;
+  color: #374151;
 }
 
 @media (max-width: 720px) {

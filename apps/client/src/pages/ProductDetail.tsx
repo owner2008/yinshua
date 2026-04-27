@@ -105,7 +105,7 @@ export function ProductDetailPage() {
               <li key={template.id}>
                 <strong>{template.templateName}</strong>
                 <span>
-                  宽 {String(template.widthMin)}- {String(template.widthMax)} 毫米 · 高 {String(template.heightMin)}-
+                  宽 {String(template.widthMin)} - {String(template.widthMax)} 毫米 · 高 {String(template.heightMin)} -{' '}
                   {String(template.heightMax)} 毫米 · 数量 {template.quantityMin}-{template.quantityMax}
                 </span>
               </li>

@@ -38,6 +38,7 @@ export interface HomepageBranding {
   siteSubtitle?: string;
   logoImage?: string;
   headerNotice?: string;
+  themeMode?: 'graphite' | 'ivory' | 'forest' | string;
   status?: string;
 }
 
@@ -151,6 +152,22 @@ export interface QuoteInput {
   isUrgent: boolean;
   customerType: 'personal' | 'company';
   memberId?: number;
+  deliveryForm?: string;
+  labelingMethod?: string;
+  rollDirection?: string;
+  rollCoreMm?: number;
+  piecesPerRoll?: number;
+  adhesiveType?: string;
+  usageEnvironment?: string;
+  surfaceFinish?: string;
+  colorMode?: string;
+  hasDesignFile?: boolean;
+  designFileUrl?: string;
+  needDesignService?: boolean;
+  needSampleApproval?: boolean;
+  packagingMethod?: string;
+  expectedDeliveryDate?: string;
+  quoteRemark?: string;
 }
 
 export interface MemberSession {

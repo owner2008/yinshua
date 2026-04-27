@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsIn,
   IsInt,
   IsObject,
   IsOptional,
@@ -53,6 +54,8 @@ export class UpsertCompanyProfileDto {
 }
 
 export class UpsertHomepageBrandingDto {
+  private static readonly themeModes = ['graphite', 'ivory', 'forest'] as const;
+
   @IsString()
   siteName!: string;
 
@@ -67,6 +70,11 @@ export class UpsertHomepageBrandingDto {
   @IsOptional()
   @IsString()
   headerNotice?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(UpsertHomepageBrandingDto.themeModes)
+  themeMode?: string;
 
   @IsOptional()
   @IsString()

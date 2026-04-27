@@ -1,29 +1,196 @@
-<view class="page">
-  <view class="hero card" style="{{banners[0] && banners[0].imageUrl ? 'background-image: linear-gradient(135deg, rgba(17,52,72,0.88), rgba(31,111,166,0.55)), url(' + banners[0].imageUrl + '); background-size: cover; background-position: center;' : ''}}">
-    <view class="hero-main">
-      <view class="brand-row" wx:if="{{branding && branding.logoImage}}">
-        <image class="brand-logo" src="{{branding.logoImage}}" mode="aspectFill" />
+<view class="page theme-{{themeMode}} home-page">
+  <view
+    class="hero card hero-shell"
+    style="{{banners[0] && banners[0].imageUrl ? 'background-image: var(--home-hero-image-overlay), url(' + banners[0].imageUrl + '); background-size: cover; background-position: center;' : ''}}"
+  >
+    <view class="brand-row">
+      <image wx:if="{{branding && branding.logoImage}}" class="brand-logo" src="{{branding.logoImage}}" mode="aspectFill" />
+      <view wx:else class="brand-logo brand-logo-fallback">印</view>
+      <view class="brand-copy">
+        <text class="eyebrow">{{(branding && branding.siteSubtitle) || 'Label Printing'}}</text>
+        <view class="title">{{(branding && branding.siteName) || '不干胶标签印刷'}}</view>
+      </view>
+    </view>
+
+    <view class="hero-copy">{{(banners[0] && banners[0].title) || '产品展示、材料工艺与在线报价一步到位'}}</view>
+    <view class="hero-desc">{{(banners[0] && banners[0].subtitle) || '选择产品、填写尺寸数量和工艺参数，快速生成不干胶标签报价。'}}</view>
+
+    <view class="hero-actions">
+      <button class="primary-button" size="mini" bindtap="gotoQuote">立即报价</button>
+      <button
+        class="ghost-button"
+        size="mini"
+        bindtap="openBanner"
+        data-link-type="{{banners[0].linkType}}"
+        data-link-value="{{banners[0].linkValue}}"
+      >
+        {{(banners[0] && banners[0].buttonText) || '查看产品'}}
+      </button>
+    </view>
+
+    <view class="hero-tags">
+      <text>低起订量</text>
+      <text>支持打样</text>
+      <text>卷装/张装</text>
+      <text>多工艺组合</text>
+    </view>
+  </view>
+
+  <view class="card quick-card">
+    <view class="quick-card-copy">
+      <text class="eyebrow">Quick Quote</text>
+      <view class="quick-title">已有尺寸和数量？先算一个大概价格</view>
+      <view class="muted">完整报价会继续填写材料、印刷、工艺、打样和加急等参数。</view>
+    </view>
+    <button class="primary-button" size="mini" bindtap="gotoQuote">打开报价系统</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>产品类型</text>
+      <text class="link" bindtap="openAllProducts">全部产品</text>
+    </view>
+    <view class="category-grid">
+      <block wx:for="{{categories}}" wx:key="id">
+        <view wx:if="{{index < 8}}" class="category-card" data-id="{{item.id}}" bindtap="openCategory">
+          <text class="category-index">{{index < 9 ? '0' : ''}}{{index + 1}}</text>
+          <text class="category-name">{{item.name}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <text>常用产品与应用</text>
+      <text class="muted">{{hotProducts.length}} 款推荐</text>
+    </view>
+    <view class="feature-list">
+      <block wx:for="{{hotProducts}}" wx:key="id">
+        <view wx:if="{{index < 4}}" class="feature-item">
+          <image wx:if="{{item.coverImage}}" class="feature-thumb" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
+          <view wx:else class="feature-thumb tone-{{index % 3}}"></view>
+          <view class="feature-body">
+            <view class="feature-title">{{item.name}}</view>
+            <view class="feature-desc muted">{{item.applicationScenario || '适合多行业产品包装、识别与物流场景。'}}</view>
+            <view class="feature-actions">
+              <button class="mini-button" size="mini" data-id="{{item.id}}" bindtap="openDetail">看详情</button>
+              <button class="primary-button mini-quote" size="mini" data-id="{{item.id}}" bindtap="quoteProduct">按此报价</button>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="card capability-card">
+    <view class="section-title">
+      <text>材料与工艺</text>
+      <text class="muted">按需求组合</text>
+    </view>
+    <view class="capability-group">
+      <view class="capability-title">常用材料</view>
+      <view class="capability-tags">
+        <text>铜版纸</text>
+        <text>PET/透明膜</text>
+        <text>PVC/合成纸</text>
+        <text>热敏纸</text>
+        <text>亮银/哑银</text>
+        <text>可移胶</text>
+      </view>
+    </view>
+    <view class="capability-group">
+      <view class="capability-title">常用工艺</view>
+      <view class="capability-tags">
+        <text>覆膜</text>
+        <text>模切</text>
+        <text>烫金</text>
+        <text>局部UV</text>
+        <text>白墨打底</text>
+        <text>可变数据</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card service-card">
+    <view class="section-title">
+      <text>服务流程</text>
+      <text class="muted">从询价到交付</text>
+    </view>
+    <view class="step-list">
+      <view class="step-item">
+        <text>01</text>
         <view>
-          <text class="eyebrow">{{branding.siteSubtitle || '不干胶印刷解决方案'}}</text>
-          <view class="title">{{branding.siteName || '产品展示与在线报价'}}</view>
+          <view class="step-title">选择产品</view>
+          <view class="muted">按应用场景或材料类型找到合适标签。</view>
         </view>
       </view>
-      <view wx:else>
-        <text class="eyebrow">不干胶印刷</text>
-        <view class="title">产品展示与在线报价</view>
+      <view class="step-item">
+        <text>02</text>
+        <view>
+          <view class="step-title">填写参数</view>
+          <view class="muted">输入尺寸、数量、材料、工艺与贴标要求。</view>
+        </view>
       </view>
-      <view class="hero-copy">{{banners[0].title || '首页 Banner 已支持后台配置'}}</view>
-      <view class="muted">{{banners[0].subtitle || notice}}</view>
+      <view class="step-item">
+        <text>03</text>
+        <view>
+          <view class="step-title">确认样稿</view>
+          <view class="muted">上传设计文件，确认电子样或实物样。</view>
+        </view>
+      </view>
+      <view class="step-item">
+        <text>04</text>
+        <view>
+          <view class="step-title">生产交付</view>
+          <view class="muted">按交期生产、分卷包装并发货。</view>
+        </view>
+      </view>
     </view>
-    <button class="primary-button" size="mini" bindtap="openBanner" data-link-type="{{banners[0].linkType}}" data-link-value="{{banners[0].linkValue}}">
-      {{banners[0].buttonText || '浏览产品'}}
-    </button>
+  </view>
+
+  <view class="card company-shell" wx:if="{{companyProfile}}">
+    <view class="section-title">
+      <text>{{companyProfile.title}}</text>
+      <text class="muted">{{companyProfile.subtitle || '企业介绍'}}</text>
+    </view>
+    <view class="company-layout-mini">
+      <image wx:if="{{companyProfile.coverImage}}" class="company-cover" src="{{companyProfile.coverImage}}" mode="aspectFill" />
+      <view>
+        <view class="company-copy">{{companyProfile.content || '支持后台维护企业介绍、图集与联系信息。'}}</view>
+        <view class="company-contact">
+          <view wx:if="{{companyProfile.contactPhone}}">电话：{{companyProfile.contactPhone}}</view>
+          <view wx:if="{{companyProfile.contactWechat}}">微信：{{companyProfile.contactWechat}}</view>
+          <view wx:if="{{companyProfile.address}}">地址：{{companyProfile.address}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{equipmentShowcases.length}}">
+    <view class="section-title">
+      <text>设备能力</text>
+      <text class="muted">{{equipmentShowcases.length}} 项能力</text>
+    </view>
+    <view class="showcase-list">
+      <block wx:for="{{equipmentShowcases}}" wx:key="id">
+        <view wx:if="{{index < 2}}" class="showcase-item">
+          <image wx:if="{{item.imageUrl}}" class="showcase-image" src="{{item.imageUrl}}" mode="aspectFill" />
+          <view wx:else class="showcase-image showcase-fallback"></view>
+          <view class="showcase-body">
+            <view class="showcase-tag">{{(item.category && item.category.name) || '设备展示'}}</view>
+            <view class="showcase-title">{{item.title || item.name}}</view>
+            <view class="showcase-desc">{{item.description || '支持后台维护设备主图、文案说明与参数信息。'}}</view>
+          </view>
+        </view>
+      </block>
+    </view>
   </view>
 
   <view class="card" wx:if="{{banners.length > 1}}">
     <view class="section-title">
-      <text>首页 Banner</text>
-      <text class="muted">{{banners.length}} 组内容</text>
+      <text>更多推荐</text>
+      <text class="muted">{{banners.length - 1}} 组内容</text>
     </view>
     <swiper class="banner-swiper" indicator-dots circular autoplay interval="4500">
       <block wx:for="{{banners}}" wx:key="id">
@@ -31,8 +198,9 @@
           <view class="banner-item" bindtap="openBanner" data-link-type="{{item.linkType}}" data-link-value="{{item.linkValue}}">
             <image class="banner-image" src="{{item.imageUrl}}" mode="aspectFill" />
             <view class="banner-mask">
+              <text class="card-tag">Banner</text>
               <view class="banner-title">{{item.title}}</view>
-              <view class="banner-subtitle">{{item.subtitle || '支持后台配置标题、副标题和跳转信息'}}</view>
+              <view class="banner-subtitle">{{item.subtitle || '查看相关产品与服务'}}</view>
             </view>
           </view>
         </swiper-item>
@@ -42,86 +210,8 @@
 
   <view class="card">
     <view class="section-title">
-      <text>产品分类</text>
-      <text class="link" bindtap="openAllProducts">全部</text>
-    </view>
-    <view class="chip-row">
-      <block wx:for="{{categories}}" wx:key="id">
-        <view class="chip" data-id="{{item.id}}" bindtap="openCategory">{{item.name}}</view>
-      </block>
-    </view>
-  </view>
-
-  <view class="card" wx:if="{{companyProfile}}">
-    <view class="section-title">
-      <text>{{companyProfile.title}}</text>
-      <text class="muted">{{companyProfile.subtitle || '企业介绍'}}</text>
-    </view>
-    <image wx:if="{{companyProfile.coverImage}}" class="company-cover" src="{{companyProfile.coverImage}}" mode="aspectFill" />
-    <view class="company-copy">{{companyProfile.content || '支持后台维护企业介绍图文内容。'}}</view>
-    <view class="company-contact">
-      <view wx:if="{{companyProfile.contactPhone}}">电话：{{companyProfile.contactPhone}}</view>
-      <view wx:if="{{companyProfile.contactWechat}}">微信：{{companyProfile.contactWechat}}</view>
-      <view wx:if="{{companyProfile.address}}">地址：{{companyProfile.address}}</view>
-    </view>
-    <scroll-view wx:if="{{companyProfile.galleryJson && companyProfile.galleryJson.length}}" scroll-x class="gallery-scroll">
-      <view class="gallery-row">
-        <block wx:for="{{companyProfile.galleryJson}}" wx:key="*this">
-          <image class="gallery-thumb" src="{{item}}" mode="aspectFill" />
-        </block>
-      </view>
-    </scroll-view>
-  </view>
-
-  <view class="card" wx:if="{{equipmentShowcases.length}}">
-    <view class="section-title">
-      <text>分类设备展示</text>
-      <text class="muted">{{equipmentShowcases.length}} 台设备</text>
-    </view>
-    <view class="showcase-list">
-      <block wx:for="{{equipmentShowcases}}" wx:key="id">
-        <view class="showcase-item">
-          <image wx:if="{{item.imageUrl}}" class="showcase-image" src="{{item.imageUrl}}" mode="aspectFill" />
-          <view wx:else class="showcase-image showcase-fallback"></view>
-          <view class="showcase-body">
-            <view class="showcase-tag">{{item.category && item.category.name ? item.category.name : '设备展示'}}</view>
-            <view class="showcase-title">{{item.title || item.name}}</view>
-            <view class="showcase-desc">{{item.description || '支持后台维护设备主图、文本说明与参数信息。'}}</view>
-            <view class="spec-list" wx:if="{{item.specsEntries && item.specsEntries.length}}">
-              <block wx:for="{{item.specsEntries}}" wx:key="key">
-                <view class="spec-item">
-                  <text class="muted">{{item.key}}</text>
-                  <text>{{item.value}}</text>
-                </view>
-              </block>
-            </view>
-          </view>
-        </view>
-      </block>
-    </view>
-  </view>
-
-  <view class="card">
-    <view class="section-title">
-      <text>热门产品</text>
-      <text class="muted">{{hotProducts.length}} 款</text>
-    </view>
-    <view class="product-grid">
-      <block wx:for="{{hotProducts}}" wx:key="id">
-        <view class="product-tile" data-id="{{item.id}}" bindtap="openDetail">
-          <image wx:if="{{item.coverImage}}" class="tile-thumb cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
-          <view wx:else class="tile-thumb tone-{{index % 3}}"></view>
-          <view class="tile-name">{{item.name}}</view>
-          <view class="tile-meta muted">{{item.applicationScenario || '可按需定制'}}</view>
-        </view>
-      </block>
-    </view>
-  </view>
-
-  <view class="card">
-    <view class="section-title">
       <text>最新上架</text>
-      <text class="link" bindtap="openAllProducts">全部</text>
+      <text class="link" bindtap="openAllProducts">查看全部</text>
     </view>
     <view class="product-grid">
       <block wx:for="{{latestProducts}}" wx:key="id">
@@ -129,7 +219,7 @@
           <image wx:if="{{item.coverImage}}" class="tile-thumb cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
           <view wx:else class="tile-thumb tone-{{index % 3}}"></view>
           <view class="tile-name">{{item.name}}</view>
-          <view class="tile-meta muted">{{item.applicationScenario || '可按需定制'}}</view>
+          <view class="tile-meta muted">{{item.applicationScenario || '支持按需定制'}}</view>
         </view>
       </block>
     </view>

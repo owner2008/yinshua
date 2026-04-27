@@ -1,8 +1,9 @@
-const { normalizeProduct, request } = require('../../utils/api');
+const { applyStoredThemeMode, normalizeProduct, refreshThemeMode, request } = require('../../utils/api');
 const { sampleProducts } = require('../../utils/sample-data');
 
 Page({
   data: {
+    themeMode: 'graphite',
     loading: true,
     error: '',
     product: null,
@@ -11,6 +12,8 @@ Page({
   },
 
   onLoad(query) {
+    applyStoredThemeMode(this);
+    void refreshThemeMode(this);
     const id = query && query.id;
     if (!id) {
       this.setData({ loading: false, error: '缺少产品 ID' });

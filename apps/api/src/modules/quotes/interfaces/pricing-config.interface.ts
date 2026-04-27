@@ -51,6 +51,16 @@ export interface RuleConfig {
   minPrice: number;
   packageFee: number;
   urgentFeeRate: number;
+  whiteInkUnitPrice: number;
+  whiteInkSetupFee: number;
+  whiteInkMinFee: number;
+  variableDataUnitPrice: number;
+  variableDataMinFee: number;
+  protectiveFinishUnitPrice: number;
+  protectiveFinishMinFee: number;
+  rollSplitFeePerRoll: number;
+  sheetCuttingFee: number;
+  fanFoldFee: number;
 }
 
 export interface MatchedQuoteConfig {

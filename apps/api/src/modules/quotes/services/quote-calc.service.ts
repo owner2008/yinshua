@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateQuoteDto } from '../dto/create-quote.dto';
-import { MatchedQuoteConfig, ProcessPriceConfig } from '../interfaces/pricing-config.interface';
+import { MatchedQuoteConfig, ProcessPriceConfig, RuleConfig } from '../interfaces/pricing-config.interface';
 import { QuoteResult } from '../interfaces/quote-result.interface';
 
 @Injectable()
@@ -31,11 +31,13 @@ export class QuoteCalcService {
       2,
     );
 
+    const requirementFees = calculateRequirementFees(dto, areaM2, config.rule);
     const urgentFee = dto.isUrgent
       ? round((materialCost + printCost + processCost) * config.rule.urgentFeeRate, 2)
       : 0;
     const extraFees = [
       { code: 'package', name: '包装费', amount: config.rule.packageFee },
+      ...requirementFees,
       ...(urgentFee > 0 ? [{ code: 'urgent', name: '加急费', amount: urgentFee }] : []),
     ];
     const extraFeeTotal = round(extraFees.reduce((total, fee) => total + fee.amount, 0), 2);
@@ -87,6 +89,7 @@ export class QuoteCalcService {
           print: config.print,
           processes: config.processes,
           rule: config.rule,
+          requirementFees,
         },
         result: {
           baseCost,
@@ -130,6 +133,59 @@ export class QuoteCalcService {
 function round(value: number, precision: number): number {
   const factor = 10 ** precision;
   return Math.round((value + Number.EPSILON) * factor) / factor;
+}
+
+function calculateRequirementFees(dto: CreateQuoteDto, areaM2: number, rule: RuleConfig) {
+  const fees: Array<{ code: string; name: string; amount: number }> = [];
+
+  if (dto.colorMode?.includes('白墨')) {
+    fees.push({
+      code: 'white_ink',
+      name: '白墨打底费',
+      amount: round(
+        Math.max(rule.whiteInkMinFee, areaM2 * dto.quantity * rule.whiteInkUnitPrice + rule.whiteInkSetupFee),
+        2,
+      ),
+    });
+  }
+
+  if (dto.colorMode?.includes('可变数据')) {
+    fees.push({
+      code: 'variable_data',
+      name: '可变数据费',
+      amount: round(Math.max(rule.variableDataMinFee, dto.quantity * rule.variableDataUnitPrice), 2),
+    });
+  }
+
+  if (dto.surfaceFinish && ['防刮', '防水'].some((keyword) => dto.surfaceFinish?.includes(keyword))) {
+    fees.push({
+      code: 'protective_finish',
+      name: `${dto.surfaceFinish}处理费`,
+      amount: round(
+        Math.max(rule.protectiveFinishMinFee, areaM2 * dto.quantity * rule.protectiveFinishUnitPrice),
+        2,
+      ),
+    });
+  }
+
+  const rollCount = dto.deliveryForm === '卷装' && dto.piecesPerRoll ? Math.ceil(dto.quantity / dto.piecesPerRoll) : 0;
+  if (rollCount > 1) {
+    fees.push({
+      code: 'roll_split',
+      name: '分卷包装费',
+      amount: round(rollCount * rule.rollSplitFeePerRoll, 2),
+    });
+  }
+
+  if (dto.deliveryForm === '单张裁切') {
+    fees.push({ code: 'sheet_cutting', name: '单张裁切整理费', amount: rule.sheetCuttingFee });
+  }
+
+  if (dto.deliveryForm === '折叠 / 风琴折') {
+    fees.push({ code: 'fan_fold', name: '折叠整理费', amount: rule.fanFoldFee });
+  }
+
+  return fees;
 }
 
 function createQuoteNo(): string {

@@ -1,4 +1,4 @@
-const { clearSession, del, loginMember, post, put, request } = require('../../utils/api');
+const { applyStoredThemeMode, clearSession, del, loginMember, post, put, refreshThemeMode, request } = require('../../utils/api');
 
 const customerTypes = [
   { label: '个人客户', value: 'personal' },
@@ -28,6 +28,7 @@ const emptyAddress = {
 
 Page({
   data: {
+    themeMode: 'graphite',
     notice: '',
     session: null,
     profile: emptyProfile,
@@ -41,6 +42,8 @@ Page({
   },
 
   onShow() {
+    applyStoredThemeMode(this);
+    void refreshThemeMode(this);
     this.init();
   },
 
@@ -110,7 +113,7 @@ Page({
   saveAddress() {
     const draft = this.data.addressDraft;
     if (!draft.consignee || !draft.mobile || !draft.province || !draft.city || !draft.detail) {
-      wx.showToast({ title: '请完善地址', icon: 'none' });
+      wx.showToast({ title: '请完善地址信息', icon: 'none' });
       return;
     }
     this.setData({ savingAddress: true });
@@ -186,7 +189,7 @@ Page({
   deleteAddress(id) {
     wx.showModal({
       title: '确认删除',
-      content: '删除后无法恢复',
+      content: '删除后无法恢复。',
       success: (res) => {
         if (!res.confirm) {
           return;
