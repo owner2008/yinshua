@@ -162,6 +162,7 @@ export class AdminProductsService {
       allowProofing: dto.allowProofing,
       defaultLossRate: dto.defaultLossRate,
       minPrice: dto.minPrice,
+      status: dto.status,
     };
   }
 
@@ -183,6 +184,7 @@ export class AdminProductsService {
       allowProofing: dto.allowProofing,
       defaultLossRate: dto.defaultLossRate,
       minPrice: dto.minPrice,
+      status: dto.status,
     };
   }
 

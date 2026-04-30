@@ -146,6 +146,10 @@ export class CreateProductTemplateDto {
   minPrice?: number;
 
   @IsOptional()
+  @IsString()
+  status?: string;
+
+  @IsOptional()
   @IsArray()
   materialIds?: number[];
 
@@ -162,4 +166,94 @@ export class CreateProductTemplateDto {
   shapeTypes?: string[];
 }
 
-export class UpdateProductTemplateDto extends CreateProductTemplateDto {}
+export class UpdateProductTemplateDto {
+  @IsOptional()
+  @IsInt()
+  productId?: number;
+
+  @IsOptional()
+  @IsString()
+  templateName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  widthMin?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  widthMax?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  heightMin?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  heightMax?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  quantityMin?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  quantityMax?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  allowCustomShape?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  allowLamination?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  allowHotStamping?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  allowUv?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  allowDieCut?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  allowProofing?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  defaultLossRate?: number;
+
+  @IsOptional()
+  @IsNumber()
+  minPrice?: number;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
+
+  @IsOptional()
+  @IsArray()
+  materialIds?: number[];
+
+  @IsOptional()
+  @IsArray()
+  processCodes?: string[];
+
+  @IsOptional()
+  @IsArray()
+  printModes?: string[];
+
+  @IsOptional()
+  @IsArray()
+  shapeTypes?: string[];
+}

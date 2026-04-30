@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { CreateQuoteDto } from '../dto/create-quote.dto';
+import { UpdateQuoteStatusDto } from '../dto/update-quote-status.dto';
 import { QuoteResult, QuoteSnapshot } from '../interfaces/quote-result.interface';
+import { RuleConfig } from '../interfaces/pricing-config.interface';
 import { PrismaService } from '../../../database/prisma.service';
+import { AuditLogService } from '../../admin/services/audit-log.service';
 import { QuoteCalcService } from './quote-calc.service';
 import { QuoteRuleMatcherService } from './quote-rule-matcher.service';
 import { QuoteSnapshotService } from './quote-snapshot.service';
@@ -18,12 +21,29 @@ export class QuoteService {
     private readonly calc: QuoteCalcService,
     private readonly snapshots: QuoteSnapshotService,
     private readonly prisma: PrismaService,
+    @Optional() private readonly audit?: AuditLogService,
   ) {}
 
   async calculate(dto: CreateQuoteDto): Promise<QuoteResult> {
     const config = await this.ruleMatcher.match(dto);
     this.validator.validate(dto, config.template);
     return this.calc.calculate(dto, config);
+  }
+
+  async preview(dto: CreateQuoteDto): Promise<QuotePreviewResult> {
+    const config = await this.ruleMatcher.match(dto);
+    this.validator.validate(dto, config.template);
+    const result = this.calc.calculate(dto, config);
+
+    return {
+      matchedRule: {
+        ruleSetId: config.rule.ruleSetId,
+        ruleId: config.rule.ruleId,
+        versionNo: config.rule.versionNo,
+        config: config.rule,
+      },
+      result,
+    };
   }
 
   async create(dto: CreateQuoteDto, userId?: number): Promise<QuoteResult> {
@@ -68,6 +88,58 @@ export class QuoteService {
     }
 
     return this.findOneFromMemory(quoteNo);
+  }
+
+  async updateAdminStatus(quoteNo: string, dto: UpdateQuoteStatusDto): Promise<QuoteResult | undefined> {
+    if (!process.env.DATABASE_URL) {
+      const quote = this.quotes.get(quoteNo);
+      if (!quote) {
+        return undefined;
+      }
+      const followRemark = normalizeFollowRemark(dto.followRemark) ?? quote.followRemark;
+      const updated = { ...quote, status: dto.status, followRemark };
+      this.quotes.set(quoteNo, structuredClone(updated));
+      return structuredClone(updated);
+    }
+
+    const before = await this.prisma.quote.findUnique({
+      where: { quoteNo },
+      include: { snapshot: true },
+    });
+    if (!before) {
+      return undefined;
+    }
+
+    const beforeOptions = jsonObject(before.processOptionsJson);
+    const nextOptions = {
+      ...beforeOptions,
+      followRemark: normalizeFollowRemark(dto.followRemark) ?? extractFollowRemark(beforeOptions),
+    };
+    const after = await this.prisma.quote.update({
+      where: { quoteNo },
+      data: {
+        status: dto.status,
+        processOptionsJson: jsonValue(nextOptions),
+      },
+      include: { snapshot: true },
+    });
+
+    await this.audit?.record({
+      module: 'quote',
+      action: 'follow_up',
+      targetType: 'quote',
+      targetId: before.id,
+      before: {
+        status: before.status,
+        followRemark: extractFollowRemark(beforeOptions),
+      },
+      after: {
+        status: after.status,
+        followRemark: extractFollowRemark(nextOptions),
+      },
+    });
+
+    return quoteFromDatabase(after);
   }
 
   private findAllFromMemory(): QuoteResult[] {
@@ -134,13 +206,20 @@ type QuoteWithSnapshot = Prisma.QuoteGetPayload<{ include: { snapshot: true } }>
 
 function quoteFromDatabase(quote: QuoteWithSnapshot): QuoteResult {
   const fullResult = quote.snapshot?.fullSnapshotJson as unknown as QuoteResult | undefined;
+  const followRemark = extractFollowRemark(jsonObject(quote.processOptionsJson));
 
   if (fullResult?.quoteNo) {
-    return fullResult;
+    return {
+      ...fullResult,
+      status: quote.status,
+      followRemark,
+    };
   }
 
   return {
     quoteNo: quote.quoteNo,
+    status: quote.status,
+    followRemark,
     productId: Number(quote.productId),
     productTemplateId: Number(quote.productTemplateId),
     dimensions: {
@@ -182,6 +261,32 @@ function quoteFromDatabase(quote: QuoteWithSnapshot): QuoteResult {
         result: {},
       },
   };
+}
+
+export interface QuotePreviewResult {
+  matchedRule: {
+    ruleSetId: number;
+    ruleId?: number;
+    versionNo: string;
+    config: RuleConfig;
+  };
+  result: QuoteResult;
+}
+
+function jsonObject(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? { ...(value as Record<string, unknown>) }
+    : {};
+}
+
+function extractFollowRemark(value: Record<string, unknown>): string | undefined {
+  return typeof value.followRemark === 'string' && value.followRemark.trim()
+    ? value.followRemark.trim()
+    : undefined;
+}
+
+function normalizeFollowRemark(value: string | undefined): string | undefined {
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
 function jsonValue(value: unknown): Prisma.InputJsonValue {

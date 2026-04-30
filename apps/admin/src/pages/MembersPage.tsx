@@ -1,4 +1,4 @@
-import { App, Button, Form, Input, InputNumber, Modal, Select, Space, Table, Tabs, Tag } from 'antd';
+import { App, Button, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Table, Tabs, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { post, put, request } from '../api';
 import { Member, MemberLevel } from '../types';
@@ -20,7 +20,7 @@ export function MembersPage() {
   const members = useRemoteList<Member>('/admin/members');
   const levels = useRemoteList<MemberLevel>('/admin/member-levels');
   const [keyword, setKeyword] = useState('');
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<string>('active');
   const [memberModal, setMemberModal] = useState<Member | 'new' | null>(null);
   const [detailModal, setDetailModal] = useState<Member | null>(null);
   const [levelModal, setLevelModal] = useState<MemberLevel | 'new' | null>(null);
@@ -113,6 +113,13 @@ export function MembersPage() {
     await members.reload();
   }
 
+  async function toggleMemberStatus(record: Member) {
+    const nextStatus = record.status === 'active' ? 'disabled' : 'active';
+    await put(`/admin/members/${record.id}`, { status: nextStatus });
+    message.success(`会员已${nextStatus === 'active' ? '恢复' : '删除'}`);
+    await members.reload();
+  }
+
   async function submitLevel() {
     const values = await levelForm.validateFields();
     if (levelModal === 'new') {
@@ -190,7 +197,7 @@ export function MembersPage() {
                     { title: '注册时间', dataIndex: 'createdAt', width: 190 },
                     {
                       title: '操作',
-                      width: 150,
+                      width: 220,
                       fixed: 'right',
                       render: (_, record) => (
                         <Space>
@@ -200,6 +207,15 @@ export function MembersPage() {
                           <Button type="link" onClick={() => void openDetail(record)}>
                             详情
                           </Button>
+                          <Popconfirm
+                            title={record.status === 'active' ? '确定删除该会员？' : '确定恢复该会员？'}
+                            description={record.status === 'active' ? '删除后默认列表不再显示，可通过状态筛选找回。' : undefined}
+                            onConfirm={() => toggleMemberStatus(record)}
+                          >
+                            <Button type="link" danger={record.status === 'active'}>
+                              {record.status === 'active' ? '删除' : '恢复'}
+                            </Button>
+                          </Popconfirm>
                         </Space>
                       ),
                     },

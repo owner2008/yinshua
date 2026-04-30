@@ -7,6 +7,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  Popconfirm,
   Select,
   Space,
   Table,
@@ -107,9 +108,10 @@ export function ContentManagementPage() {
   const [savingBanner, setSavingBanner] = useState(false);
   const [savingShowcase, setSavingShowcase] = useState(false);
   const [bannerKeyword, setBannerKeyword] = useState('');
-  const [bannerStatus, setBannerStatus] = useState<string>();
+  const [bannerStatus, setBannerStatus] = useState<string>('active');
   const [showcaseKeyword, setShowcaseKeyword] = useState('');
   const [showcaseCategory, setShowcaseCategory] = useState<string>();
+  const [showcaseStatus, setShowcaseStatus] = useState<string>('active');
 
   useEffect(() => {
     void refreshSummary();
@@ -242,6 +244,13 @@ export function ContentManagementPage() {
     }
   }
 
+  async function toggleBannerStatus(record: HomepageBanner) {
+    const nextStatus = record.status === 'active' ? 'inactive' : 'active';
+    await put(`/admin/homepage-banners/${record.id}`, { status: nextStatus });
+    message.success(`Banner 已${nextStatus === 'active' ? '恢复' : '删除'}。`);
+    await reloadBanners();
+  }
+
   function openCreateShowcase() {
     setEditingShowcase(null);
     showcaseForm.resetFields();
@@ -301,6 +310,13 @@ export function ContentManagementPage() {
     }
   }
 
+  async function toggleShowcaseStatus(record: CategoryEquipmentShowcase) {
+    const nextStatus = record.status === 'active' ? 'inactive' : 'active';
+    await put(`/admin/category-equipment-showcases/${record.id}`, { status: nextStatus });
+    message.success(`设备展示已${nextStatus === 'active' ? '恢复' : '删除'}。`);
+    await reloadShowcases();
+  }
+
   const categoryOptions = useMemo(
     () =>
       categories.map((item) => ({
@@ -331,9 +347,10 @@ export function ContentManagementPage() {
         (item.title ?? '').toLowerCase().includes(keyword) ||
         (item.description ?? '').toLowerCase().includes(keyword);
       const matchCategory = showcaseCategory ? String(item.categoryId) === showcaseCategory : true;
-      return matchKeyword && matchCategory;
+      const matchStatus = showcaseStatus ? item.status === showcaseStatus : true;
+      return matchKeyword && matchCategory && matchStatus;
     });
-  }, [showcaseKeyword, showcaseCategory, showcases]);
+  }, [showcaseKeyword, showcaseCategory, showcaseStatus, showcases]);
 
   const currentBannerLinkType = Form.useWatch('linkType', bannerForm);
 
@@ -560,11 +577,22 @@ export function ContentManagementPage() {
                       canWrite
                         ? {
                             title: '操作',
-                            width: 120,
+                            width: 160,
                             render: (_: unknown, record: HomepageBanner) => (
-                              <Button type="link" onClick={() => openEditBanner(record)}>
-                                编辑
-                              </Button>
+                              <Space>
+                                <Button type="link" onClick={() => openEditBanner(record)}>
+                                  编辑
+                                </Button>
+                                <Popconfirm
+                                  title={record.status === 'active' ? '确定删除该 Banner？' : '确定恢复该 Banner？'}
+                                  description={record.status === 'active' ? '删除后默认列表不再显示，可通过状态筛选找回。' : undefined}
+                                  onConfirm={() => toggleBannerStatus(record)}
+                                >
+                                  <Button type="link" danger={record.status === 'active'}>
+                                    {record.status === 'active' ? '删除' : '恢复'}
+                                  </Button>
+                                </Popconfirm>
+                              </Space>
                             ),
                           }
                         : {},
@@ -608,6 +636,17 @@ export function ContentManagementPage() {
                     value={showcaseCategory}
                     onChange={(value) => setShowcaseCategory(value)}
                     options={categoryOptions}
+                  />
+                  <Select
+                    allowClear
+                    placeholder="状态"
+                    style={{ width: 140 }}
+                    value={showcaseStatus}
+                    onChange={(value) => setShowcaseStatus(value)}
+                    options={[
+                      { value: 'active', label: '启用' },
+                      { value: 'inactive', label: '停用' },
+                    ]}
                   />
                 </div>
 
@@ -657,11 +696,22 @@ export function ContentManagementPage() {
                     canWrite
                       ? {
                           title: '操作',
-                          width: 120,
+                          width: 160,
                           render: (_: unknown, record: CategoryEquipmentShowcase) => (
-                            <Button type="link" onClick={() => openEditShowcase(record)}>
-                              编辑
-                            </Button>
+                            <Space>
+                              <Button type="link" onClick={() => openEditShowcase(record)}>
+                                编辑
+                              </Button>
+                              <Popconfirm
+                                title={record.status === 'active' ? '确定删除该设备展示？' : '确定恢复该设备展示？'}
+                                description={record.status === 'active' ? '删除后默认列表不再显示，可通过状态筛选找回。' : undefined}
+                                onConfirm={() => toggleShowcaseStatus(record)}
+                              >
+                                <Button type="link" danger={record.status === 'active'}>
+                                  {record.status === 'active' ? '删除' : '恢复'}
+                                </Button>
+                              </Popconfirm>
+                            </Space>
                           ),
                         }
                       : {},

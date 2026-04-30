@@ -1,4 +1,4 @@
-import { Alert, App, Button, Form, Input, Modal, Select, Space, Table, Tabs, Tag } from 'antd';
+import { Alert, App, Button, Form, Input, Modal, Popconfirm, Select, Space, Table, Tabs, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { post, put } from '../api';
 import { AdminPermission, AdminRole, AdminUser } from '../types';
@@ -23,6 +23,8 @@ export function AdminAccessPage() {
   const permissions = useRemoteList<AdminPermission>('/admin/admin-permissions');
   const [userModal, setUserModal] = useState<AdminUser | 'new' | null>(null);
   const [roleModal, setRoleModal] = useState<AdminRole | 'new' | null>(null);
+  const [userStatus, setUserStatus] = useState<string>('active');
+  const [roleStatus, setRoleStatus] = useState<string>('active');
   const [userForm] = Form.useForm();
   const [roleForm] = Form.useForm();
 
@@ -37,6 +39,14 @@ export function AdminAccessPage() {
         value: Number(permission.id),
       })),
     [permissions.data],
+  );
+  const filteredUsers = useMemo(
+    () => users.data.filter((user) => (userStatus ? user.status === userStatus : true)),
+    [userStatus, users.data],
+  );
+  const filteredRoles = useMemo(
+    () => roles.data.filter((role) => (roleStatus ? role.status === roleStatus : true)),
+    [roleStatus, roles.data],
   );
 
   function openUser(record: AdminUser | 'new') {
@@ -93,6 +103,21 @@ export function AdminAccessPage() {
     await users.reload();
   }
 
+  async function toggleUserStatus(record: AdminUser) {
+    const nextStatus = record.status === 'active' ? 'disabled' : 'active';
+    await put(`/admin/admin-users/${record.id}`, { status: nextStatus });
+    message.success(`管理员已${nextStatus === 'active' ? '恢复' : '删除'}`);
+    await users.reload();
+  }
+
+  async function toggleRoleStatus(record: AdminRole) {
+    const nextStatus = record.status === 'active' ? 'disabled' : 'active';
+    await put(`/admin/admin-roles/${record.id}`, { status: nextStatus });
+    message.success(`角色已${nextStatus === 'active' ? '恢复' : '删除'}`);
+    await roles.reload();
+    await users.reload();
+  }
+
   return (
     <div className="page-card">
       <PageHeader
@@ -119,11 +144,19 @@ export function AdminAccessPage() {
               <>
                 <div className="filter-bar">
                   <Button type="primary" onClick={() => openUser('new')}>新增管理员</Button>
+                  <Select
+                    allowClear
+                    placeholder="状态"
+                    value={userStatus}
+                    onChange={setUserStatus}
+                    style={{ width: 140 }}
+                    options={statusOptions}
+                  />
                 </div>
                 <Table
                   rowKey="id"
                   loading={users.loading}
-                  dataSource={users.data}
+                  dataSource={filteredUsers}
                   columns={[
                     { title: '账号', dataIndex: 'username', width: 160 },
                     { title: '名称', dataIndex: 'displayName', width: 160 },
@@ -137,7 +170,22 @@ export function AdminAccessPage() {
                       ),
                     },
                     { title: '最后登录', dataIndex: 'lastLoginAt', width: 200 },
-                    { title: '操作', width: 100, render: (_, record) => <Button type="link" onClick={() => openUser(record)}>编辑</Button> },
+                    {
+                      title: '操作',
+                      width: 160,
+                      render: (_, record) => (
+                        <Space>
+                          <Button type="link" onClick={() => openUser(record)}>编辑</Button>
+                          <Popconfirm
+                            title={record.status === 'active' ? '确定删除该管理员？' : '确定恢复该管理员？'}
+                            description={record.status === 'active' ? '删除后默认列表不再显示，可通过状态筛选找回。' : undefined}
+                            onConfirm={() => toggleUserStatus(record)}
+                          >
+                            <Button type="link" danger={record.status === 'active'}>{record.status === 'active' ? '删除' : '恢复'}</Button>
+                          </Popconfirm>
+                        </Space>
+                      ),
+                    },
                   ]}
                   scroll={{ x: 900 }}
                 />
@@ -151,11 +199,19 @@ export function AdminAccessPage() {
               <>
                 <div className="filter-bar">
                   <Button type="primary" onClick={() => openRole('new')}>新增角色</Button>
+                  <Select
+                    allowClear
+                    placeholder="状态"
+                    value={roleStatus}
+                    onChange={setRoleStatus}
+                    style={{ width: 140 }}
+                    options={statusOptions}
+                  />
                 </div>
                 <Table
                   rowKey="id"
                   loading={roles.loading}
-                  dataSource={roles.data}
+                  dataSource={filteredRoles}
                   columns={[
                     { title: '角色名', dataIndex: 'name', width: 180 },
                     { title: '编码', dataIndex: 'code', width: 180 },
@@ -168,7 +224,22 @@ export function AdminAccessPage() {
                         </Space>
                       ),
                     },
-                    { title: '操作', width: 100, render: (_, record) => <Button type="link" onClick={() => openRole(record)}>编辑</Button> },
+                    {
+                      title: '操作',
+                      width: 160,
+                      render: (_, record) => (
+                        <Space>
+                          <Button type="link" onClick={() => openRole(record)}>编辑</Button>
+                          <Popconfirm
+                            title={record.status === 'active' ? '确定删除该角色？' : '确定恢复该角色？'}
+                            description={record.status === 'active' ? '删除后默认列表不再显示，可通过状态筛选找回。' : undefined}
+                            onConfirm={() => toggleRoleStatus(record)}
+                          >
+                            <Button type="link" danger={record.status === 'active'}>{record.status === 'active' ? '删除' : '恢复'}</Button>
+                          </Popconfirm>
+                        </Space>
+                      ),
+                    },
                   ]}
                   scroll={{ x: 1000 }}
                 />

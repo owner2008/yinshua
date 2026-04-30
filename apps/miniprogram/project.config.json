@@ -1,0 +1,16 @@
+{
+  "appid": "请替换为真实 WECHAT_APPID",
+  "projectname": "yinshua-miniprogram",
+  "compileType": "miniprogram",
+  "libVersion": "latest",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true
+  },
+  "condition": {},
+  "miniprogramRoot": "./"
+}

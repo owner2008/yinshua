@@ -97,6 +97,71 @@ body {
   gap: 0 16px;
 }
 
+.quote-formula-guide {
+  margin: 8px 0 16px;
+  padding: 14px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #f8fbff;
+}
+
+.quote-rule-help {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: #4b5563;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.quote-formula-title {
+  margin-bottom: 10px;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+.quote-formula-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.quote-formula-list li {
+  padding-left: 4px;
+}
+
+.quote-formula-list span {
+  display: inline-block;
+  min-width: 72px;
+  margin-right: 8px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.quote-formula-list code {
+  white-space: normal;
+  color: #1d4ed8;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.quote-formula-note {
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.quote-preview-result {
+  margin-top: 16px;
+}
+
+.quote-preview-table {
+  margin-top: 12px;
+}
+
 .inline-alert {
   margin-bottom: 16px;
 }

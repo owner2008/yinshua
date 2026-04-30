@@ -44,6 +44,7 @@ export interface ProcessPriceConfig {
 
 export interface RuleConfig {
   ruleSetId: number;
+  ruleId?: number;
   versionNo: string;
   lossRate: number;
   profitRate: number;

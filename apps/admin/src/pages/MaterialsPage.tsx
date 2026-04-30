@@ -50,7 +50,7 @@ function MaterialList() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Material | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<string>('active');
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:pricing');
 
@@ -94,7 +94,13 @@ function MaterialList() {
 
   async function disable(record: Material) {
     await put(`/admin/materials/${record.id}`, { status: 'inactive' });
-    message.success('材料已停用');
+    message.success('材料已删除');
+    await reload();
+  }
+
+  async function restore(record: Material) {
+    await put(`/admin/materials/${record.id}`, { status: 'active' });
+    message.success('材料已恢复');
     await reload();
   }
 
@@ -139,9 +145,15 @@ function MaterialList() {
           render: (_, record) => (
             <Space>
               <Button type="link" onClick={() => openEdit(record)}>编辑</Button>
-              <Popconfirm title="确定停用该材料？" onConfirm={() => disable(record)} disabled={record.status !== 'active'}>
-                <Button type="link" danger disabled={record.status !== 'active'}>停用</Button>
-              </Popconfirm>
+              {record.status === 'active' ? (
+                <Popconfirm title="确定删除该材料？" description="删除后默认列表不再显示，可通过状态筛选找回。" onConfirm={() => disable(record)}>
+                  <Button type="link" danger>删除</Button>
+                </Popconfirm>
+              ) : (
+                <Popconfirm title="确定恢复该材料？" onConfirm={() => restore(record)}>
+                  <Button type="link">恢复</Button>
+                </Popconfirm>
+              )}
             </Space>
           ),
         } : {},

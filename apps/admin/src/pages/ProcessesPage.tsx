@@ -43,7 +43,7 @@ function ProcessList() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Process | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<string>('active');
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:pricing');
 
@@ -87,7 +87,13 @@ function ProcessList() {
 
   async function disable(record: Process) {
     await put(`/admin/processes/${record.id}`, { status: 'inactive' });
-    message.success('工艺已停用');
+    message.success('工艺已删除');
+    await reload();
+  }
+
+  async function restore(record: Process) {
+    await put(`/admin/processes/${record.id}`, { status: 'active' });
+    message.success('工艺已恢复');
     await reload();
   }
 
@@ -130,9 +136,15 @@ function ProcessList() {
           render: (_, record) => (
             <Space>
               <Button type="link" onClick={() => openEdit(record)}>编辑</Button>
-              <Popconfirm title="确定停用该工艺？" onConfirm={() => disable(record)} disabled={record.status !== 'active'}>
-                <Button type="link" danger disabled={record.status !== 'active'}>停用</Button>
-              </Popconfirm>
+              {record.status === 'active' ? (
+                <Popconfirm title="确定删除该工艺？" description="删除后默认列表不再显示，可通过状态筛选找回。" onConfirm={() => disable(record)}>
+                  <Button type="link" danger>删除</Button>
+                </Popconfirm>
+              ) : (
+                <Popconfirm title="确定恢复该工艺？" onConfirm={() => restore(record)}>
+                  <Button type="link">恢复</Button>
+                </Popconfirm>
+              )}
             </Space>
           ),
         } : {},

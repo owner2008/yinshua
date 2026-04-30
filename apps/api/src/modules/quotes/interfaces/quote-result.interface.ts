@@ -1,5 +1,7 @@
 export interface QuoteResult {
   quoteNo: string;
+  status?: string;
+  followRemark?: string;
   productId: number;
   productTemplateId: number;
   dimensions: {

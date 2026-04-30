@@ -25,6 +25,7 @@ export interface ProductCategory {
 export interface ProductTemplate {
   id: string;
   productId: string;
+  product?: Product;
   templateName: string;
   widthMin: string;
   widthMax: string;
@@ -40,6 +41,7 @@ export interface ProductTemplate {
   allowUv?: boolean;
   allowDieCut?: boolean;
   allowProofing?: boolean;
+  status?: string;
   options?: ProductTemplateOption[];
 }
 
@@ -127,16 +129,82 @@ export interface QuoteRule {
 
 export interface Quote {
   quoteNo: string;
+  followRemark?: string;
   productId: number;
   productTemplateId: number;
   quantity: number;
   status?: string;
   createdAt?: string;
   snapshot?: Record<string, unknown>;
+  material?: {
+    materialId: number;
+    materialName: string;
+    unitPrice: number;
+    lossRate: number;
+    cost: number;
+  };
+  print?: {
+    printMode: string;
+    unitPrice: number;
+    setupFee: number;
+    cost: number;
+  };
+  processes?: Array<{
+    code: string;
+    name: string;
+    feeMode: string;
+    unitPrice: number;
+    setupFee: number;
+    cost: number;
+  }>;
+  extraFees?: Array<{
+    code: string;
+    name: string;
+    amount: number;
+  }>;
   summary: {
     finalPrice: number;
     unitPrice: number;
     baseCost: number;
+    salePrice?: number;
+    minPriceApplied?: boolean;
+  };
+}
+
+export interface QuotePreviewResult {
+  matchedRule: {
+    ruleSetId: number;
+    ruleId?: number;
+    versionNo: string;
+    config: Record<string, unknown>;
+  };
+  result: Quote & {
+    dimensions: {
+      widthMm: number;
+      heightMm: number;
+      areaM2: number;
+    };
+    material: {
+      materialId: number;
+      materialName: string;
+      unitPrice: number;
+      lossRate: number;
+      cost: number;
+    };
+    print: {
+      printMode: string;
+      unitPrice: number;
+      setupFee: number;
+      cost: number;
+    };
+    processes: Array<{
+      code: string;
+      name: string;
+      feeMode: string;
+      unitPrice: number;
+      setupFee: number;
+      cost: number;
+    }>;
   };
 }
 

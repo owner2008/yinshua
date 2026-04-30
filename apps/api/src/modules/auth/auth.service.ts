@@ -130,8 +130,11 @@ function verifyPassword(password: string, storedHash: string): boolean {
 async function resolveWxIdentity(code: string): Promise<{ openid: string; unionid?: string }> {
   const appid = process.env.WECHAT_APPID;
   const secret = process.env.WECHAT_APP_SECRET;
-  if (!appid || !secret || code.startsWith('mock_')) {
+  if (code.startsWith('mock_')) {
     return { openid: `mock_${code.replace(/^mock_/, '')}` };
+  }
+  if (!appid || !secret) {
+    throw new UnauthorizedException('未配置微信小程序 AppID 或 AppSecret，无法使用真实微信登录');
   }
 
   const params = new URLSearchParams({

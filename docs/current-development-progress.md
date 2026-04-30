@@ -508,6 +508,161 @@ pnpm --dir apps/client build
 - 进入小程序真机联调阶段，验证报价、保存、历史查看在真实微信环境下的链路。
 - 或继续补后台报价详情里的费用说明，让运营查看客户报价时也能快速理解费用来源。
 
+## 本次新增进展：后台报价详情费用说明
+
+完成时间：2026-04-29
+
+已完成：
+- 后台报价单详情弹窗新增“费用说明”区块。
+- 后台报价详情可展示白墨、可变数据、防护处理、分卷、单张裁切、折叠整理等行业附加费的金额与解释。
+- 新增后台 `quoteFeeNotes.ts`，将费用说明文案从页面中抽离，便于后续复用到导出或打印报价单。
+- 后台 `Quote` 类型补充 `extraFees` 字段，和后端报价结果保持一致。
+
+验证命令：
+- `corepack pnpm --dir apps/admin build`
+
+下一步建议：
+- 进入小程序真机联调阶段，验证报价、保存、历史查看在真实微信环境下的链路。
+- 或为后台报价单增加状态流转、跟进备注和筛选，增强运营处理报价的能力。
+
+## 本次新增进展：后台列表软删除入口
+
+完成时间：2026-04-29
+
+已完成：
+- 后台主要运营列表新增“删除 / 恢复”操作，删除采用软删除方式，不破坏历史报价、库存流水和审计数据。
+- 产品分类、产品、报价模板、材料、工艺、报价规则集、报价规则、Banner、分类设备展示、仓库、会员、管理员、角色列表默认只展示启用数据。
+- 被删除的数据会切换为停用 / 禁用状态，可通过状态筛选找回并恢复。
+- 报价模板补充 `status` 编辑与更新能力，便于在后台隐藏不再使用的模板。
+- 价格历史、库存流水、报价单和操作日志仍保持不可删除，保证业务追溯链路完整。
+
+验证命令：
+- `corepack pnpm --dir apps/api typecheck`
+- `corepack pnpm --dir apps/api test`
+- `corepack pnpm --dir apps/admin build`
+
+下一步建议：
+- 在页面级 smoke 测试中覆盖删除、筛选停用、恢复三段流程。
+- 后续如确实需要物理删除，可按单个模块增加“仅允许未被引用数据删除”的后端校验。
+
+## 本次新增进展：后台报价单运营跟进
+
+完成时间：2026-04-29
+
+已完成：
+- 后台报价单列表新增跟进状态筛选、状态列和最新跟进备注列。
+- 报价单支持在列表中点击“跟进”，维护状态：草稿、待跟进、已联系、已成交、已作废。
+- 跟进备注保存到报价单 `processOptionsJson.followRemark`，不改变原报价快照。
+- 后端新增 `PUT /api/admin/quotes/:quoteNo/status`，用于更新报价单状态和最新跟进备注。
+- 报价单详情同步展示跟进状态和跟进备注。
+- 每次后台跟进会写入操作日志，便于后续追溯运营处理动作。
+- 新增 `QuoteService` 单元测试，覆盖状态更新、备注保留和快照不变。
+
+验证命令：
+- `corepack pnpm --dir apps/api test -- src/modules/quotes/services/quote.service.test.ts`
+- `corepack pnpm --dir apps/api typecheck`
+- `corepack pnpm --dir apps/api test`
+- `corepack pnpm --dir apps/admin build`
+
+下一步建议：
+- 在操作日志页增加“报价跟进”快捷筛选，方便查看某张报价单的全部跟进记录。
+- 后续可增加报价单详情里的跟进记录时间线，而不只是展示最新备注。
+
+## 本次新增进展：报价规则编辑公式说明
+
+完成时间：2026-04-29
+
+已完成：
+- 后台“报价规则”编辑弹窗新增只读的“报价计算公式”说明。
+- 公式说明按计算顺序展示：面积、材料费、印刷费、工艺费、附加费、基础成本、销售价、最终报价、单价。
+- 补充说明这些配置只影响新报价，历史报价仍以快照为准。
+- 该改动只增强运营理解，不改变后端实际报价计算逻辑。
+
+验证命令：
+- `corepack pnpm --dir apps/admin build`
+
+下一步建议：
+- 后续可在报价结果或规则编辑中增加试算入口，用一组参数即时预览当前规则会算出什么价格。
+
+## 本次新增进展：报价规则 JSON 配置表单化
+
+完成时间：2026-04-29
+
+已完成：
+- 后台“报价规则”编辑弹窗将原“条件配置 JSON”改为通俗表单：最小/最大数量、最小/最大宽度、最小/最大高度、适用客户类型。
+- 规则列表的“条件”和“配置”列改为中文摘要，不再直接展示整段 JSON。
+- 保留“高级匹配条件 JSON”，用于后续扩展暂未表单化的匹配条件。
+- 原“其他配置 JSON”改名为“高级扩展配置 JSON”，并补充说明：上方结构化字段会覆盖同名配置。
+- 后端实际识别逻辑不变，保存时仍会组装成原有 `conditionJson` / `configJson` 数据结构。
+
+验证命令：
+- `corepack pnpm --dir apps/admin build`
+
+下一步建议：
+- 后续可把规则命中预览做成“试算”功能，输入尺寸、数量和客户类型后提示会命中哪条规则。
+
+## 本次新增进展：报价规则试算 / 命中预览
+
+完成时间：2026-04-29
+
+已完成：
+- 后端新增后台试算接口 `POST /api/admin/quotes/preview`，复用真实报价匹配、校验和计算链路，但不创建报价单、不保存快照。
+- 试算结果返回 `matchedRule`，包含命中的规则集编号、规则编号、版本号和完整规则配置，方便运营判断规则是否命中正确。
+- 数据库规则匹配结果补充 `ruleId`，内存兜底规则也会返回基础规则编号。
+- 后台“报价规则”页新增“规则试算”按钮，可输入产品、模板、尺寸、数量、材料、印刷方式、工艺、客户类型、打样和加急参数。
+- 试算输入已从手填编号/编码升级为产品、报价模板、材料、工艺下拉选择，模板会随产品联动筛选。
+- 工艺计费方式从 `feeMode` 枚举改为运营可读文案，例如固定费用、按面积计费、开机费 + 按数量计费。
+- 试算弹窗展示命中规则、关键系数、基础成本、销售价、最终报价、单价、工艺费和附加费拆分。
+- 新增 `QuoteService.preview` 单元测试，覆盖预览不持久化、返回命中规则元信息和报价结果。
+
+验证命令：
+- `corepack pnpm --dir apps/api test -- src/modules/quotes/services/quote.service.test.ts`
+- `corepack pnpm --dir apps/api typecheck`
+- `corepack pnpm --dir apps/api test`
+- `corepack pnpm --dir apps/admin build`
+
+下一步建议：
+- 继续把报价单详情里的产品、模板、材料也转换为名称展示，减少后台列表里的编号阅读成本。
+
+## 本次新增进展：后台报价单名称化展示
+
+完成时间：2026-04-29
+
+已完成：
+- 后台“报价单”列表将产品编号、模板编号改为产品名称/编码和报价模板名称展示。
+- 报价单搜索支持按产品名称、产品编码和模板名称匹配，减少运营查单时记编号的成本。
+- 报价单详情新增材料、印刷方式、形状、工艺的中文展示。
+- 报价金额统一格式化为人民币金额，跟进、询价需求和费用说明功能保持不变。
+
+验证命令：
+- `corepack pnpm --dir apps/admin build`
+
+下一步建议：
+- 进入小程序真机联调阶段，验证真实微信登录、报价保存、历史报价查看链路。
+
+## 本次新增进展：小程序真机联调准备
+
+完成时间：2026-04-29
+
+已完成：
+- 后端微信登录收紧真实 code 校验：只有显式 `mock_` code 允许走开发 mock；真实 `wx.login` code 在缺少 `WECHAT_APPID` / `WECHAT_APP_SECRET` 时会直接失败。
+- `apps/api/.env.example` 补充 `WECHAT_APPID`、`WECHAT_APP_SECRET`、`MEMBER_AUTH_SECRET`、`ADMIN_AUTH_SECRET` 示例项。
+- 新增后端单元测试，覆盖真实微信 code 缺少密钥必须拒绝，以及本地 `mock_` code 仍可用于开发。
+- 新增小程序 `project.config.json`，用于微信开发者工具导入项目并替换真实 AppID。
+- 新增 `apps/miniprogram/config.real-device.example.js`，用于真机联调时切换到 HTTPS API 域名。
+- 新增 `docs/miniprogram-real-device-checklist.md`，整理真实 AppID/AppSecret、request 合法域名、微信登录、报价保存、历史报价查看的联调步骤和常见错误。
+
+验证命令：
+- `corepack pnpm --dir apps/api typecheck`
+- `corepack pnpm --dir apps/api test`
+- `node --check apps/miniprogram/utils/api.js`
+- `node --check apps/miniprogram/pages/quote/index.js`
+- `node --check apps/miniprogram/pages/history/index.js`
+- `node --check apps/miniprogram/config.real-device.example.js`
+
+下一步建议：
+- 等拿到真实 `WECHAT_APPID`、`WECHAT_APP_SECRET` 和 HTTPS API 域名后，按 `docs/miniprogram-real-device-checklist.md` 在微信开发者工具和真机上逐项验收。
+
 ## 常用启动命令
 
 ```powershell

@@ -403,6 +403,7 @@ export class QuoteConfigRepository {
 
     return {
       ruleSetId: Number(ruleSet.id),
+      ruleId: Number(matchedRule.id),
       versionNo: ruleSet.versionNo,
       lossRate: jsonNumber(config.lossRate, 1.08),
       profitRate: jsonNumber(config.profitRate, 1.35),
@@ -461,6 +462,7 @@ export class QuoteConfigRepository {
       processes,
       rule: {
         ruleSetId: dto.customerType === 'company' ? 2 : 1,
+        ruleId: dto.customerType === 'company' ? 2 : 1,
         versionNo: dto.customerType === 'company' ? 'RULE-COMPANY-V1' : 'RULE-RETAIL-V1',
         lossRate: 1.08,
         profitRate: 1.35,

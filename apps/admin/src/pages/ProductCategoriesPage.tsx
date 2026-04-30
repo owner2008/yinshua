@@ -1,4 +1,4 @@
-import { App, Button, Form, Input, InputNumber, Modal, Select, Space, Table, Tag } from 'antd';
+import { App, Button, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Table, Tag } from 'antd';
 import { useMemo, useState } from 'react';
 import { hasAdminPermission, post, put } from '../api';
 import { ProductCategory } from '../types';
@@ -11,7 +11,7 @@ export function ProductCategoriesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<ProductCategory | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<string>('active');
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:product');
 
@@ -54,7 +54,7 @@ export function ProductCategoriesPage() {
   async function toggleStatus(record: ProductCategory) {
     const next = record.status === 'active' ? 'inactive' : 'active';
     await put(`/admin/product-categories/${record.id}`, { status: next });
-    message.success(`分类已${next === 'active' ? '启用' : '停用'}`);
+    message.success(`分类已${next === 'active' ? '恢复' : '删除'}`);
     await reload();
   }
 
@@ -120,9 +120,15 @@ export function ProductCategoriesPage() {
                     <Button type="link" onClick={() => openEdit(record)}>
                       编辑
                     </Button>
-                    <Button type="link" onClick={() => toggleStatus(record)}>
-                      {record.status === 'active' ? '停用' : '启用'}
-                    </Button>
+                    <Popconfirm
+                      title={record.status === 'active' ? '确定删除该分类？' : '确定恢复该分类？'}
+                      description={record.status === 'active' ? '删除后默认列表不再显示，可通过状态筛选找回。' : undefined}
+                      onConfirm={() => toggleStatus(record)}
+                    >
+                      <Button type="link" danger={record.status === 'active'}>
+                        {record.status === 'active' ? '删除' : '恢复'}
+                      </Button>
+                    </Popconfirm>
                   </Space>
                 ),
               }

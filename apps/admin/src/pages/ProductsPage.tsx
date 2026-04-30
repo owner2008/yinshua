@@ -25,7 +25,7 @@ function ProductList() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<string>('active');
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:product');
 
@@ -78,7 +78,13 @@ function ProductList() {
 
   async function disable(record: Product) {
     await put(`/admin/products/${record.id}`, { status: 'inactive' });
-    message.success('产品已停用');
+    message.success('产品已删除');
+    await reload();
+  }
+
+  async function restore(record: Product) {
+    await put(`/admin/products/${record.id}`, { status: 'active' });
+    message.success('产品已恢复');
     await reload();
   }
 
@@ -148,9 +154,15 @@ function ProductList() {
             render: (_, record) => (
               <Space>
                 <Button type="link" onClick={() => openEdit(record)}>编辑</Button>
-                <Popconfirm title="确定停用该产品？" onConfirm={() => disable(record)} disabled={record.status !== 'active'}>
-                  <Button type="link" danger disabled={record.status !== 'active'}>停用</Button>
+              {record.status === 'active' ? (
+                <Popconfirm title="确定删除该产品？" description="删除后默认列表不再显示，可通过状态筛选找回。" onConfirm={() => disable(record)}>
+                  <Button type="link" danger>删除</Button>
                 </Popconfirm>
+              ) : (
+                <Popconfirm title="确定恢复该产品？" onConfirm={() => restore(record)}>
+                  <Button type="link">恢复</Button>
+                </Popconfirm>
+              )}
               </Space>
             ),
           } : {},
@@ -209,17 +221,22 @@ function TemplateList() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<ProductTemplate | null>(null);
   const [keyword, setKeyword] = useState('');
+  const [status, setStatus] = useState<string>('active');
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:product');
 
   const filteredData = useMemo(() => {
-    return data.filter((item) => [item.templateName, item.productId].some((value) => String(value).includes(keyword.trim())));
-  }, [data, keyword]);
+    return data.filter((item) => {
+      const matchedKeyword = [item.templateName, item.productId].some((value) => String(value).includes(keyword.trim()));
+      const matchedStatus = status ? (item.status ?? 'active') === status : true;
+      return matchedKeyword && matchedStatus;
+    });
+  }, [data, keyword, status]);
 
   function openCreate() {
     setEditing(null);
     form.resetFields();
-    form.setFieldsValue({ productId: 1, minPrice: 300, defaultLossRate: 1.08 });
+    form.setFieldsValue({ productId: 1, minPrice: 300, defaultLossRate: 1.08, status: 'active' });
     setOpen(true);
   }
 
@@ -257,6 +274,18 @@ function TemplateList() {
     await reload();
   }
 
+  async function disable(record: ProductTemplate) {
+    await put(`/admin/product-templates/${record.id}`, { status: 'inactive' });
+    message.success('报价模板已删除');
+    await reload();
+  }
+
+  async function restore(record: ProductTemplate) {
+    await put(`/admin/product-templates/${record.id}`, { status: 'active' });
+    message.success('报价模板已恢复');
+    await reload();
+  }
+
   return (
     <>
       <PageHeader
@@ -273,6 +302,17 @@ function TemplateList() {
           onChange={(event) => setKeyword(event.target.value)}
           style={{ width: 280 }}
         />
+        <Select
+          allowClear
+          placeholder="状态"
+          value={status}
+          onChange={setStatus}
+          style={{ width: 140 }}
+          options={[
+            { label: '启用', value: 'active' },
+            { label: '停用', value: 'inactive' },
+          ]}
+        />
       </div>
       <Table
         rowKey="id"
@@ -285,10 +325,29 @@ function TemplateList() {
           { title: '尺寸范围', render: (_, r) => `${r.widthMin}-${r.widthMax} × ${r.heightMin}-${r.heightMax}` },
           { title: '数量范围', render: (_, r) => `${r.quantityMin}-${r.quantityMax}` },
           { title: '最低收费', dataIndex: 'minPrice', width: 120 },
+          {
+            title: '状态',
+            dataIndex: 'status',
+            width: 100,
+            render: (value: string) => <Tag color={(value ?? 'active') === 'active' ? 'green' : 'default'}>{(value ?? 'active') === 'active' ? '启用' : '停用'}</Tag>,
+          },
           canWrite ? {
             title: '操作',
-            width: 100,
-            render: (_, record) => <Button type="link" onClick={() => openEdit(record)}>编辑</Button>,
+            width: 160,
+            render: (_, record) => (
+              <Space>
+                <Button type="link" onClick={() => openEdit(record)}>编辑</Button>
+                {(record.status ?? 'active') === 'active' ? (
+                  <Popconfirm title="确定删除该报价模板？" description="删除后默认列表不再显示，可通过状态筛选找回。" onConfirm={() => disable(record)}>
+                    <Button type="link" danger>删除</Button>
+                  </Popconfirm>
+                ) : (
+                  <Popconfirm title="确定恢复该报价模板？" onConfirm={() => restore(record)}>
+                    <Button type="link">恢复</Button>
+                  </Popconfirm>
+                )}
+              </Space>
+            ),
           } : {},
         ]}
       />
@@ -324,6 +383,14 @@ function TemplateList() {
             <Form.Item name="allowLamination" label="允许覆膜" valuePropName="checked"><Switch /></Form.Item>
             <Form.Item name="allowDieCut" label="允许模切" valuePropName="checked"><Switch /></Form.Item>
           </Space>
+          <Form.Item name="status" label="状态">
+            <Select
+              options={[
+                { label: '启用', value: 'active' },
+                { label: '停用', value: 'inactive' },
+              ]}
+            />
+          </Form.Item>
         </Form>
       </Modal>
     </>

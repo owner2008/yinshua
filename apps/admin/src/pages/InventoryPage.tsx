@@ -33,7 +33,7 @@ function Warehouses() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Warehouse | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<string>('active');
   const [form] = Form.useForm();
   const canWrite = hasAdminPermission('admin:inventory');
 
@@ -77,7 +77,13 @@ function Warehouses() {
 
   async function disable(record: Warehouse) {
     await put(`/admin/warehouses/${record.id}`, { status: 'inactive' });
-    message.success('仓库已停用');
+    message.success('仓库已删除');
+    await reload();
+  }
+
+  async function restore(record: Warehouse) {
+    await put(`/admin/warehouses/${record.id}`, { status: 'active' });
+    message.success('仓库已恢复');
     await reload();
   }
 
@@ -119,9 +125,15 @@ function Warehouses() {
           render: (_, record) => (
             <Space>
               <Button type="link" onClick={() => openEdit(record)}>编辑</Button>
-              <Popconfirm title="确定停用该仓库？" onConfirm={() => disable(record)} disabled={record.status !== 'active'}>
-                <Button type="link" danger disabled={record.status !== 'active'}>停用</Button>
-              </Popconfirm>
+              {record.status === 'active' ? (
+                <Popconfirm title="确定删除该仓库？" description="删除后默认列表不再显示，可通过状态筛选找回。" onConfirm={() => disable(record)}>
+                  <Button type="link" danger>删除</Button>
+                </Popconfirm>
+              ) : (
+                <Popconfirm title="确定恢复该仓库？" onConfirm={() => restore(record)}>
+                  <Button type="link">恢复</Button>
+                </Popconfirm>
+              )}
             </Space>
           ),
         } : {},
