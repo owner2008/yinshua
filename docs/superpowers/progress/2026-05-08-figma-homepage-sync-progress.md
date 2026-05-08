@@ -35,7 +35,7 @@
 | Task | Scope | Status | Owner | Commit | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Worktree and progress tracking setup | Done | Codex | `e38e390` | Worktree created; progress doc added and committed. |
-| 1 | Extract brand content and clean fallback data | Needs Review | Codex | Pending | Brand constants and clean fallback sample data implemented; review gates pending. |
+| 1 | Extract brand content and clean fallback data | Done | Codex | `b923ba4`, `0e4a708` | Brand constants and clean fallback sample data implemented; local spec/quality review passed. |
 | 2 | Build Figma-derived design system | Not Started | Pending subagent | Pending | Shared cards, printing visuals, global CSS tokens. |
 | 3 | Replace client shell with Figma navigation/footer | Not Started | Pending subagent | Pending | `BrandShell.tsx`, `App.tsx`. |
 | 4 | Implement Figma homepage | Not Started | Pending subagent | Pending | `HomeSections.tsx`, `Home.tsx`. |
@@ -59,6 +59,8 @@
 - Task 1A TypeScript and Vite verification passed.
 - Task 1B fallback sample data rewritten in clean Chinese while preserving quote template relationships.
 - Task 1B TypeScript and Vite verification passed.
+- Task 1 local spec compliance review passed.
+- Task 1 local code quality review passed.
 
 ### Environment Notes
 
@@ -70,8 +72,8 @@
 
 ### Next Action
 
-1. Run Task 1 spec compliance review.
-2. Run Task 1 code quality review.
+1. Start Task 2: build Figma-derived design system.
+2. Keep Task 2 scoped to shared cards, printing visuals, and global CSS tokens.
 
 ## Review Log
 
@@ -80,6 +82,8 @@
 | 2026-05-08 | 0 | Self-check | Done | Progress document created and committed. |
 | 2026-05-08 | 1A | Self-check | Pass | Added Figma brand constants; `catalogContext` notices are already clean Chinese. |
 | 2026-05-08 | 1B | Self-check | Pass | Rewrote fallback categories/products/templates with clean Chinese and kept template relationships valid. |
+| 2026-05-08 | 1 | Spec compliance | Pass | Required exports exist; fallback products/templates remain compatible; catalog notices are clean Chinese. |
+| 2026-05-08 | 1 | Code quality | Pass | Changes are scoped, typed, and buildable. Terminal display may show mojibake due shell encoding, but TypeScript/Vite pass. |
 
 ## Verification Log
 
