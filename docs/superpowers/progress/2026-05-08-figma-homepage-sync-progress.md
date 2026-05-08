@@ -36,9 +36,9 @@
 | --- | --- | --- | --- | --- | --- |
 | 0 | Worktree and progress tracking setup | Done | Codex | `e38e390` | Worktree created; progress doc added and committed. |
 | 1 | Extract brand content and clean fallback data | Done | Codex | `b923ba4`, `0e4a708` | Brand constants and clean fallback sample data implemented; local spec/quality review passed. |
-| 2 | Build Figma-derived design system | Done | Codex | Pending | Shared cards, printing visuals, and `.lc-*` CSS tokens/classes added; local review passed. |
-| 3 | Replace client shell with Figma navigation/footer | Not Started | Pending subagent | Pending | `BrandShell.tsx`, `App.tsx`. |
-| 4 | Implement Figma homepage | Not Started | Pending subagent | Pending | `HomeSections.tsx`, `Home.tsx`. |
+| 2 | Build Figma-derived design system | Done | Codex | `801e099` | Shared cards, printing visuals, and `.lc-*` CSS tokens/classes added; local review passed. |
+| 3 | Replace client shell with Figma navigation/footer | Done | Codex | `c15f2dc` | `BrandShell.tsx`, `App.tsx`; TypeScript and Vite passed. |
+| 4 | Implement Figma homepage | In Progress | Codex | Pending | `HomeSections.tsx`, `Home.tsx`. |
 | 5 | Restyle client subpages | Not Started | Pending subagent | Pending | Product, quote, history, member pages. |
 | 6 | Align mini program with Figma mobile style | Not Started | Pending subagent | Pending | `apps/miniprogram` global and pages. |
 | 7 | Content completeness and data backfill | Not Started | Pending subagent | Pending | API seeds/data only if needed. |
@@ -65,6 +65,8 @@
 - Task 2 Figma-derived `.lc-*` CSS token and component classes added without deleting legacy styles.
 - Task 2 TypeScript and Vite verification passed.
 - Task 2 local spec/code quality review passed.
+- Task 3 client shell replaced with Figma-style sticky navigation and footer.
+- Task 3 TypeScript and Vite verification passed.
 
 ### Environment Notes
 
@@ -76,8 +78,7 @@
 
 ### Next Action
 
-1. Commit Task 2.
-2. Start Task 3: replace client shell with Figma navigation/footer.
+1. Start Task 4: implement Figma homepage sections.
 
 ## Review Log
 
@@ -90,6 +91,8 @@
 | 2026-05-08 | 1 | Code quality | Pass | Changes are scoped, typed, and buildable. Terminal display may show mojibake due shell encoding, but TypeScript/Vite pass. |
 | 2026-05-08 | 2 | Self-check | Pass | New design-system files are scoped to shared cards, printing visuals, and `.lc-*` CSS classes. |
 | 2026-05-08 | 2 | Spec/code quality | Pass | Buildable, scoped additions; legacy styles retained to avoid mid-migration breakage. |
+| 2026-05-08 | 3 | Self-check | Pass | Shell now uses `BrandHeader`/`BrandFooter`; old encoded header copy removed from `App.tsx`. |
+| 2026-05-08 | 3 | Spec/code quality | Pass | Navigation/footer match requested structure, preserve existing routes, and remain responsive. |
 
 ## Verification Log
 
@@ -105,3 +108,5 @@
 | 2026-05-08 | Task 1B root Node + `vite build` | Pass | Production build remains green after sample data rewrite. |
 | 2026-05-08 | Task 2 root Node + `tsc --noEmit` | Pass | Shared components type-check. |
 | 2026-05-08 | Task 2 root Node + `vite build` | Pass | Production build remains green after `.lc-*` CSS additions. |
+| 2026-05-08 | Task 3 root Node + `tsc --noEmit` | Pass | Figma shell components type-check. |
+| 2026-05-08 | Task 3 root Node + `vite build` | Pass | Production build remains green after shell replacement. |
