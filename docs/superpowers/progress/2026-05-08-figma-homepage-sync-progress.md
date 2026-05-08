@@ -35,7 +35,7 @@
 | Task | Scope | Status | Owner | Commit | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Worktree and progress tracking setup | Done | Codex | `e38e390` | Worktree created; progress doc added and committed. |
-| 1 | Extract brand content and clean fallback data | Not Started | Pending subagent | Pending | `brandContent.ts`, `sampleData.ts`, `catalogContext.tsx`. |
+| 1 | Extract brand content and clean fallback data | In Progress | Codex | Pending | Task 1A brand constants complete; sample data cleanup remains. |
 | 2 | Build Figma-derived design system | Not Started | Pending subagent | Pending | Shared cards, printing visuals, global CSS tokens. |
 | 3 | Replace client shell with Figma navigation/footer | Not Started | Pending subagent | Pending | `BrandShell.tsx`, `App.tsx`. |
 | 4 | Implement Figma homepage | Not Started | Pending subagent | Pending | `HomeSections.tsx`, `Home.tsx`. |
@@ -55,6 +55,8 @@
 - Progress tracker committed in `e38e390`.
 - Baseline client TypeScript check passed.
 - Baseline client Vite build passed.
+- Task 1A brand constants added in `apps/client/src/brandContent.ts`.
+- Task 1A TypeScript and Vite verification passed.
 
 ### Environment Notes
 
@@ -66,13 +68,15 @@
 
 ### Next Action
 
-1. Dispatch Task 1 implementer subagent with the relevant plan excerpt.
+1. Complete Task 1B: clean `apps/client/src/sampleData.ts` fallback data while preserving quote template relationships.
+2. Run Task 1 review gates after Task 1B.
 
 ## Review Log
 
 | Date | Task | Review Type | Result | Reviewer Notes |
 | --- | --- | --- | --- | --- |
 | 2026-05-08 | 0 | Self-check | Done | Progress document created and committed. |
+| 2026-05-08 | 1A | Self-check | Pass | Added Figma brand constants; `catalogContext` notices are already clean Chinese. |
 
 ## Verification Log
 
@@ -82,3 +86,5 @@
 | 2026-05-08 | `pnpm --dir apps/client build` | Fail | Worktree lacks `.tools`; package script path cannot resolve. |
 | 2026-05-08 | root Node + `tsc --noEmit` | Pass | Manual equivalent TypeScript baseline passed. |
 | 2026-05-08 | root Node + `vite build` | Pass | Manual equivalent production build passed. |
+| 2026-05-08 | Task 1A root Node + `tsc --noEmit` | Pass | Brand constants compile. |
+| 2026-05-08 | Task 1A root Node + `vite build` | Pass | Production build remains green. |
