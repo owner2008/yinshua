@@ -3214,6 +3214,44 @@ body {
   letter-spacing: 0;
 }
 
+.lc-subpage .lc-page-hero {
+  align-items: center;
+  padding: 48px 0 26px;
+}
+
+.lc-subpage .lc-page-hero h1 {
+  max-width: 720px;
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1.16;
+}
+
+.lc-subpage .lc-page-hero p:not(.lc-kicker) {
+  max-width: 680px;
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.lc-subpage .lc-section {
+  padding: clamp(42px, 5vw, 64px) 0;
+}
+
+.lc-subpage .lc-section-heading {
+  margin-bottom: 24px;
+}
+
+.lc-subpage .lc-section-heading h2 {
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.24;
+}
+
+.lc-subpage .lc-empty-state h3,
+.lc-subpage .lc-template-card h3,
+.lc-subpage .lc-history-card h3 {
+  font-size: clamp(19px, 2vw, 24px);
+  line-height: 1.28;
+}
+
 .lc-page-hero p:not(.lc-kicker) {
   max-width: 760px;
   margin: 18px 0 0;
@@ -3660,6 +3698,11 @@ body {
   margin: 0;
 }
 
+.lc-member-title h2 {
+  font-size: clamp(22px, 2.2vw, 28px);
+  line-height: 1.26;
+}
+
 .lc-member-title span {
   color: var(--lc-muted);
   font-size: 14px;
@@ -3745,6 +3788,14 @@ body {
   .lc-selected-product,
   .lc-history-card {
     grid-template-columns: 1fr;
+  }
+
+  .lc-subpage .lc-page-hero {
+    padding: 34px 0 18px;
+  }
+
+  .lc-subpage .lc-page-hero h1 {
+    font-size: clamp(28px, 8vw, 36px);
   }
 
   .lc-page-hero-extra,

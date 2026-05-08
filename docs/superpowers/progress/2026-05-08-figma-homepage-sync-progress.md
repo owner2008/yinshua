@@ -20,6 +20,7 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 8 | Final verification and handoff | Done | `5b8b510` | Final client/API verification completed |
 | 9 | Browser visual QA for retained pages | Done | Pending commit | History/member pages retained and polished after browser check |
 | 10 | Homepage visual fidelity and product imagery pass | Done | Pending commit | Reworked product imagery, quality control and trust modules |
+| 11 | Subpage typography refinement | Done | Pending commit | Reduced oversized functional page titles and section headings |
 
 ## Completed Details
 
@@ -185,6 +186,25 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
   - Network image URL checks returned HTTP 200 for the selected product/factory images.
   - Browser homepage scan confirmed 17 image nodes after the update.
   - Browser scans for `/`, `/products`, `/quote`, `/history`, `/member` found no raw `HTTP 500`, no mojibake markers and no old theme words.
+  - Browser console error check returned no errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.
+
+### Task 11 - Subpage Typography Refinement
+
+- Status: Done
+- Reason:
+  - Manual review found some subpage titles were too large for functional pages.
+  - The shared `PageHero` inherited a homepage-like title scale.
+- Changes:
+  - Scoped subpage hero title scale from `clamp(36px, 5vw, 62px)` down to `clamp(30px, 3.2vw, 46px)`.
+  - Added mobile-specific subpage title limits at `28px - 36px`.
+  - Reduced subpage section heading scale and card heading scale for product detail, quote, history and member center pages.
+  - Added a dedicated member center panel title scale.
+- Verification:
+  - Browser route scan checked `/products`, `/quote`, `/history`, `/member`.
+  - Browser scan confirmed expected headings remain visible.
+  - Browser scan found no raw `HTTP 500`, no mojibake markers and no old theme words.
   - Browser console error check returned no errors.
   - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
   - Client `vite build`: passed.
