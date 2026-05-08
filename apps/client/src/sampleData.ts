@@ -1,18 +1,16 @@
 import { Product, ProductCategory, ProductTemplate, TemplateOption } from './types';
 
 export const sampleCategories: ProductCategory[] = [
-  { id: '1', name: '铜版纸不干胶', sort: 10, status: 'active' },
-  { id: '2', name: '透明膜标签', sort: 20, status: 'active' },
-  { id: '3', name: '合成纸标签', sort: 30, status: 'active' },
-  { id: '4', name: '热敏 / 物流标签', sort: 40, status: 'active' },
-  { id: '5', name: '食品饮料标签', sort: 50, status: 'active' },
-  { id: '6', name: '日化美妆标签', sort: 60, status: 'active' },
-  { id: '7', name: '电子电器标签', sort: 70, status: 'active' },
-  { id: '8', name: '医药保健标签', sort: 80, status: 'active' },
-  { id: '9', name: '防伪 / 易碎标签', sort: 90, status: 'active' },
-  { id: '10', name: '特殊工艺标签', sort: 100, status: 'active' },
-  { id: '11', name: '包装封口标签', sort: 110, status: 'active' },
-  { id: '12', name: '可移除标签', sort: 120, status: 'active' },
+  { id: '1', name: '不干胶标签', sort: 10, status: 'active' },
+  { id: '2', name: '卷标标签', sort: 20, status: 'active' },
+  { id: '3', name: '食品饮料标签', sort: 30, status: 'active' },
+  { id: '4', name: '日化美妆标签', sort: 40, status: 'active' },
+  { id: '5', name: '医药保健标签', sort: 50, status: 'active' },
+  { id: '6', name: '工业电子标签', sort: 60, status: 'active' },
+  { id: '7', name: '防伪标签', sort: 70, status: 'active' },
+  { id: '8', name: '可变二维码 / 一物一码标签', sort: 80, status: 'active' },
+  { id: '9', name: '产品说明书', sort: 90, status: 'active' },
+  { id: '10', name: '包装盒 / 宣传册印刷', sort: 100, status: 'active' },
 ];
 
 function buildOptions(spec: {
@@ -22,26 +20,10 @@ function buildOptions(spec: {
   shapes: Array<[string, string]>;
 }): TemplateOption[] {
   return [
-    ...spec.materials.map(([optionValue, optionLabel]) => ({
-      optionType: 'material' as const,
-      optionValue,
-      optionLabel,
-    })),
-    ...spec.processes.map(([optionValue, optionLabel]) => ({
-      optionType: 'process' as const,
-      optionValue,
-      optionLabel,
-    })),
-    ...spec.printModes.map(([optionValue, optionLabel]) => ({
-      optionType: 'print_mode' as const,
-      optionValue,
-      optionLabel,
-    })),
-    ...spec.shapes.map(([optionValue, optionLabel]) => ({
-      optionType: 'shape' as const,
-      optionValue,
-      optionLabel,
-    })),
+    ...spec.materials.map(([optionValue, optionLabel]) => ({ optionType: 'material' as const, optionValue, optionLabel })),
+    ...spec.processes.map(([optionValue, optionLabel]) => ({ optionType: 'process' as const, optionValue, optionLabel })),
+    ...spec.printModes.map(([optionValue, optionLabel]) => ({ optionType: 'print_mode' as const, optionValue, optionLabel })),
+    ...spec.shapes.map(([optionValue, optionLabel]) => ({ optionType: 'shape' as const, optionValue, optionLabel })),
   ];
 }
 
@@ -89,243 +71,141 @@ function createTemplate(
 }
 
 const MATERIAL_COATED: [string, string] = ['1', '铜版纸'];
-const MATERIAL_PET: [string, string] = ['2', '透明膜'];
-const MATERIAL_THERMAL: [string, string] = ['4', '热敏纸'];
-const MATERIAL_PVC: [string, string] = ['5', '合成纸'];
-const MATERIAL_FRAGILE: [string, string] = ['6', '易碎防伪纸'];
-const MATERIAL_REMOVABLE: [string, string] = ['7', '可移除胶铜版纸'];
+const MATERIAL_SYNTHETIC: [string, string] = ['2', '合成纸'];
+const MATERIAL_PET: [string, string] = ['3', 'PET'];
+const MATERIAL_PP: [string, string] = ['4', 'PP'];
+const MATERIAL_SILVER: [string, string] = ['5', '哑银'];
+const MATERIAL_CLEAR: [string, string] = ['6', '透明膜'];
+const MATERIAL_REMOVABLE: [string, string] = ['7', '可移胶'];
+const MATERIAL_FROZEN: [string, string] = ['8', '冷藏冷冻标签材质'];
 
 const PROCESS_LAMINATION: [string, string] = ['lamination', '覆膜'];
 const PROCESS_DIE_CUT: [string, string] = ['die_cut', '模切'];
-const PROCESS_UV: [string, string] = ['uv', '局部光油'];
+const PROCESS_UV: [string, string] = ['uv', '局部 UV'];
 const PROCESS_HOT_STAMP: [string, string] = ['hot_stamp', '烫金'];
-const PROCESS_PROOFING: [string, string] = ['proofing', '打样'];
+const PROCESS_EMBOSS: [string, string] = ['emboss', '击凸'];
+const PROCESS_QR: [string, string] = ['variable_qr', '可变二维码'];
+const PROCESS_ANTI_FAKE: [string, string] = ['anti_fake', '防伪工艺'];
+const PROCESS_PROOFING: [string, string] = ['proofing', '打样确认'];
 
 const PRINT_FOUR_COLOR: [string, string] = ['four_color', '四色印刷'];
+const PRINT_SPOT_COLOR: [string, string] = ['spot_color', '专色印刷'];
+const PRINT_VARIABLE: [string, string] = ['variable_data', '可变数据印刷'];
 const PRINT_SINGLE_COLOR: [string, string] = ['single_color', '单色印刷'];
 
 const SHAPE_RECTANGLE: [string, string] = ['rectangle', '矩形'];
+const SHAPE_ROUND: [string, string] = ['round', '圆形'];
 const SHAPE_CUSTOM: [string, string] = ['custom', '异形'];
 
-const TEMPLATE_1 = createTemplate('1', '1', '透明膜标准报价模板', {
+const commonSpec = {
   widthMin: 20,
   widthMax: 500,
-  heightMin: 20,
+  heightMin: 15,
   heightMax: 500,
-  quantityMin: 100,
-  quantityMax: 100000,
-  minPrice: 300,
-  allowProofing: true,
-  allowLamination: true,
-  allowUv: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_COATED, MATERIAL_PET],
-  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_UV, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_2 = createTemplate('2', '2', '铜版纸彩色报价模板', {
-  widthMin: 30,
-  widthMax: 400,
-  heightMin: 20,
-  heightMax: 400,
-  quantityMin: 500,
-  quantityMax: 200000,
-  minPrice: 200,
-  allowProofing: true,
-  allowLamination: true,
-  allowDieCut: true,
-  materials: [MATERIAL_COATED],
-  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
-  shapes: [SHAPE_RECTANGLE],
-});
-
-const TEMPLATE_3 = createTemplate('3', '3', '烫金工艺报价模板', {
-  widthMin: 40,
-  widthMax: 300,
-  heightMin: 30,
-  heightMax: 300,
-  quantityMin: 200,
-  quantityMax: 50000,
-  minPrice: 500,
-  allowProofing: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_COATED, MATERIAL_PET],
-  processes: [PROCESS_HOT_STAMP, PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_4 = createTemplate('4', '4', '热敏物流报价模板', {
-  widthMin: 30,
-  widthMax: 200,
-  heightMin: 30,
-  heightMax: 200,
-  quantityMin: 1000,
-  quantityMax: 500000,
-  minPrice: 150,
-  allowDieCut: true,
-  materials: [MATERIAL_THERMAL],
-  processes: [PROCESS_DIE_CUT],
-  printModes: [PRINT_SINGLE_COLOR],
-  shapes: [SHAPE_RECTANGLE],
-});
-
-const TEMPLATE_5 = createTemplate('5', '5', '合成纸耐候报价模板', {
-  widthMin: 30,
-  widthMax: 450,
-  heightMin: 20,
-  heightMax: 450,
-  quantityMin: 300,
-  quantityMax: 150000,
-  minPrice: 260,
-  allowProofing: true,
-  allowLamination: true,
-  allowUv: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_PVC],
-  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_UV, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_6 = createTemplate('6', '6', '食品饮料标签报价模板', {
-  widthMin: 25,
-  widthMax: 420,
-  heightMin: 20,
-  heightMax: 420,
   quantityMin: 500,
   quantityMax: 300000,
-  minPrice: 220,
-  allowProofing: true,
-  allowLamination: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_COATED, MATERIAL_PET],
-  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_7 = createTemplate('7', '7', '日化美妆标签报价模板', {
-  widthMin: 25,
-  widthMax: 360,
-  heightMin: 20,
-  heightMax: 360,
-  quantityMin: 500,
-  quantityMax: 200000,
-  minPrice: 320,
-  allowProofing: true,
-  allowLamination: true,
-  allowUv: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_COATED, MATERIAL_PET],
-  processes: [PROCESS_LAMINATION, PROCESS_HOT_STAMP, PROCESS_UV, PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_8 = createTemplate('8', '8', '电子电器铭牌标签报价模板', {
-  widthMin: 20,
-  widthMax: 300,
-  heightMin: 15,
-  heightMax: 300,
-  quantityMin: 500,
-  quantityMax: 200000,
-  minPrice: 260,
-  allowProofing: true,
-  allowLamination: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_PET, MATERIAL_PVC],
-  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_9 = createTemplate('9', '9', '医药保健标签报价模板', {
-  widthMin: 20,
-  widthMax: 300,
-  heightMin: 15,
-  heightMax: 300,
-  quantityMin: 1000,
-  quantityMax: 500000,
   minPrice: 200,
   allowProofing: true,
   allowLamination: true,
   allowDieCut: true,
-  materials: [MATERIAL_COATED],
+  allowCustomShape: true,
+  printModes: [PRINT_FOUR_COLOR, PRINT_SPOT_COLOR],
+  shapes: [SHAPE_RECTANGLE, SHAPE_ROUND, SHAPE_CUSTOM],
+};
+
+const TEMPLATE_1 = createTemplate('1', '1', '不干胶标签标准报价模板', {
+  ...commonSpec,
+  materials: [MATERIAL_COATED, MATERIAL_PET, MATERIAL_PP, MATERIAL_REMOVABLE],
   processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
+});
+
+const TEMPLATE_2 = createTemplate('2', '2', '卷标标签批量报价模板', {
+  ...commonSpec,
+  quantityMin: 1000,
+  quantityMax: 500000,
+  materials: [MATERIAL_COATED, MATERIAL_PET, MATERIAL_CLEAR],
+  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_QR, PROCESS_PROOFING],
+});
+
+const TEMPLATE_3 = createTemplate('3', '3', '食品饮料标签报价模板', {
+  ...commonSpec,
+  materials: [MATERIAL_COATED, MATERIAL_PET, MATERIAL_PP, MATERIAL_FROZEN],
+  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
+});
+
+const TEMPLATE_4 = createTemplate('4', '4', '日化美妆标签报价模板', {
+  ...commonSpec,
+  minPrice: 320,
+  allowUv: true,
+  materials: [MATERIAL_CLEAR, MATERIAL_PET, MATERIAL_COATED],
+  processes: [PROCESS_LAMINATION, PROCESS_HOT_STAMP, PROCESS_UV, PROCESS_DIE_CUT, PROCESS_PROOFING],
+});
+
+const TEMPLATE_5 = createTemplate('5', '5', '医药保健标签报价模板', {
+  ...commonSpec,
+  quantityMin: 1000,
+  materials: [MATERIAL_COATED, MATERIAL_SYNTHETIC, MATERIAL_PET],
+  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
+  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
+});
+
+const TEMPLATE_6 = createTemplate('6', '6', '工业电子标签报价模板', {
+  ...commonSpec,
+  materials: [MATERIAL_SILVER, MATERIAL_PET, MATERIAL_SYNTHETIC],
+  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
+  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
+});
+
+const TEMPLATE_7 = createTemplate('7', '7', '防伪标签报价模板', {
+  ...commonSpec,
+  minPrice: 350,
+  materials: [MATERIAL_PET, MATERIAL_SILVER, MATERIAL_COATED],
+  processes: [PROCESS_ANTI_FAKE, PROCESS_DIE_CUT, PROCESS_QR, PROCESS_PROOFING],
+  printModes: [PRINT_FOUR_COLOR, PRINT_VARIABLE],
+});
+
+const TEMPLATE_8 = createTemplate('8', '8', '一物一码标签报价模板', {
+  ...commonSpec,
+  quantityMin: 1000,
+  materials: [MATERIAL_COATED, MATERIAL_PET, MATERIAL_CLEAR],
+  processes: [PROCESS_QR, PROCESS_DIE_CUT, PROCESS_PROOFING],
+  printModes: [PRINT_VARIABLE, PRINT_FOUR_COLOR],
+});
+
+const TEMPLATE_9 = createTemplate('9', '9', '产品说明书报价模板', {
+  ...commonSpec,
+  widthMin: 80,
+  widthMax: 420,
+  heightMin: 80,
+  heightMax: 594,
+  minPrice: 300,
+  materials: [MATERIAL_COATED, MATERIAL_SYNTHETIC],
+  processes: [PROCESS_DIE_CUT, PROCESS_PROOFING],
   printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
   shapes: [SHAPE_RECTANGLE],
 });
 
-const TEMPLATE_10 = createTemplate('10', '10', '防伪易碎标签报价模板', {
-  widthMin: 20,
-  widthMax: 260,
-  heightMin: 15,
-  heightMax: 260,
-  quantityMin: 500,
-  quantityMax: 120000,
-  minPrice: 350,
-  allowProofing: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_FRAGILE],
-  processes: [PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_11 = createTemplate('11', '11', '包装封口标签报价模板', {
-  widthMin: 20,
-  widthMax: 320,
-  heightMin: 15,
-  heightMax: 320,
-  quantityMin: 1000,
-  quantityMax: 500000,
-  minPrice: 180,
-  allowProofing: true,
-  allowLamination: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_COATED, MATERIAL_PET],
-  processes: [PROCESS_LAMINATION, PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR],
-  shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
-});
-
-const TEMPLATE_12 = createTemplate('12', '12', '可移除标签报价模板', {
-  widthMin: 20,
-  widthMax: 360,
-  heightMin: 15,
-  heightMax: 360,
-  quantityMin: 500,
-  quantityMax: 150000,
-  minPrice: 240,
-  allowProofing: true,
-  allowDieCut: true,
-  allowCustomShape: true,
-  materials: [MATERIAL_REMOVABLE],
-  processes: [PROCESS_DIE_CUT, PROCESS_PROOFING],
-  printModes: [PRINT_FOUR_COLOR, PRINT_SINGLE_COLOR],
+const TEMPLATE_10 = createTemplate('10', '10', '包装盒 / 宣传册报价模板', {
+  ...commonSpec,
+  widthMin: 80,
+  widthMax: 600,
+  heightMin: 80,
+  heightMax: 600,
+  minPrice: 500,
+  materials: [MATERIAL_COATED, MATERIAL_SYNTHETIC],
+  processes: [PROCESS_LAMINATION, PROCESS_HOT_STAMP, PROCESS_UV, PROCESS_EMBOSS, PROCESS_PROOFING],
+  printModes: [PRINT_FOUR_COLOR, PRINT_SPOT_COLOR],
   shapes: [SHAPE_RECTANGLE, SHAPE_CUSTOM],
 });
 
 export const sampleProducts: Product[] = [
   {
     id: '1',
-    categoryId: '2',
-    name: '透明膜标签',
-    code: 'PET-LABEL',
-    description: '适合瓶身、食品包装、日化贴标等高透明场景。',
-    applicationScenario: '日化瓶贴、食品包装、礼盒封签',
+    categoryId: '1',
+    name: '不干胶标签',
+    code: 'SELF-ADHESIVE-LABEL',
+    description: '适用于食品、日化、工业、电商等多场景的基础标签产品，可按尺寸、材质和工艺定制。',
+    applicationScenario: '食品包装、日化瓶贴、工业标识、电商商品贴纸',
     isHot: true,
     sort: 10,
     status: 'active',
@@ -333,11 +213,11 @@ export const sampleProducts: Product[] = [
   },
   {
     id: '2',
-    categoryId: '1',
-    name: '铜版纸彩色标签',
-    code: 'COATED-LABEL',
-    description: '铜版纸材质彩色印刷标签，性价比高，适合大批量使用。',
-    applicationScenario: '食品包装、电商发货标签、普通商品贴纸',
+    categoryId: '2',
+    name: '卷标标签',
+    code: 'ROLL-LABEL',
+    description: '适合自动贴标与批量生产，支持卷芯、出标方向、每卷数量等生产参数。',
+    applicationScenario: '自动贴标、饮料瓶贴、物流仓储、批量供货',
     isHot: true,
     sort: 20,
     status: 'active',
@@ -345,11 +225,12 @@ export const sampleProducts: Product[] = [
   },
   {
     id: '3',
-    categoryId: '10',
-    name: '烫金工艺标签',
-    code: 'HOT-STAMP-LABEL',
-    description: '铜版纸或透明膜材质叠加烫金工艺，适合强调质感的产品包装。',
-    applicationScenario: '礼品、高端酒水、化妆品',
+    categoryId: '3',
+    name: '食品饮料标签',
+    code: 'FOOD-DRINK-LABEL',
+    description: '针对冷藏、防潮、瓶罐包装等食品饮料场景，兼顾粘性、色彩和安全合规展示。',
+    applicationScenario: '饮料瓶贴、烘焙包装、休闲食品、冷藏冷冻标签',
+    isHot: true,
     sort: 30,
     status: 'active',
     templates: [TEMPLATE_3],
@@ -357,103 +238,81 @@ export const sampleProducts: Product[] = [
   {
     id: '4',
     categoryId: '4',
-    name: '热敏物流标签',
-    code: 'THERMAL-LABEL',
-    description: '热敏材质物流标签，适合快递、仓储扫码打印。',
-    applicationScenario: '电商仓储、快递物流、条码贴纸',
+    name: '日化美妆标签',
+    code: 'COSMETIC-LABEL',
+    description: '强调货架质感与品牌识别，支持透明膜、烫金、局部 UV、覆膜等精致工艺。',
+    applicationScenario: '洗护瓶贴、精华标签、香薰包装、美妆产品贴纸',
+    isHot: true,
     sort: 40,
     status: 'active',
     templates: [TEMPLATE_4],
   },
   {
     id: '5',
-    categoryId: '3',
-    name: '合成纸耐候标签',
-    code: 'PVC-SYNTHETIC-LABEL',
-    description: '耐水耐磨的合成纸不干胶标签，适合户外和设备标识。',
-    applicationScenario: '户外标识、设备贴、周转箱标签',
+    categoryId: '5',
+    name: '医药保健标签',
+    code: 'MEDICAL-HEALTH-LABEL',
+    description: '版面信息清晰，批量一致性好，适用于药盒、保健品瓶身与说明标签。',
+    applicationScenario: '药盒贴、保健品瓶贴、说明标签、批号追溯',
     sort: 50,
     status: 'active',
     templates: [TEMPLATE_5],
   },
   {
     id: '6',
-    categoryId: '5',
-    name: '食品饮料标签',
-    code: 'FOOD-DRINK-LABEL',
-    description: '适合食品、饮品瓶贴和外包装贴标，可按场景选择铜版纸或透明膜。',
-    applicationScenario: '饮料瓶贴、烘焙包装、休闲食品标签',
-    isHot: true,
+    categoryId: '6',
+    name: '工业电子标签',
+    code: 'INDUSTRIAL-ELECTRONIC-LABEL',
+    description: '耐磨耐候，适合设备铭牌、参数贴、警示贴和电子电器标识。',
+    applicationScenario: '设备铭牌、参数标签、电子电器警示贴、工业资产标识',
     sort: 60,
     status: 'active',
     templates: [TEMPLATE_6],
   },
   {
     id: '7',
-    categoryId: '6',
-    name: '日化美妆标签',
-    code: 'COSMETIC-LABEL',
-    description: '适合洗护、美妆、香薰等包装标签，支持覆膜、局部光油、烫金等工艺。',
-    applicationScenario: '洗护瓶贴、精华标签、香薰包装',
-    isHot: true,
+    categoryId: '7',
+    name: '防伪标签',
+    code: 'ANTI-COUNTERFEIT-LABEL',
+    description: '通过防伪材料、可变二维码和专属工艺提升品牌可信度与渠道管控能力。',
+    applicationScenario: '质保封签、防拆标签、品牌防伪、渠道管控',
     sort: 70,
     status: 'active',
     templates: [TEMPLATE_7],
   },
   {
     id: '8',
-    categoryId: '7',
-    name: '电子电器铭牌标签',
-    code: 'ELECTRONIC-NAMEPLATE',
-    description: '适合设备铭牌、参数贴和电子电器警示标签，兼顾耐磨和清晰度。',
-    applicationScenario: '设备铭牌、参数标签、警示贴',
+    categoryId: '8',
+    name: '可变二维码 / 一物一码标签',
+    code: 'VARIABLE-QR-LABEL',
+    description: '支持可变数据印刷，用于扫码溯源、防伪验证、营销活动和一物一码管理。',
+    applicationScenario: '产品溯源、防伪验证、渠道营销、扫码活动',
+    isHot: true,
     sort: 80,
     status: 'active',
     templates: [TEMPLATE_8],
   },
   {
     id: '9',
-    categoryId: '8',
-    name: '医药保健标签',
-    code: 'MEDICAL-HEALTH-LABEL',
-    description: '适合药盒、保健品瓶身和说明标签，版面清晰、批量稳定。',
-    applicationScenario: '药盒贴、保健品瓶贴、说明标签',
+    categoryId: '9',
+    name: '产品说明书',
+    code: 'PRODUCT-INSERT',
+    description: '支持折页、说明书、随箱资料等印刷，信息清晰，适合与包装配套生产。',
+    applicationScenario: '产品说明书、随箱资料、折页、保修卡',
     sort: 90,
     status: 'active',
     templates: [TEMPLATE_9],
   },
   {
     id: '10',
-    categoryId: '9',
-    name: '防伪易碎标签',
-    code: 'TAMPER-EVIDENT-LABEL',
-    description: '使用易碎防伪纸，撕开后难以复原，适合封口和防拆场景。',
-    applicationScenario: '质保封签、防拆标签、电子产品封口',
+    categoryId: '10',
+    name: '包装盒 / 宣传册印刷',
+    code: 'PACKAGING-BROCHURE',
+    description: '面向品牌包装和宣传资料，支持覆膜、烫金、局部 UV、击凸等工艺。',
+    applicationScenario: '包装盒、宣传册、礼盒配套、品牌物料',
     sort: 100,
     status: 'active',
     templates: [TEMPLATE_10],
-  },
-  {
-    id: '11',
-    categoryId: '11',
-    name: '包装封口标签',
-    code: 'SEALING-LABEL',
-    description: '适合盒装、袋装和礼盒封口，可按品牌包装定制尺寸与形状。',
-    applicationScenario: '礼盒封签、食品袋封口、外包装贴纸',
-    sort: 110,
-    status: 'active',
-    templates: [TEMPLATE_11],
-  },
-  {
-    id: '12',
-    categoryId: '12',
-    name: '可移除标签',
-    code: 'REMOVABLE-LABEL',
-    description: '可移除胶标签，适合临时标识、促销贴和不留胶场景。',
-    applicationScenario: '临时标识、促销贴、玻璃贴',
-    sort: 120,
-    status: 'active',
-    templates: [TEMPLATE_12],
   },
 ];
 

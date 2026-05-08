@@ -35,7 +35,7 @@
 | Task | Scope | Status | Owner | Commit | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Worktree and progress tracking setup | Done | Codex | `e38e390` | Worktree created; progress doc added and committed. |
-| 1 | Extract brand content and clean fallback data | In Progress | Codex | Pending | Task 1A brand constants complete; sample data cleanup remains. |
+| 1 | Extract brand content and clean fallback data | Needs Review | Codex | Pending | Brand constants and clean fallback sample data implemented; review gates pending. |
 | 2 | Build Figma-derived design system | Not Started | Pending subagent | Pending | Shared cards, printing visuals, global CSS tokens. |
 | 3 | Replace client shell with Figma navigation/footer | Not Started | Pending subagent | Pending | `BrandShell.tsx`, `App.tsx`. |
 | 4 | Implement Figma homepage | Not Started | Pending subagent | Pending | `HomeSections.tsx`, `Home.tsx`. |
@@ -57,6 +57,8 @@
 - Baseline client Vite build passed.
 - Task 1A brand constants added in `apps/client/src/brandContent.ts`.
 - Task 1A TypeScript and Vite verification passed.
+- Task 1B fallback sample data rewritten in clean Chinese while preserving quote template relationships.
+- Task 1B TypeScript and Vite verification passed.
 
 ### Environment Notes
 
@@ -68,8 +70,8 @@
 
 ### Next Action
 
-1. Complete Task 1B: clean `apps/client/src/sampleData.ts` fallback data while preserving quote template relationships.
-2. Run Task 1 review gates after Task 1B.
+1. Run Task 1 spec compliance review.
+2. Run Task 1 code quality review.
 
 ## Review Log
 
@@ -77,6 +79,7 @@
 | --- | --- | --- | --- | --- |
 | 2026-05-08 | 0 | Self-check | Done | Progress document created and committed. |
 | 2026-05-08 | 1A | Self-check | Pass | Added Figma brand constants; `catalogContext` notices are already clean Chinese. |
+| 2026-05-08 | 1B | Self-check | Pass | Rewrote fallback categories/products/templates with clean Chinese and kept template relationships valid. |
 
 ## Verification Log
 
@@ -88,3 +91,5 @@
 | 2026-05-08 | root Node + `vite build` | Pass | Manual equivalent production build passed. |
 | 2026-05-08 | Task 1A root Node + `tsc --noEmit` | Pass | Brand constants compile. |
 | 2026-05-08 | Task 1A root Node + `vite build` | Pass | Production build remains green. |
+| 2026-05-08 | Task 1B root Node + `tsc --noEmit` | Pass | Clean fallback data type-checks. |
+| 2026-05-08 | Task 1B root Node + `vite build` | Pass | Production build remains green after sample data rewrite. |
