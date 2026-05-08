@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { CatalogProvider } from './catalogContext';
 import { BrandFooter, BrandHeader } from './components/BrandShell';
+import { ContactPage } from './pages/Contact';
 import { HistoryPage } from './pages/History';
 import { HomePage } from './pages/Home';
 import { MemberCenterPage } from './pages/MemberCenter';
@@ -25,6 +26,7 @@ function Shell() {
         <Route path="/products" element={<ProductListPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/quote" element={<QuotePage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/member" element={<MemberCenterPage />} />
         <Route path="*" element={<HomePage />} />

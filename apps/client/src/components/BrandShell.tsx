@@ -52,6 +52,8 @@ export function BrandFooter() {
       </div>
       <div className="lc-footer-contact">
         <span>电话：{brand.phone}</span>
+        <span>手机：{brand.mobile}</span>
+        <span>联系人：{brand.contactPerson}</span>
         <span>地址：{brand.address}</span>
         <span>备案信息：{brand.recordNo}</span>
       </div>

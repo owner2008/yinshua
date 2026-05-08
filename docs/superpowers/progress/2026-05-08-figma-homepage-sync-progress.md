@@ -25,6 +25,7 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 13 | Material craft section spacing refinement | Done | Pending commit | Added inner spacing to material/craft sample panels |
 | 14 | Header member/history shortcuts | Done | Pending commit | Added member center and quote history links to header actions |
 | 15 | Header navigation simplification | Done | Pending commit | Removed online quote, about and craft/equipment from main nav |
+| 16 | Official website information backfill | Done | Pending commit | Added qddflc.com company info, contact page and official images |
 
 ## Completed Details
 
@@ -273,6 +274,33 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 - Verification:
   - Browser header scan confirmed removed links are no longer visible as navigation links.
   - Browser header scan confirmed `首页`, `产品中心`, `标签定制`, `案例展示`, `联系我们`, `报价历史`, `会员中心`, and `立即报价` remain visible.
+  - Browser console error check returned no errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.
+
+### Task 16 - Official Website Information Backfill
+
+- Status: Done
+- Source:
+  - `http://www.qddflc.com/`
+- Extracted company information:
+  - Company: `青岛东方丽彩包装有限公司`
+  - Phone: `0532-8886 0880`
+  - Mobile: `18705328806`
+  - Contact: `尚经理`
+  - Address: `青岛市城阳区书雨路118号`
+  - Intro: German Bosch Rexroth six-color + varnish PS UV printing line, Heidelberg equipment, label/roll label/manual/packaging/brochure/variable QR/one-item-one-code printing services.
+- Changes:
+  - Updated brand/contact constants.
+  - Added official product image URLs from qddflc.com.
+  - Added official equipment image URLs from qddflc.com.
+  - Added `/contact` page with company intro, contact details, QR code, product gallery and equipment gallery.
+  - Updated navigation/footer contact links and footer contact information.
+- Verification:
+  - qddflc.com and selected product/equipment image URLs returned HTTP 200.
+  - Browser scan checked `/`, `/products`, and `/contact`.
+  - Browser scan confirmed company name, phone/mobile and address appear.
+  - Browser scan confirmed `/contact` contains company intro, product gallery and equipment gallery.
   - Browser console error check returned no errors.
   - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
   - Client `vite build`: passed.

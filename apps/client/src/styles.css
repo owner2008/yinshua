@@ -3776,6 +3776,117 @@ body {
   font-weight: 800;
 }
 
+.lc-contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.72fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.lc-contact-intro,
+.lc-contact-card {
+  padding: 30px;
+}
+
+.lc-contact-intro {
+  display: grid;
+  gap: 20px;
+}
+
+.lc-contact-intro h2,
+.lc-contact-intro p,
+.lc-contact-card h2,
+.lc-contact-card p {
+  margin: 0;
+}
+
+.lc-contact-intro h2,
+.lc-contact-card h2 {
+  color: var(--lc-ink);
+  font-size: clamp(26px, 3vw, 34px);
+  line-height: 1.2;
+}
+
+.lc-contact-intro > p:not(.lc-kicker) {
+  color: var(--lc-muted);
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+.lc-contact-card {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.lc-contact-card dl {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.lc-contact-card dl div {
+  display: grid;
+  gap: 6px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--lc-line);
+}
+
+.lc-contact-card dt {
+  color: var(--lc-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.lc-contact-card dd {
+  margin: 0;
+  color: var(--lc-ink);
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.55;
+}
+
+.lc-contact-card img {
+  width: 132px;
+  height: 132px;
+  object-fit: cover;
+  border: 1px solid var(--lc-border);
+  border-radius: 18px;
+  background: white;
+}
+
+.lc-official-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.lc-official-gallery.equipment {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.lc-official-gallery .lc-card {
+  display: grid;
+  gap: 14px;
+  overflow: hidden;
+  padding: 14px;
+}
+
+.lc-official-gallery img {
+  width: 100%;
+  height: 190px;
+  display: block;
+  object-fit: cover;
+  border-radius: var(--lc-radius-card);
+  background: var(--lc-bg-soft);
+}
+
+.lc-official-gallery strong {
+  color: var(--lc-ink);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
 .lc-address-list {
   display: grid;
   gap: 12px;
@@ -3855,7 +3966,8 @@ body {
   .lc-page-hero,
   .lc-detail-layout,
   .lc-selected-product,
-  .lc-history-card {
+  .lc-history-card,
+  .lc-contact-layout {
     grid-template-columns: 1fr;
   }
 
@@ -3878,6 +3990,11 @@ body {
   }
 
   .lc-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lc-official-gallery,
+  .lc-official-gallery.equipment {
     grid-template-columns: 1fr;
   }
 
