@@ -16,8 +16,8 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 4 | Homepage implementation | Done | `88aab5e` | Homepage aligned with Figma structure and conversion modules |
 | 5 | Client subpages | Done | `c9de431` | Product, quote, history and member pages restyled |
 | 6 | Mini program mobile style | Done | `0f24754` | Mini program homepage, product, quote and account pages aligned |
-| 7 | Content completeness and data backfill | Done | Pending commit | API and SQL seed data rewritten for label printing business |
-| 8 | Final verification and handoff | Pending | - | Run final checks and produce handoff notes |
+| 7 | Content completeness and data backfill | Done | `8a47554` | API and SQL seed data rewritten for label printing business |
+| 8 | Final verification and handoff | Done | Pending commit | Final client/API verification completed |
 
 ## Completed Details
 
@@ -128,16 +128,12 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 
 ### Task 8 - Final Verification and Handoff
 
-- Run final client verification:
-  - Client `tsc --noEmit`
-  - Client `vite build`
-- Run final API verification:
-  - Prisma Client generation
-  - API build
-- Review `git status --short`.
-- Commit final progress update if needed.
-- Produce handoff summary with:
-  - Changed files
-  - Verification commands
-  - Remaining risks or known gaps
-  - Suggested next implementation phase
+- Status: Done
+- Final verification:
+  - `D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps\client\node_modules\typescript\bin\tsc -p apps\client\tsconfig.json --noEmit`: passed
+  - `D:\study\Web\Dflc\yinshua\.tools\node\node.exe node_modules\vite\bin\vite.js build` from `apps/client`: passed
+  - `D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps\api\node_modules\prisma\build\index.js generate --schema apps\api\prisma\schema.prisma`: passed
+  - `D:\study\Web\Dflc\yinshua\.tools\node\pnpm.CMD --dir apps/api build`: passed
+- Handoff notes:
+  - Client website, subpages, mini program, and seed data now share the same high-end label-printing brand direction.
+  - Follow-up implementation can start from API integration, admin content editing, quote submission persistence, or pixel QA against the original Figma frame.
