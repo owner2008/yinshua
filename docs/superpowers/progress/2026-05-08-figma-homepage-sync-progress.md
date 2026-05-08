@@ -23,6 +23,7 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 11 | Subpage typography refinement | Done | Pending commit | Reduced oversized functional page titles and section headings |
 | 12 | Quote page spacing refinement | Done | Pending commit | Added breathing room to quote layout, cards and form fields |
 | 13 | Material craft section spacing refinement | Done | Pending commit | Added inner spacing to material/craft sample panels |
+| 14 | Header member/history shortcuts | Done | Pending commit | Added member center and quote history links to header actions |
 
 ## Completed Details
 
@@ -243,5 +244,20 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
   - Browser homepage scan confirmed material/craft section content renders.
   - Browser scan found no raw `HTTP 500` and no mojibake markers.
   - Browser console error check returned no errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.
+
+### Task 14 - Header Member/History Shortcuts
+
+- Status: Done
+- Reason:
+  - Member center existed as `/member`, but there was no visible entry point.
+- Changes:
+  - Added right-side header shortcuts for `报价历史` and `会员中心`.
+  - Kept `立即报价` as the primary CTA.
+  - Added compact pill styles and mobile sizing for header action links.
+- Verification:
+  - Browser header scan confirmed `报价历史`, `会员中心`, and `立即报价` are present.
+  - Browser navigation opened `/history`, `/member`, and `/quote` without console errors.
   - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
   - Client `vite build`: passed.

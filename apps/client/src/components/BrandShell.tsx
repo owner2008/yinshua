@@ -18,9 +18,17 @@ export function BrandHeader() {
           </NavLink>
         ))}
       </nav>
-      <NavLink className="lc-button primary lc-header-cta" to="/quote">
-        立即报价
-      </NavLink>
+      <div className="lc-header-actions" aria-label="用户快捷入口">
+        <NavLink className="lc-header-link" to="/history">
+          报价历史
+        </NavLink>
+        <NavLink className="lc-header-link" to="/member">
+          会员中心
+        </NavLink>
+        <NavLink className="lc-button primary lc-header-cta" to="/quote">
+          立即报价
+        </NavLink>
+      </div>
     </header>
   );
 }
