@@ -39,7 +39,7 @@
 | 2 | Build Figma-derived design system | Done | Codex | `801e099` | Shared cards, printing visuals, and `.lc-*` CSS tokens/classes added; local review passed. |
 | 3 | Replace client shell with Figma navigation/footer | Done | Codex | `6ae1783` | `BrandShell.tsx`, `App.tsx`; TypeScript and Vite passed. |
 | 4 | Implement Figma homepage | Done | Codex | `5ae9b38` | `Home.tsx`, `brandContent.ts`, homepage `.lc-*` styles; TypeScript and Vite passed. |
-| 5 | Restyle client subpages | Done | Codex | Pending | Product, quote, history, member pages aligned with Figma style; TypeScript, Vite, and mojibake scan passed. |
+| 5 | Restyle client subpages | Done | Codex | `fc61fdc` | Product, quote, history, member pages aligned with Figma style; TypeScript, Vite, and mojibake scan passed. |
 | 6 | Align mini program with Figma mobile style | Not Started | Pending subagent | Pending | `apps/miniprogram` global and pages. |
 | 7 | Content completeness and data backfill | Not Started | Pending subagent | Pending | API seeds/data only if needed. |
 | 8 | Responsive and visual verification | Not Started | Pending subagent | Pending | Client build, browser checks, mini program checklist. |
