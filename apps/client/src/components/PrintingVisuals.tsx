@@ -1,4 +1,5 @@
 import { toAssetUrl } from '../api';
+import { productImageByCode } from '../brandContent';
 import type { Product } from '../types';
 
 export function HeroPrintingVisual() {
@@ -28,8 +29,10 @@ export function HeroPrintingVisual() {
 }
 
 export function ProductVisual({ product, tone = 0 }: { product?: Product; tone?: number }) {
-  if (product?.coverImage) {
-    return <img className="lc-product-visual image" src={toAssetUrl(product.coverImage)} alt={product.name} loading="lazy" />;
+  const imageUrl = product?.coverImage ?? (product?.code ? productImageByCode[product.code] : undefined);
+
+  if (imageUrl) {
+    return <ProductPhoto src={imageUrl} alt={product?.name ?? '标签印刷产品'} />;
   }
 
   return (
@@ -42,6 +45,10 @@ export function ProductVisual({ product, tone = 0 }: { product?: Product; tone?:
       <div className="lc-product-roll" />
     </div>
   );
+}
+
+export function ProductPhoto({ src, alt }: { src: string; alt: string }) {
+  return <img className="lc-product-visual image" src={toAssetUrl(src)} alt={alt} loading="lazy" referrerPolicy="no-referrer" />;
 }
 
 export function MaterialSample({ label, tone = 0 }: { label: string; tone?: number }) {

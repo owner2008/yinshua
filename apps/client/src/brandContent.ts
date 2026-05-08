@@ -36,16 +36,16 @@ export const advantages = [
 ] as const;
 
 export const productCategories = [
-  { name: '不干胶标签', desc: '适用于食品、日化、工业等多场景。' },
-  { name: '卷标标签', desc: '自动贴标、批量生产的稳定方案。' },
-  { name: '食品饮料标签', desc: '耐冷藏、防潮、贴合瓶罐包装。' },
-  { name: '日化美妆标签', desc: '强调质感、色彩与货架表现。' },
-  { name: '医药保健标签', desc: '信息清晰，批量一致，可靠耐用。' },
-  { name: '工业电子标签', desc: '耐磨、耐候、可追溯识别。' },
-  { name: '防伪标签', desc: '提升品牌可信度与渠道管控能力。' },
-  { name: '可变二维码 / 一物一码标签', desc: '可变二维码，支持溯源与营销。' },
-  { name: '产品说明书', desc: '折页、说明书、随箱资料印刷。' },
-  { name: '包装盒 / 宣传册印刷', desc: '品牌包装与宣传资料配套生产。' },
+  { name: '不干胶标签', desc: '适用于食品、日化、工业等多场景。', imageUrl: 'https://images.pexels.com/photos/9594419/pexels-photo-9594419.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '卷标标签', desc: '自动贴标、批量生产的稳定方案。', imageUrl: 'https://images.pexels.com/photos/5532716/pexels-photo-5532716.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '食品饮料标签', desc: '耐冷藏、防潮、贴合瓶罐包装。', imageUrl: 'https://images.pexels.com/photos/37271678/pexels-photo-37271678.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '日化美妆标签', desc: '强调质感、色彩与货架表现。', imageUrl: 'https://images.pexels.com/photos/13946074/pexels-photo-13946074.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '医药保健标签', desc: '信息清晰，批量一致，可靠耐用。', imageUrl: 'https://images.pexels.com/photos/6800931/pexels-photo-6800931.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '工业电子标签', desc: '耐磨、耐候、可追溯识别。', imageUrl: 'https://images.pexels.com/photos/31091538/pexels-photo-31091538.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '防伪标签', desc: '提升品牌可信度与渠道管控能力。', imageUrl: 'https://images.pexels.com/photos/7464264/pexels-photo-7464264.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '可变二维码 / 一物一码标签', desc: '可变二维码，支持溯源与营销。', imageUrl: 'https://images.pexels.com/photos/12053213/pexels-photo-12053213.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '产品说明书', desc: '折页、说明书、随箱资料印刷。', imageUrl: 'https://images.pexels.com/photos/9594419/pexels-photo-9594419.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { name: '包装盒 / 宣传册印刷', desc: '品牌包装与宣传资料配套生产。', imageUrl: 'https://images.pexels.com/photos/7956854/pexels-photo-7956854.jpeg?auto=compress&cs=tinysrgb&w=1200' },
 ] as const;
 
 export const quoteSteps = [
@@ -61,12 +61,12 @@ export const materials = ['铜版纸', '合成纸', 'PET', 'PP', '哑银', '透�
 export const crafts = ['覆亮膜', '覆哑膜', '烫金', '烫银', '击凸', '局部 UV', '模切异形', '可变二维码', '防伪工艺'] as const;
 
 export const cases = [
-  { title: '食品瓶贴', industry: '食品饮料', material: 'PET + 覆亮膜', highlight: '冷藏环境粘性稳定' },
-  { title: '化妆品标签', industry: '日化美妆', material: '透明膜 + 烫金', highlight: '提升货架质感' },
-  { title: '茶叶包装标签', industry: '农产品礼盒', material: '铜版纸 + 击凸', highlight: '品牌包装识别度高' },
-  { title: '工业设备标签', industry: '工业制造', material: '哑银 PET', highlight: '耐磨耐候' },
-  { title: '二维码溯源标签', industry: '一物一码', material: '可变数据印刷', highlight: '扫码追溯防伪' },
-  { title: '宣传册 / 产品说明书', industry: '说明书印刷', material: '双胶纸 + 折页', highlight: '信息清晰易读' },
+  { title: '食品瓶贴', industry: '食品饮料', material: 'PET + 覆亮膜', highlight: '冷藏环境粘性稳定', imageUrl: 'https://images.pexels.com/photos/37271678/pexels-photo-37271678.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { title: '化妆品标签', industry: '日化美妆', material: '透明膜 + 烫金', highlight: '提升货架质感', imageUrl: 'https://images.pexels.com/photos/13946074/pexels-photo-13946074.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { title: '茶叶包装标签', industry: '农产品礼盒', material: '铜版纸 + 击凸', highlight: '品牌包装识别度高', imageUrl: 'https://images.pexels.com/photos/18347923/pexels-photo-18347923.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { title: '工业设备标签', industry: '工业制造', material: '哑银 PET', highlight: '耐磨耐候', imageUrl: 'https://images.pexels.com/photos/31091538/pexels-photo-31091538.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { title: '二维码溯源标签', industry: '一物一码', material: '可变数据印刷', highlight: '扫码追溯防伪', imageUrl: 'https://images.pexels.com/photos/7464264/pexels-photo-7464264.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { title: '宣传册 / 产品说明书', industry: '说明书印刷', material: '双胶纸 + 折页', highlight: '信息清晰易读', imageUrl: 'https://images.pexels.com/photos/9594419/pexels-photo-9594419.jpeg?auto=compress&cs=tinysrgb&w=1200' },
 ] as const;
 
 export const qualityItems = ['先进印刷设备', '严格色彩管理', '出货前质量检测', '支持打样确认', '批量生产稳定', '售后跟进服务'] as const;
@@ -78,3 +78,28 @@ export const testimonials = [
   '批量标签颜色一致，贴标稳定，售后也能及时跟进。',
   '二维码标签数据准确，帮助我们做了渠道追溯和营销活动。',
 ] as const;
+
+export const productImageByCode: Record<string, string> = {
+  'SELF-ADHESIVE-LABEL': 'https://images.pexels.com/photos/9594419/pexels-photo-9594419.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'ROLL-LABEL': 'https://images.pexels.com/photos/5532716/pexels-photo-5532716.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'FOOD-DRINK-LABEL': 'https://images.pexels.com/photos/37271678/pexels-photo-37271678.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'COSMETIC-LABEL': 'https://images.pexels.com/photos/13946074/pexels-photo-13946074.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'MEDICAL-HEALTH-LABEL': 'https://images.pexels.com/photos/6800931/pexels-photo-6800931.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'INDUSTRIAL-ELECTRONIC-LABEL': 'https://images.pexels.com/photos/31091538/pexels-photo-31091538.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'ANTI-COUNTERFEIT-LABEL': 'https://images.pexels.com/photos/7464264/pexels-photo-7464264.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'VARIABLE-QR-LABEL': 'https://images.pexels.com/photos/12053213/pexels-photo-12053213.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'PRODUCT-INSERT': 'https://images.pexels.com/photos/9594419/pexels-photo-9594419.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'PACKAGING-BROCHURE': 'https://images.pexels.com/photos/7956854/pexels-photo-7956854.jpeg?auto=compress&cs=tinysrgb&w=1200',
+};
+
+export const factoryVisual = {
+  imageUrl: 'https://images.pexels.com/photos/5532716/pexels-photo-5532716.jpeg?auto=compress&cs=tinysrgb&w=1600',
+  title: '自动化标签贴标与批量生产现场',
+  stats: [
+    { label: '出货前质检', value: '100%' },
+    { label: '批量色彩校准', value: 'ΔE' },
+    { label: '打样确认', value: 'Proof' },
+  ],
+} as const;
+
+export const trustLogos = ['食品饮料', '日化美妆', '医药保健', '工业制造', '电商零售', '物流仓储'] as const;

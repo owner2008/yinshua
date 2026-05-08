@@ -4,6 +4,7 @@ import {
   cases,
   cooperationSteps,
   crafts,
+  factoryVisual,
   heroCopy,
   industries,
   materials,
@@ -11,15 +12,13 @@ import {
   qualityItems,
   quoteSteps,
   testimonials,
+  trustLogos,
 } from '../brandContent';
 import { FeatureCard, InfoChip, ProcessStep, SectionHeading, StatCard } from '../components/cards';
-import { HeroPrintingVisual, MaterialSample, ProductVisual, QrVisual } from '../components/PrintingVisuals';
-import { useCatalog } from '../catalogContext';
+import { HeroPrintingVisual, MaterialSample, ProductPhoto, QrVisual } from '../components/PrintingVisuals';
 
 export function HomePage() {
-  const { products } = useCatalog();
   const displayProducts = productCategories.slice(0, 10);
-  const featuredProducts = products.slice(0, 6);
 
   return (
     <div className="lc-home">
@@ -67,7 +66,7 @@ export function HomePage() {
           <div className="lc-grid-4">
             {displayProducts.map((item, index) => (
               <article className="lc-product-card lc-card" key={item.name}>
-                <ProductVisual product={featuredProducts[index]} tone={index % 4} />
+                <ProductPhoto src={item.imageUrl} alt={item.name} />
                 <h3>{item.name}</h3>
                 <p>{item.desc}</p>
                 <Link to="/products">查看详情</Link>
@@ -172,11 +171,13 @@ export function HomePage() {
           <div className="lc-grid-3">
             {cases.map((item, index) => (
               <article className="lc-case-card lc-card" key={item.title}>
-                <ProductVisual product={featuredProducts[index]} tone={index % 4} />
-                <span>{item.industry}</span>
-                <h3>{item.title}</h3>
-                <p>{item.material}</p>
-                <strong>{item.highlight}</strong>
+                <ProductPhoto src={item.imageUrl} alt={item.title} />
+                <div className="lc-case-body">
+                  <span>{item.industry}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.material}</p>
+                  <strong>{item.highlight}</strong>
+                </div>
               </article>
             ))}
           </div>
@@ -184,16 +185,36 @@ export function HomePage() {
       </section>
 
       <section className="lc-section" id="quality">
-        <div className="lc-container lc-quality-layout">
-          <div>
-            <SectionHeading kicker="Quality Control" title="工厂实力与品控流程，支撑稳定交付" desc="从设备、色彩、打样到出货检测，保证批量标签的一致性和可追溯。" />
-            <div className="lc-chip-cloud">
-              {qualityItems.map((item) => (
-                <InfoChip key={item}>{item}</InfoChip>
-              ))}
+        <div className="lc-container">
+          <SectionHeading kicker="Factory & Quality" title="工厂实力与品控流程，支撑稳定交付" desc="以真实生产场景、色彩管理和出货检测构建信任感，让采购人员清楚看到从文件到成品的稳定交付链路。" />
+          <div className="lc-quality-showcase">
+            <figure className="lc-factory-photo">
+              <img src={factoryVisual.imageUrl} alt={factoryVisual.title} loading="lazy" referrerPolicy="no-referrer" />
+              <figcaption>
+                <span>Factory View</span>
+                <strong>{factoryVisual.title}</strong>
+              </figcaption>
+            </figure>
+            <div className="lc-quality-stack">
+              <div className="lc-quality-stats">
+                {factoryVisual.stats.map((item) => (
+                  <article key={item.label}>
+                    <strong>{item.value}</strong>
+                    <span>{item.label}</span>
+                  </article>
+                ))}
+              </div>
+              <div className="lc-quality-grid">
+                {qualityItems.map((item, index) => (
+                  <article className="lc-quality-item" key={item}>
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <strong>{item}</strong>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="lc-card lc-process-panel">
+          <div className="lc-process-timeline">
             {cooperationSteps.map((item, index) => (
               <ProcessStep key={item} index={index + 1} title={item} />
             ))}
@@ -202,14 +223,19 @@ export function HomePage() {
       </section>
 
       <section className="lc-section lc-section-soft">
-        <div className="lc-container lc-trust-layout">
-          <SectionHeading kicker="Clients" title="被企业客户信任的稳定印刷服务" desc="合作关注点集中在稳定供货、沟通效率、品质可靠和问题响应。" />
+        <div className="lc-container lc-trust-section">
+          <SectionHeading kicker="Trusted by Business Clients" title="被企业客户信任的稳定印刷服务" desc="围绕稳定供货、沟通效率、品质可靠和问题响应建立长期合作关系，适合企业采购、品牌方与电商客户持续复购。" />
           <div className="lc-testimonials">
             {testimonials.map((item, index) => (
               <article className="lc-card" key={item}>
                 <span>客户评价 {index + 1}</span>
                 <p>{item}</p>
               </article>
+            ))}
+          </div>
+          <div className="lc-logo-wall" aria-label="合作行业 Logo 墙">
+            {trustLogos.map((item) => (
+              <span key={item}>{item}</span>
             ))}
           </div>
         </div>

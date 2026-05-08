@@ -19,6 +19,7 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 7 | Content completeness and data backfill | Done | `8a47554` | API and SQL seed data rewritten for label printing business |
 | 8 | Final verification and handoff | Done | `5b8b510` | Final client/API verification completed |
 | 9 | Browser visual QA for retained pages | Done | Pending commit | History/member pages retained and polished after browser check |
+| 10 | Homepage visual fidelity and product imagery pass | Done | Pending commit | Reworked product imagery, quality control and trust modules |
 
 ## Completed Details
 
@@ -162,6 +163,28 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
   - Browser route scan confirmed the five routes render expected headings.
   - Browser route scan found no raw `HTTP 500` on `/history` or `/member`.
   - Browser route scan found no visible mojibake markers in the checked routes.
+  - Browser console error check returned no errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.
+
+### Task 10 - Homepage Visual Fidelity and Product Imagery Pass
+
+- Status: Done
+- Reason:
+  - Manual review found the homepage still differed from the Figma direction in several high-impact modules.
+  - Product/case areas used too many abstract placeholder visuals and did not show real packaging/label products.
+- Changes:
+  - Added network product imagery for product categories and case cards.
+  - Added fallback product image mapping by product code so product list/detail/quote pages can show product photos when API data has no image.
+  - Reworked `工厂实力与品控流程，支撑稳定交付` into a stronger factory visual module with production photo, quality stats, six quality cards and a cooperation timeline.
+  - Reworked `被企业客户信任的稳定印刷服务` into a centered trust module with testimonials and industry logo wall.
+- Image sources used:
+  - Pexels product/packaging/factory images from free-use pages.
+  - Pexels commercial-use reference: all photos and videos can be used for commercial projects, subject to depicted third-party rights.
+- Verification:
+  - Network image URL checks returned HTTP 200 for the selected product/factory images.
+  - Browser homepage scan confirmed 17 image nodes after the update.
+  - Browser scans for `/`, `/products`, `/quote`, `/history`, `/member` found no raw `HTTP 500`, no mojibake markers and no old theme words.
   - Browser console error check returned no errors.
   - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
   - Client `vite build`: passed.
