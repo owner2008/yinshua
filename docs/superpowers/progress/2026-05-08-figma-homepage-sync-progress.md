@@ -34,7 +34,7 @@
 
 | Task | Scope | Status | Owner | Commit | Notes |
 | --- | --- | --- | --- | --- | --- |
-| 0 | Worktree and progress tracking setup | In Progress | Codex | Pending | Worktree created; this progress doc added. |
+| 0 | Worktree and progress tracking setup | Done | Codex | `e38e390` | Worktree created; progress doc added and committed. |
 | 1 | Extract brand content and clean fallback data | Not Started | Pending subagent | Pending | `brandContent.ts`, `sampleData.ts`, `catalogContext.tsx`. |
 | 2 | Build Figma-derived design system | Not Started | Pending subagent | Pending | Shared cards, printing visuals, global CSS tokens. |
 | 3 | Replace client shell with Figma navigation/footer | Not Started | Pending subagent | Pending | `BrandShell.tsx`, `App.tsx`. |
@@ -52,18 +52,18 @@
 - `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md` exists on this branch.
 - `.worktrees/` and `worktrees/` are ignored by git.
 - Isolated worktree created at `D:\study\Web\Dflc\yinshua\.worktrees\figma-homepage-sync`.
+- Progress tracker committed in `e38e390`.
 
 ### Next Action
 
-1. Commit this progress tracking document.
-2. Run a baseline client build if available in this worktree.
-3. Dispatch Task 1 implementer subagent with the relevant plan excerpt.
+1. Run a baseline client build if available in this worktree.
+2. Dispatch Task 1 implementer subagent with the relevant plan excerpt.
 
 ## Review Log
 
 | Date | Task | Review Type | Result | Reviewer Notes |
 | --- | --- | --- | --- | --- |
-| 2026-05-08 | 0 | Self-check | In Progress | Progress document created; commit pending. |
+| 2026-05-08 | 0 | Self-check | Done | Progress document created and committed. |
 
 ## Verification Log
 
