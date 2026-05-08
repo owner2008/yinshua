@@ -24,6 +24,7 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 12 | Quote page spacing refinement | Done | Pending commit | Added breathing room to quote layout, cards and form fields |
 | 13 | Material craft section spacing refinement | Done | Pending commit | Added inner spacing to material/craft sample panels |
 | 14 | Header member/history shortcuts | Done | Pending commit | Added member center and quote history links to header actions |
+| 15 | Header navigation simplification | Done | Pending commit | Removed online quote, about and craft/equipment from main nav |
 
 ## Completed Details
 
@@ -259,5 +260,19 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 - Verification:
   - Browser header scan confirmed `报价历史`, `会员中心`, and `立即报价` are present.
   - Browser navigation opened `/history`, `/member`, and `/quote` without console errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.
+
+### Task 15 - Header Navigation Simplification
+
+- Status: Done
+- Changes:
+  - Removed `在线报价`, `关于我们`, and `工艺与设备` from the main navigation.
+  - Kept `立即报价` in the right-side header actions.
+  - Kept `报价历史` and `会员中心` in the right-side header actions.
+- Verification:
+  - Browser header scan confirmed removed links are no longer visible as navigation links.
+  - Browser header scan confirmed `首页`, `产品中心`, `标签定制`, `案例展示`, `联系我们`, `报价历史`, `会员中心`, and `立即报价` remain visible.
+  - Browser console error check returned no errors.
   - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
   - Client `vite build`: passed.
