@@ -3439,9 +3439,11 @@ body {
 
 .lc-quote-page {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr) 320px;
-  gap: 22px;
+  grid-template-columns: 260px minmax(0, 1fr) 340px;
+  gap: 28px;
   align-items: start;
+  width: min(1240px, calc(100% - 72px));
+  padding: 8px 0 72px;
 }
 
 .lc-product-selector {
@@ -3449,17 +3451,18 @@ body {
   top: 112px;
   display: grid;
   max-height: calc(100vh - 140px);
-  gap: 12px;
+  gap: 14px;
   overflow: auto;
-  padding-right: 4px;
+  padding: 12px 10px 12px 2px;
+  scrollbar-gutter: stable;
 }
 
 .lc-product-selector button {
   display: grid;
-  gap: 10px;
-  padding: 12px;
+  gap: 12px;
+  padding: 14px;
   border: 1px solid var(--lc-line);
-  border-radius: 18px;
+  border-radius: 20px;
   text-align: left;
   background: white;
   box-shadow: 0 10px 24px rgb(7 26 48 / 6%);
@@ -3473,10 +3476,14 @@ body {
 
 .lc-product-selector .lc-product-visual {
   min-height: 96px;
+  height: 150px;
+  border-radius: 16px;
 }
 
 .lc-product-selector strong {
   color: var(--lc-ink);
+  font-size: 16px;
+  line-height: 1.35;
 }
 
 .lc-product-selector small {
@@ -3486,14 +3493,15 @@ body {
 
 .lc-quote-main {
   display: grid;
-  gap: 20px;
+  gap: 24px;
 }
 
 .lc-selected-product {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
-  gap: 20px;
+  gap: 26px;
   align-items: center;
+  padding: 24px;
 }
 
 .lc-selected-product h2,
@@ -3516,13 +3524,14 @@ body {
 
 .lc-form-panel {
   display: grid;
-  gap: 18px;
+  gap: 22px;
+  padding: 28px;
 }
 
 .lc-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 20px 18px;
 }
 
 .field {
@@ -3537,8 +3546,8 @@ body {
 .field select,
 .field textarea {
   width: 100%;
-  min-height: 46px;
-  padding: 0 13px;
+  min-height: 48px;
+  padding: 0 16px;
   border: 1px solid #d9e4f0;
   border-radius: 12px;
   color: var(--lc-ink);
@@ -3548,7 +3557,7 @@ body {
 
 .field textarea {
   min-height: 110px;
-  padding: 13px;
+  padding: 14px 16px;
   resize: vertical;
 }
 
@@ -3584,6 +3593,7 @@ body {
   top: 112px;
   display: grid;
   gap: 16px;
+  padding: 26px;
 }
 
 .lc-quote-result h2 {
@@ -3763,6 +3773,8 @@ body {
 @media (max-width: 1120px) {
   .lc-quote-page {
     grid-template-columns: 1fr;
+    width: min(100% - 48px, 960px);
+    padding-bottom: 56px;
   }
 
   .lc-product-selector,
@@ -3774,7 +3786,7 @@ body {
     display: flex;
     max-height: none;
     overflow-x: auto;
-    padding-bottom: 8px;
+    padding: 4px 0 12px;
   }
 
   .lc-product-selector button {
@@ -3810,5 +3822,20 @@ body {
 
   .lc-form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .lc-quote-page {
+    width: min(100% - 32px, 680px);
+    gap: 18px;
+  }
+
+  .lc-product-selector button {
+    flex-basis: 220px;
+  }
+
+  .lc-form-panel,
+  .lc-selected-product,
+  .lc-quote-result {
+    padding: 22px;
   }
 }

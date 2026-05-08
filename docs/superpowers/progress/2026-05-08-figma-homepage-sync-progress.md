@@ -21,6 +21,7 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 9 | Browser visual QA for retained pages | Done | Pending commit | History/member pages retained and polished after browser check |
 | 10 | Homepage visual fidelity and product imagery pass | Done | Pending commit | Reworked product imagery, quality control and trust modules |
 | 11 | Subpage typography refinement | Done | Pending commit | Reduced oversized functional page titles and section headings |
+| 12 | Quote page spacing refinement | Done | Pending commit | Added breathing room to quote layout, cards and form fields |
 
 ## Completed Details
 
@@ -205,6 +206,24 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
   - Browser route scan checked `/products`, `/quote`, `/history`, `/member`.
   - Browser scan confirmed expected headings remain visible.
   - Browser scan found no raw `HTTP 500`, no mojibake markers and no old theme words.
+  - Browser console error check returned no errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.
+
+### Task 12 - Quote Page Spacing Refinement
+
+- Status: Done
+- Reason:
+  - Manual screenshot review showed the quote page content was too close to card edges and page edges.
+- Changes:
+  - Increased quote page side gutters and reduced overly full-width layout.
+  - Increased left product selector width, card padding and scroll gutter.
+  - Increased selected product, form panel and quote result card padding.
+  - Increased form field horizontal padding and row/column gaps.
+  - Added responsive quote page gutters for tablet/mobile.
+- Verification:
+  - Browser quote page scan confirmed `基础报价参数` and `工艺选择` sections render.
+  - Browser quote page scan found no raw `HTTP 500` and no mojibake markers.
   - Browser console error check returned no errors.
   - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
   - Client `vite build`: passed.
