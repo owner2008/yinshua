@@ -154,10 +154,42 @@ export function toAssetUrl(path?: string | null) {
   if (!path) {
     return '';
   }
+  const officialAsset = mapOfficialRemoteAsset(path);
+  if (officialAsset) {
+    return officialAsset;
+  }
   if (/^https?:\/\//i.test(path)) {
     return path;
   }
   return path.startsWith('/') ? path : `/${path}`;
+}
+
+const OFFICIAL_REMOTE_ASSETS: Record<string, string> = {
+  '/uploads/image/20140606/1402073029.jpg': '/official/qddflc/label-self-adhesive.jpg',
+  '/uploads/image/20140611/1402504974.jpg': '/official/qddflc/label-roll.jpg',
+  '/uploads/image/20140611/1402500548.jpg': '/official/qddflc/product-insert.jpg',
+  '/uploads/image/20140611/1402496559.jpg': '/official/qddflc/packaging-bag-box.jpg',
+  '/uploads/image/20140611/1402503868.jpg': '/official/qddflc/brochure-print.jpg',
+  '/uploads/image/20190810/1565408204.jpg': '/official/qddflc/equipment-uv-line.jpg',
+  '/uploads/image/20190810/1565411248.jpg': '/official/qddflc/equipment-heidelberg.jpg',
+  '/uploads/image/20140613/1402669288.jpg': '/official/qddflc/equipment-label-machine.jpg',
+  '/uploads/image/20140613/1402673876.jpg': '/official/qddflc/equipment-roll-machine.jpg',
+  '/uploads/image/20140613/1402671819.jpg': '/official/qddflc/equipment-print-machine.jpg',
+  '/uploads/image/20140611/1402505008.jpg': '/official/qddflc/equipment-diecut.jpg',
+  '/data/watermark/erweima.jpg': '/official/qddflc/wechat-qr.jpg',
+};
+
+function mapOfficialRemoteAsset(path: string) {
+  try {
+    const url = new URL(path);
+    if (url.hostname === 'www.qddflc.com' || url.hostname === 'qddflc.com') {
+      return OFFICIAL_REMOTE_ASSETS[url.pathname] ?? '';
+    }
+  } catch {
+    return OFFICIAL_REMOTE_ASSETS[path.startsWith('/') ? path : `/${path}`] ?? '';
+  }
+
+  return '';
 }
 
 function parseError(text: string): string {
