@@ -2638,3 +2638,294 @@ a.action-bar-link.primary {
     padding: 28px 22px 34px;
   }
 }
+
+.lc-home {
+  margin-top: -72px;
+}
+
+.lc-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.92fr);
+  align-items: center;
+  gap: 54px;
+  min-height: 760px;
+  padding-top: 122px;
+}
+
+.lc-hero-copy h1 {
+  max-width: 680px;
+  margin: 0;
+  color: var(--lc-ink);
+  font-size: clamp(44px, 6vw, 78px);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.lc-hero-copy > p:not(.lc-kicker) {
+  max-width: 680px;
+  margin: 24px 0 0;
+  color: var(--lc-muted);
+  font-size: 18px;
+  line-height: 1.9;
+}
+
+.lc-hero-actions,
+.lc-final-cta > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.lc-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 560px;
+  margin-top: 38px;
+}
+
+.lc-section-soft {
+  background: linear-gradient(180deg, #f7fafe, #ffffff);
+}
+
+.lc-product-card,
+.lc-case-card {
+  display: grid;
+  gap: 14px;
+}
+
+.lc-product-card h3,
+.lc-case-card h3,
+.lc-sample-panel h3 {
+  margin: 0;
+  color: var(--lc-ink);
+  font-size: 18px;
+}
+
+.lc-product-card p,
+.lc-case-card p {
+  min-height: 48px;
+  margin: 0;
+  color: var(--lc-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.lc-product-card a {
+  color: var(--lc-blue);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.lc-quote-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.lc-quote-steps,
+.lc-process-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.lc-quote-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 28px;
+  border: 1px solid var(--lc-line);
+  border-radius: 24px;
+  background: white;
+  box-shadow: var(--lc-shadow);
+}
+
+.lc-quote-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--lc-text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.lc-quote-form input,
+.lc-quote-form select {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #d9e4f0;
+  border-radius: 12px;
+  color: var(--lc-ink);
+  background: #f9fbfe;
+  font: inherit;
+}
+
+.lc-form-wide,
+.lc-form-submit {
+  grid-column: 1 / -1;
+}
+
+.lc-form-submit {
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.lc-industry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.lc-industry-card {
+  display: grid;
+  min-height: 120px;
+  align-content: space-between;
+  padding: 22px;
+  border: 1px solid var(--lc-line);
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 12px 26px rgb(7 26 48 / 6%);
+}
+
+.lc-industry-card span {
+  color: var(--lc-blue);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.lc-industry-card strong {
+  color: var(--lc-ink);
+  font-size: 19px;
+}
+
+.lc-craft-layout,
+.lc-quality-layout,
+.lc-trust-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.92fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.lc-sample-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.lc-sample-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.lc-chip-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lc-sample-panel .lc-qr {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  margin-top: 10px;
+}
+
+.lc-case-card > span,
+.lc-testimonials span {
+  color: var(--lc-blue);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.lc-case-card strong {
+  color: var(--lc-teal);
+}
+
+.lc-testimonials {
+  display: grid;
+  gap: 16px;
+}
+
+.lc-testimonials p {
+  margin: 10px 0 0;
+  color: var(--lc-text);
+  line-height: 1.8;
+}
+
+.lc-final-cta {
+  margin-top: 54px;
+  padding: 58px;
+  border-radius: 30px;
+  color: white;
+  background:
+    radial-gradient(circle at 85% 18%, rgb(255 122 26 / 34%), transparent 25%),
+    linear-gradient(135deg, #071a30, #0a3566);
+}
+
+.lc-final-cta h2,
+.lc-final-cta p {
+  max-width: 760px;
+  margin: 0;
+}
+
+.lc-final-cta h2 {
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.12;
+}
+
+.lc-final-cta p {
+  margin-top: 16px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.lc-final-cta .lc-button.ghost {
+  border-color: rgb(255 255 255 / 26%);
+  color: white;
+  background: rgb(255 255 255 / 10%);
+}
+
+@media (max-width: 960px) {
+  .lc-home {
+    margin-top: 0;
+  }
+
+  .lc-hero,
+  .lc-quote-layout,
+  .lc-craft-layout,
+  .lc-quality-layout,
+  .lc-trust-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lc-hero {
+    min-height: auto;
+    padding-top: 58px;
+    padding-bottom: 58px;
+  }
+
+  .lc-industry-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .lc-hero-copy h1 {
+    font-size: 40px;
+  }
+
+  .lc-hero-stats,
+  .lc-quote-form,
+  .lc-industry-grid,
+  .lc-sample-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lc-final-cta {
+    padding: 36px 24px;
+  }
+}

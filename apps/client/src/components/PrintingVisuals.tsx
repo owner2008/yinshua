@@ -1,3 +1,4 @@
+import { toAssetUrl } from '../api';
 import type { Product } from '../types';
 
 export function HeroPrintingVisual() {
@@ -28,7 +29,7 @@ export function HeroPrintingVisual() {
 
 export function ProductVisual({ product, tone = 0 }: { product?: Product; tone?: number }) {
   if (product?.coverImage) {
-    return <img className="lc-product-visual image" src={product.coverImage} alt={product.name} loading="lazy" />;
+    return <img className="lc-product-visual image" src={toAssetUrl(product.coverImage)} alt={product.name} loading="lazy" />;
   }
 
   return (

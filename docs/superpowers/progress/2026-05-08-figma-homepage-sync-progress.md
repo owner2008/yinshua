@@ -38,7 +38,7 @@
 | 1 | Extract brand content and clean fallback data | Done | Codex | `b923ba4`, `0e4a708` | Brand constants and clean fallback sample data implemented; local spec/quality review passed. |
 | 2 | Build Figma-derived design system | Done | Codex | `801e099` | Shared cards, printing visuals, and `.lc-*` CSS tokens/classes added; local review passed. |
 | 3 | Replace client shell with Figma navigation/footer | Done | Codex | `6ae1783` | `BrandShell.tsx`, `App.tsx`; TypeScript and Vite passed. |
-| 4 | Implement Figma homepage | In Progress | Codex | Pending | `HomeSections.tsx`, `Home.tsx`. |
+| 4 | Implement Figma homepage | Done | Codex | Pending | `Home.tsx`, `brandContent.ts`, homepage `.lc-*` styles; TypeScript and Vite passed. |
 | 5 | Restyle client subpages | Not Started | Pending subagent | Pending | Product, quote, history, member pages. |
 | 6 | Align mini program with Figma mobile style | Not Started | Pending subagent | Pending | `apps/miniprogram` global and pages. |
 | 7 | Content completeness and data backfill | Not Started | Pending subagent | Pending | API seeds/data only if needed. |
@@ -67,6 +67,9 @@
 - Task 2 local spec/code quality review passed.
 - Task 3 client shell replaced with Figma-style sticky navigation and footer.
 - Task 3 TypeScript and Vite verification passed.
+- Task 4 homepage rebuilt with Hero, advantages, products, quote guide/form, industries, materials/crafts, cases, quality/process, testimonials, and CTA.
+- Task 4 brand content and printing visual text rewritten in clean Chinese.
+- Task 4 TypeScript and Vite verification passed.
 
 ### Environment Notes
 
@@ -78,7 +81,7 @@
 
 ### Next Action
 
-1. Start Task 4: implement Figma homepage sections.
+1. Start Task 5: restyle client subpages.
 
 ## Review Log
 
@@ -93,6 +96,8 @@
 | 2026-05-08 | 2 | Spec/code quality | Pass | Buildable, scoped additions; legacy styles retained to avoid mid-migration breakage. |
 | 2026-05-08 | 3 | Self-check | Pass | Shell now uses `BrandHeader`/`BrandFooter`; old encoded header copy removed from `App.tsx`. |
 | 2026-05-08 | 3 | Spec/code quality | Pass | Navigation/footer match requested structure, preserve existing routes, and remain responsive. |
+| 2026-05-08 | 4 | Self-check | Pass | Required homepage sections are represented with Figma-derived copy, layout, and reusable visual primitives. |
+| 2026-05-08 | 4 | Spec/code quality | Pass | Homepage covers all required homepage modules and keeps quote flow routed to the existing quote page. |
 
 ## Verification Log
 
@@ -110,3 +115,5 @@
 | 2026-05-08 | Task 2 root Node + `vite build` | Pass | Production build remains green after `.lc-*` CSS additions. |
 | 2026-05-08 | Task 3 root Node + `tsc --noEmit` | Pass | Figma shell components type-check. |
 | 2026-05-08 | Task 3 root Node + `vite build` | Pass | Production build remains green after shell replacement. |
+| 2026-05-08 | Task 4 root Node + `tsc --noEmit` | Pass | Homepage modules and clean brand content type-check. |
+| 2026-05-08 | Task 4 root Node + `vite build` | Pass | Production build remains green after homepage replacement. |

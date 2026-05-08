@@ -1,7 +1,7 @@
 export const brand = {
   companyName: '青岛东方丽彩包装印刷公司',
   shortName: '东方丽彩包装印刷',
-  subtitle: '标签印刷 · 包装定制 · 数字溯源',
+  subtitle: '标签印刷 / 包装定制 / 数字溯源',
   phone: '400-000-0000',
   address: '青岛市包装印刷产业园区',
   recordNo: '鲁ICP备 xxxxxxxx 号',
@@ -19,20 +19,20 @@ export const navItems = [
 ] as const;
 
 export const heroCopy = {
-  kicker: '标签印刷 · 包装定制 · 数字溯源',
+  kicker: '标签印刷 / 包装定制 / 数字溯源',
   title: '专业标签印刷与一物一码解决方案',
   subtitle:
     '提供不干胶标签、卷标、产品说明书、包装印刷、可变二维码、防伪标签等定制印刷服务，支持快速报价、批量生产与多行业应用。',
-  points: ['24h 快速响应', '可打样确认', '多行业批量供货'],
+  points: ['24h 快速响应', '支持打样确认', '多行业批量供货'],
 } as const;
 
 export const advantages = [
-  { mark: '¥', title: '快速报价', desc: '在线填写尺寸、材质、数量与工艺，快速获取专属报价。', color: '#FF7A1A' },
-  { mark: 'M', title: '多种材质', desc: '铜版纸、哑银、PET、PP、合成纸、透明膜等。', color: '#0A6CFF' },
-  { mark: 'UV', title: '工艺齐全', desc: '覆膜、烫金、击凸、局部 UV、模切、可变二维码。', color: '#00A886' },
-  { mark: 'Q', title: '质量稳定', desc: '色彩精准、粘性可靠，批量一致性好，交付更安心。', color: '#6C5CE7' },
-  { mark: 'C', title: '支持定制', desc: '尺寸、形状、材质、工艺和包装方式均可灵活定制。', color: '#09A7C7' },
-  { mark: 'I', title: '多行业应用', desc: '覆盖食品、饮料、日化、医药、工业、电商和物流。', color: '#EC008C' },
+  { mark: '报', title: '快速报价', desc: '在线填写尺寸、材质、数量与工艺，快速获取专属报价。', color: '#FF7A1A' },
+  { mark: '材', title: '多种材质', desc: '铜版纸、哑银、PET、PP、合成纸、透明膜等灵活选择。', color: '#0A6CFF' },
+  { mark: 'UV', title: '工艺齐全', desc: '覆膜、烫金、击凸、局部 UV、模切、可变二维码均可定制。', color: '#00A886' },
+  { mark: '质', title: '质量稳定', desc: '色彩精准、粘性可靠、批量一致性好，交付更安心。', color: '#6C5CE7' },
+  { mark: '定', title: '支持定制', desc: '尺寸、形状、材质、工艺和包装方式均可按需定制。', color: '#09A7C7' },
+  { mark: '业', title: '多行业应用', desc: '覆盖食品、饮料、日化、医药、工业、电商和物流。', color: '#EC008C' },
 ] as const;
 
 export const productCategories = [
@@ -63,7 +63,7 @@ export const crafts = ['覆亮膜', '覆哑膜', '烫金', '烫银', '击凸', '
 export const cases = [
   { title: '食品瓶贴', industry: '食品饮料', material: 'PET + 覆亮膜', highlight: '冷藏环境粘性稳定' },
   { title: '化妆品标签', industry: '日化美妆', material: '透明膜 + 烫金', highlight: '提升货架质感' },
-  { title: '茶叶包装标签', industry: '农产品礼盒', material: '铜版纸 + 击凸', highlight: '国风包装识别' },
+  { title: '茶叶包装标签', industry: '农产品礼盒', material: '铜版纸 + 击凸', highlight: '品牌包装识别度高' },
   { title: '工业设备标签', industry: '工业制造', material: '哑银 PET', highlight: '耐磨耐候' },
   { title: '二维码溯源标签', industry: '一物一码', material: '可变数据印刷', highlight: '扫码追溯防伪' },
   { title: '宣传册 / 产品说明书', industry: '说明书印刷', material: '双胶纸 + 折页', highlight: '信息清晰易读' },
