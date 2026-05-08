@@ -58,7 +58,7 @@ export function MemberCenterPage() {
       }
       setAddresses(remoteAddresses ?? []);
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '加载失败');
+      setNotice(toFriendlyMemberError(error, 'load'));
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ export function MemberCenterPage() {
       setProfile({ ...emptyProfile, ...saved });
       setNotice(profile.memberNo ? '资料已更新' : '会员注册成功');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '保存失败');
+      setNotice(toFriendlyMemberError(error, 'save'));
     } finally {
       setSavingProfile(false);
     }
@@ -97,7 +97,7 @@ export function MemberCenterPage() {
       setAddressDraft(emptyAddress);
       setNotice('地址已新增');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '新增地址失败');
+      setNotice(toFriendlyMemberError(error, 'address'));
     } finally {
       setSavingAddress(false);
     }
@@ -120,7 +120,7 @@ export function MemberCenterPage() {
       setAddresses((current) => current.filter((item) => String(item.id) !== String(id)));
       setNotice('地址已删除');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '删除失败');
+      setNotice(toFriendlyMemberError(error, 'address'));
     }
   }
 
@@ -130,7 +130,7 @@ export function MemberCenterPage() {
       setAddresses((current) => current.map((item) => ({ ...item, isDefault: String(item.id) === String(id) })));
       setNotice('已设为默认地址');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '设置失败');
+      setNotice(toFriendlyMemberError(error, 'address'));
     }
   }
 
@@ -275,4 +275,21 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
       {children}
     </label>
   );
+}
+
+function toFriendlyMemberError(error: unknown, action: 'load' | 'save' | 'address'): string {
+  const message = error instanceof Error ? error.message : '';
+  if (/HTTP\s*5\d\d|Failed to fetch|NetworkError/i.test(message)) {
+    if (action === 'load') {
+      return '会员服务暂时无法连接服务器，页面信息已保留，您可以稍后刷新重试。';
+    }
+
+    if (action === 'save') {
+      return '会员资料暂时无法保存，请稍后在服务器恢复后重试。';
+    }
+
+    return '地址服务暂时不可用，请稍后重试。';
+  }
+
+  return message || '操作失败，请稍后重试。';
 }

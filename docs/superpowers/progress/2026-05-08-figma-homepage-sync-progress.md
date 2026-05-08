@@ -17,7 +17,8 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 5 | Client subpages | Done | `c9de431` | Product, quote, history and member pages restyled |
 | 6 | Mini program mobile style | Done | `0f24754` | Mini program homepage, product, quote and account pages aligned |
 | 7 | Content completeness and data backfill | Done | `8a47554` | API and SQL seed data rewritten for label printing business |
-| 8 | Final verification and handoff | Done | Pending commit | Final client/API verification completed |
+| 8 | Final verification and handoff | Done | `5b8b510` | Final client/API verification completed |
+| 9 | Browser visual QA for retained pages | Done | Pending commit | History/member pages retained and polished after browser check |
 
 ## Completed Details
 
@@ -141,3 +142,26 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 - Handoff notes:
   - Client website, subpages, mini program, and seed data now share the same high-end label-printing brand direction.
   - Follow-up implementation can start from API integration, admin content editing, quote submission persistence, or pixel QA against the original Figma frame.
+
+### Task 9 - Browser Visual QA for Retained Pages
+
+- Status: Done
+- Reason:
+  - The supplied Figma file does not include history and member center screens, but these routes are required by the existing product.
+- Browser checks:
+  - `http://127.0.0.1:5174/#/`
+  - `http://127.0.0.1:5174/#/products`
+  - `http://127.0.0.1:5174/#/quote`
+  - `http://127.0.0.1:5174/#/history`
+  - `http://127.0.0.1:5174/#/member`
+- Findings and fixes:
+  - `/history` and `/member` were present, but API fallback displayed raw `HTTP 500` copy when the API service was unavailable.
+  - Replaced raw API error text with user-friendly offline/service-unavailable notices.
+  - Added global light background overrides so retained subpages do not leak the old dark/gold theme.
+- Verification:
+  - Browser route scan confirmed the five routes render expected headings.
+  - Browser route scan found no raw `HTTP 500` on `/history` or `/member`.
+  - Browser route scan found no visible mojibake markers in the checked routes.
+  - Browser console error check returned no errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.

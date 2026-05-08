@@ -22,7 +22,7 @@ export function HistoryPage() {
       await ensureSession();
       setHistory(await fetchMyQuotes());
     } catch (e) {
-      setError(e instanceof Error ? e.message : '加载失败');
+      setError(toFriendlyHistoryError(e));
       setHistory([]);
     } finally {
       setLoading(false);
@@ -118,4 +118,13 @@ function getQuoteSummary(quote: MemberQuote): QuoteResult['summary'] | undefined
 
 function getHistoryFeeNotes(quote: MemberQuote): QuoteFeeNote[] {
   return getExtraFeeNotes(quote.snapshot?.fullSnapshotJson?.extraFees);
+}
+
+function toFriendlyHistoryError(error: unknown): string {
+  const message = error instanceof Error ? error.message : '';
+  if (/HTTP\s*5\d\d|Failed to fetch|NetworkError/i.test(message)) {
+    return '报价历史暂时无法连接服务器，您仍可以先提交新的报价需求，稍后再回来查看历史记录。';
+  }
+
+  return message || '报价历史加载失败，请稍后重试。';
 }

@@ -1872,6 +1872,27 @@ a.action-bar-link.primary {
   font-family: var(--font-sans);
 }
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--lc-text);
+  background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+}
+
+.app-shell {
+  min-height: 100vh;
+  color: var(--lc-text);
+  background:
+    radial-gradient(circle at 8% 4%, rgb(10 108 255 / 8%), transparent 28%),
+    radial-gradient(circle at 92% 2%, rgb(0 168 134 / 7%), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+}
+
 .lc-container {
   width: min(1296px, calc(100% - 48px));
   margin: 0 auto;
@@ -2931,7 +2952,11 @@ a.action-bar-link.primary {
 }
 
 .lc-subpage {
+  min-height: 100vh;
   padding-top: 44px;
+  background:
+    radial-gradient(circle at 12% 0%, rgb(10 108 255 / 8%), transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
 }
 
 .lc-page-hero {
@@ -2939,7 +2964,8 @@ a.action-bar-link.primary {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 28px;
   align-items: end;
-  margin-top: 28px;
+  width: min(1296px, calc(100% - 48px));
+  margin: 28px auto 0;
   padding: 64px 0 32px;
 }
 
