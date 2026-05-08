@@ -77,6 +77,10 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
   - `apps/client/src/quoteFeeNotes.ts`
   - `apps/client/src/styles.css`
 - Preserved quote calculation and history behavior while replacing old visual language.
+- Important requirement:
+  - The supplied Figma file does not include the history page or member center page.
+  - These two pages must be retained in the project and kept visually consistent with the new Figma-inspired website style.
+  - Do not remove `/history` or `/member` routes during later Figma fidelity work.
 - Verification:
   - Client `tsc --noEmit`: passed
   - Client `vite build`: passed
