@@ -94,9 +94,7 @@ Page({
       return;
     }
     if (linkType === 'custom' && linkValue) {
-      wx.setClipboardData({
-        data: String(linkValue),
-      });
+      wx.setClipboardData({ data: String(linkValue) });
     }
   },
 });

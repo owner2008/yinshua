@@ -1,12 +1,11 @@
-<view class="page theme-{{themeMode}}">
-  <view class="card header-card">
-    <view>
-      <view class="title">会员中心</view>
-      <view class="muted">{{session.user.nickname || '未登录'}} / #{{session.user.id || '-'}}</view>
-      <view wx:if="{{notice}}" class="notice">{{notice}}</view>
-    </view>
+<view class="page">
+  <view class="page-hero card">
+    <text class="kicker">Member Center</text>
+    <view class="title">会员中心</view>
+    <view class="muted">{{session.user.nickname || '未登录'}} / #{{session.user.id || '-'}}</view>
+    <view wx:if="{{notice}}" class="notice">{{notice}}</view>
     <view class="action-row">
-      <button class="ghost-button" size="mini" bindtap="reload" disabled="{{loading}}">{{loading ? '刷新中…' : '刷新'}}</button>
+      <button class="ghost-button" size="mini" bindtap="reload" disabled="{{loading}}">{{loading ? '刷新中...' : '刷新'}}</button>
       <button class="ghost-button" size="mini" bindtap="logout">退出登录</button>
     </view>
   </view>
@@ -14,14 +13,8 @@
   <view class="card">
     <view class="section-title">{{profile.memberNo ? '会员资料' : '会员注册'}}</view>
     <view class="field two">
-      <label>
-        <text>昵称</text>
-        <input value="{{profile.nickname}}" data-field="nickname" bindinput="changeProfileField" />
-      </label>
-      <label>
-        <text>手机号</text>
-        <input value="{{profile.mobile}}" data-field="mobile" bindinput="changeProfileField" />
-      </label>
+      <label><text>昵称</text><input value="{{profile.nickname}}" data-field="nickname" bindinput="changeProfileField" /></label>
+      <label><text>手机号</text><input value="{{profile.mobile}}" data-field="mobile" bindinput="changeProfileField" /></label>
     </view>
     <view class="field">
       <text>客户类型</text>
@@ -29,26 +22,11 @@
         <view class="picker-value">{{customerTypeLabels[selectedCustomerTypeIndex]}}</view>
       </picker>
     </view>
-    <view class="field">
-      <text>联系人</text>
-      <input value="{{profile.contactName}}" data-field="contactName" bindinput="changeProfileField" />
-    </view>
-    <view class="field">
-      <text>企业名称</text>
-      <input value="{{profile.companyName}}" data-field="companyName" bindinput="changeProfileField" />
-    </view>
-    <view class="field">
-      <text>税号</text>
-      <input value="{{profile.taxNo}}" data-field="taxNo" bindinput="changeProfileField" />
-    </view>
-    <view class="field">
-      <text>所属行业</text>
-      <input value="{{profile.industry}}" data-field="industry" bindinput="changeProfileField" />
-    </view>
-    <view class="field">
-      <text>备注</text>
-      <input value="{{profile.remark}}" data-field="remark" bindinput="changeProfileField" />
-    </view>
+    <view class="field"><text>联系人</text><input value="{{profile.contactName}}" data-field="contactName" bindinput="changeProfileField" /></view>
+    <view class="field"><text>企业名称</text><input value="{{profile.companyName}}" data-field="companyName" bindinput="changeProfileField" /></view>
+    <view class="field"><text>税号</text><input value="{{profile.taxNo}}" data-field="taxNo" bindinput="changeProfileField" /></view>
+    <view class="field"><text>所属行业</text><input value="{{profile.industry}}" data-field="industry" bindinput="changeProfileField" /></view>
+    <view class="field"><text>备注</text><input value="{{profile.remark}}" data-field="remark" bindinput="changeProfileField" /></view>
     <button class="primary-button" loading="{{savingProfile}}" bindtap="saveProfile">{{profile.memberNo ? '更新资料' : '注册会员'}}</button>
   </view>
 
@@ -71,34 +49,16 @@
 
     <view class="section-title" style="margin-top: 24rpx;">新增地址</view>
     <view class="field two">
-      <label>
-        <text>收件人</text>
-        <input value="{{addressDraft.consignee}}" data-field="consignee" bindinput="changeAddressField" />
-      </label>
-      <label>
-        <text>手机号</text>
-        <input value="{{addressDraft.mobile}}" data-field="mobile" bindinput="changeAddressField" />
-      </label>
+      <label><text>收件人</text><input value="{{addressDraft.consignee}}" data-field="consignee" bindinput="changeAddressField" /></label>
+      <label><text>手机号</text><input value="{{addressDraft.mobile}}" data-field="mobile" bindinput="changeAddressField" /></label>
     </view>
     <view class="field two">
-      <label>
-        <text>省</text>
-        <input value="{{addressDraft.province}}" data-field="province" bindinput="changeAddressField" />
-      </label>
-      <label>
-        <text>市</text>
-        <input value="{{addressDraft.city}}" data-field="city" bindinput="changeAddressField" />
-      </label>
+      <label><text>省</text><input value="{{addressDraft.province}}" data-field="province" bindinput="changeAddressField" /></label>
+      <label><text>市</text><input value="{{addressDraft.city}}" data-field="city" bindinput="changeAddressField" /></label>
     </view>
     <view class="field two">
-      <label>
-        <text>区 / 县</text>
-        <input value="{{addressDraft.district}}" data-field="district" bindinput="changeAddressField" />
-      </label>
-      <label>
-        <text>详细地址</text>
-        <input value="{{addressDraft.detail}}" data-field="detail" bindinput="changeAddressField" />
-      </label>
+      <label><text>区 / 县</text><input value="{{addressDraft.district}}" data-field="district" bindinput="changeAddressField" /></label>
+      <label><text>详细地址</text><input value="{{addressDraft.detail}}" data-field="detail" bindinput="changeAddressField" /></label>
     </view>
     <view class="switch-row">
       <text>设为默认</text>

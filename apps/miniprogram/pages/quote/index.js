@@ -64,10 +64,9 @@ Page({
 
   onShow() {
     const hinted = getStoredQuoteProductId();
-    if (!hinted) {
-      return;
+    if (hinted) {
+      this.applySelectedProduct(hinted);
     }
-    this.applySelectedProduct(hinted);
   },
 
   applySelectedProduct(productId) {
@@ -138,9 +137,7 @@ Page({
   },
 
   refreshOptions() {
-    const productTemplates = this.data.templates.filter(
-      (item) => Number(item.productId) === Number(this.data.selectedProductId),
-    );
+    const productTemplates = this.data.templates.filter((item) => Number(item.productId) === Number(this.data.selectedProductId));
     const selectedTemplate = productTemplates[this.data.selectedTemplateIndex] || productTemplates[0] || null;
     if (!selectedTemplate) {
       this.setData({
@@ -212,9 +209,7 @@ Page({
 
   changeTemplate(event) {
     const selectedTemplateIndex = Number(event.detail.value);
-    const productTemplates = this.data.templates.filter(
-      (item) => Number(item.productId) === Number(this.data.selectedProductId),
-    );
+    const productTemplates = this.data.templates.filter((item) => Number(item.productId) === Number(this.data.selectedProductId));
     const template = productTemplates[selectedTemplateIndex] || productTemplates[0];
     const product = this.data.products.find((item) => Number(item.id) === Number(this.data.selectedProductId));
     if (!template) {
@@ -232,32 +227,25 @@ Page({
   },
 
   changeNumber(event) {
-    this.setData({
-      [`quoteInput.${event.currentTarget.dataset.field}`]: Number(event.detail.value),
-    });
+    this.setData({ [`quoteInput.${event.currentTarget.dataset.field}`]: Number(event.detail.value) });
   },
 
   changeBoolean(event) {
-    this.setData({
-      [`quoteInput.${event.currentTarget.dataset.field}`]: event.detail.value,
-    });
+    this.setData({ [`quoteInput.${event.currentTarget.dataset.field}`]: event.detail.value });
   },
 
   changeMaterial(event) {
-    const selectedMaterialIndex = Number(event.detail.value);
-    this.setData({ selectedMaterialIndex });
+    this.setData({ selectedMaterialIndex: Number(event.detail.value) });
     this.refreshOptions();
   },
 
   changePrint(event) {
-    const selectedPrintIndex = Number(event.detail.value);
-    this.setData({ selectedPrintIndex });
+    this.setData({ selectedPrintIndex: Number(event.detail.value) });
     this.refreshOptions();
   },
 
   changeShape(event) {
-    const selectedShapeIndex = Number(event.detail.value);
-    this.setData({ selectedShapeIndex });
+    this.setData({ selectedShapeIndex: Number(event.detail.value) });
     this.refreshOptions();
   },
 
@@ -273,15 +261,11 @@ Page({
   changeRequirementPicker(event) {
     const field = event.currentTarget.dataset.field;
     const value = requirementOptions[field][Number(event.detail.value)] || '';
-    this.setData({
-      [`quoteInput.${field}`]: value,
-    });
+    this.setData({ [`quoteInput.${field}`]: value });
   },
 
   changeText(event) {
-    this.setData({
-      [`quoteInput.${event.currentTarget.dataset.field}`]: event.detail.value,
-    });
+    this.setData({ [`quoteInput.${event.currentTarget.dataset.field}`]: event.detail.value });
   },
 
   toggleProcess(event) {
@@ -392,10 +376,7 @@ function normalizeQuoteInput(input) {
 }
 
 function enrichQuoteResult(quoteResult) {
-  return {
-    ...quoteResult,
-    feeNotes: getExtraFeeNotes(quoteResult.extraFees || []),
-  };
+  return { ...quoteResult, feeNotes: getExtraFeeNotes(quoteResult.extraFees || []) };
 }
 
 function getExtraFeeNotes(extraFees) {
@@ -408,10 +389,10 @@ function getExtraFeeNotes(extraFees) {
 }
 
 const extraFeeDescriptions = {
-  white_ink: '透明膜、深色底材或需要遮盖底色时，通常要先铺白墨，会增加开机、油墨和校准成本。',
+  white_ink: '透明膜、深色底材或需要遮盖底色时，通常需要先铺白墨，会增加开机、油墨和校准成本。',
   variable_data: '流水号、条码、二维码等可变内容需要逐张生成和校验，会增加数据处理与检测成本。',
   protective_finish: '防水、防刮等表面处理会增加涂层或后道处理成本，适合冷藏、潮湿、摩擦频繁等环境。',
-  roll_split: '按每卷数量交付时，需要额外复卷、计数和包装，所以会计入分卷整理费用。',
+  roll_split: '按每卷数量交付时，需要额外复卷、计数和包装，因此会计入分卷整理费用。',
   sheet_cutting: '单张裁切需要额外裁切、点数和整理，适合手工分发或单张贴标场景。',
   fan_fold: '折叠或风琴折交付需要整理成连续折叠形态，适合连续打印或批量贴标场景。',
 };

@@ -1,10 +1,8 @@
-<view class="page theme-{{themeMode}}">
-  <view class="hero card">
-    <view>
-      <text class="eyebrow">Member Center</text>
-      <view class="title">报价历史</view>
-      <view class="muted">{{notice}}</view>
-    </view>
+<view class="page">
+  <view class="page-hero card">
+    <text class="kicker">Quote History</text>
+    <view class="title">报价历史</view>
+    <view class="muted">{{notice}}</view>
     <button class="mini-button" size="mini" loading="{{busy}}" bindtap="loadHistory">刷新</button>
   </view>
 
@@ -20,7 +18,7 @@
         </view>
         <view class="quote-meta">
           <text>{{item.productName}}</text>
-          <text>{{item.quantity}} 件</text>
+          <text>{{item.quantity}} 枚</text>
           <text>{{item.customerTypeText}}</text>
         </view>
         <view wx:if="{{openedQuoteNo === item.quoteNo}}" class="requirement-panel">
@@ -34,13 +32,6 @@
             </block>
           </view>
           <view wx:else class="muted">暂无额外询价项</view>
-          <view wx:if="{{item.feeNotes.length}}" class="fee-note">
-            <view class="fee-note-title">费用说明</view>
-            <view wx:for="{{item.feeNotes}}" wx:key="code" class="fee-note-item">
-              <view>{{item.title}}</view>
-              <text>{{item.description}}</text>
-            </view>
-          </view>
         </view>
       </view>
     </block>
