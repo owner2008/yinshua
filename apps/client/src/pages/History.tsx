@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchMyQuotes } from '../api';
 import { useCatalog } from '../catalogContext';
+import { PageHero } from '../components/PageHero';
 import { getExtraFeeNotes, type QuoteFeeNote } from '../quoteFeeNotes';
 import { getQuoteRequirementItems } from '../quoteRequirements';
 import type { MemberQuote, QuoteResult } from '../types';
@@ -32,37 +34,48 @@ export function HistoryPage() {
   }, []);
 
   return (
-    <section className="history-view panel">
-      <div className="section-title">
-        <h2>报价历史</h2>
-        <button onClick={load}>{loading ? '刷新中…' : '刷新'}</button>
-      </div>
-      {error && <p className="error-copy">{error}</p>}
-      {history.length === 0 ? (
-        <p className="empty-copy">暂时没有已保存的报价</p>
-      ) : (
-        <div className="history-list">
-          {history.map((quote) => (
-            <article key={quote.quoteNo} className="history-item">
-              <div>
-                <strong>{quote.quoteNo}</strong>
-                <span>
-                  产品编号 {quote.productId} / 模板编号 {quote.productTemplateId}
-                </span>
-                <RequirementPreview quote={quote} />
-                <FeeNotePreview notes={getHistoryFeeNotes(quote)} />
-              </div>
-              <div>
-                <strong>
-                  {getQuoteSummary(quote) ? money.format(getQuoteSummary(quote)!.finalPrice) : '-'}
-                </strong>
-                <span>{quote.quantity} 件</span>
-              </div>
-            </article>
-          ))}
+    <div className="lc-subpage">
+      <PageHero kicker="Quote History" title="报价历史" desc="查看已保存的报价单、需求参数和费用说明，方便企业采购复盘与再次下单。">
+        <button className="lc-button ghost" onClick={load} type="button">
+          {loading ? '刷新中...' : '刷新'}
+        </button>
+      </PageHero>
+
+      <section className="lc-section">
+        <div className="lc-container">
+          {error ? <p className="lc-error-copy">{error}</p> : null}
+          {history.length === 0 ? (
+            <div className="lc-empty-state lc-card">
+              <h3>暂无报价历史</h3>
+              <p>您可以先提交一次报价需求，系统会在保存后记录报价单和关键参数。</p>
+              <Link className="lc-button primary" to="/quote">
+                立即获取报价
+              </Link>
+            </div>
+          ) : (
+            <div className="lc-history-list">
+              {history.map((quote) => (
+                <article key={quote.quoteNo} className="lc-card lc-history-card">
+                  <div>
+                    <span className="lc-card-kicker">报价单</span>
+                    <h3>{quote.quoteNo}</h3>
+                    <p>
+                      产品编号 {quote.productId} / 模板编号 {quote.productTemplateId}
+                    </p>
+                    <RequirementPreview quote={quote} />
+                    <FeeNotePreview notes={getHistoryFeeNotes(quote)} />
+                  </div>
+                  <div className="lc-history-price">
+                    <strong>{getQuoteSummary(quote) ? money.format(getQuoteSummary(quote)!.finalPrice) : '-'}</strong>
+                    <span>{quote.quantity} 枚</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </section>
+      </section>
+    </div>
   );
 }
 
@@ -72,16 +85,11 @@ function FeeNotePreview({ notes }: { notes: QuoteFeeNote[] }) {
   }
 
   return (
-    <div className="quote-fee-note history-fee-note">
+    <div className="lc-fee-notes">
       <strong>费用说明</strong>
-      <ul>
-        {notes.map((note) => (
-          <li key={note.code}>
-            <span>{note.title}</span>
-            <small>{note.description}</small>
-          </li>
-        ))}
-      </ul>
+      {notes.map((note) => (
+        <span key={note.code}>{note.title}</span>
+      ))}
     </div>
   );
 }
@@ -93,7 +101,7 @@ function RequirementPreview({ quote }: { quote: MemberQuote }) {
   }
 
   return (
-    <dl className="requirement-list compact-requirements">
+    <dl className="lc-requirement-list">
       {items.map((item) => (
         <div key={item.key}>
           <dt>{item.label}</dt>

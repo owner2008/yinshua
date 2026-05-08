@@ -39,7 +39,7 @@
 | 2 | Build Figma-derived design system | Done | Codex | `801e099` | Shared cards, printing visuals, and `.lc-*` CSS tokens/classes added; local review passed. |
 | 3 | Replace client shell with Figma navigation/footer | Done | Codex | `6ae1783` | `BrandShell.tsx`, `App.tsx`; TypeScript and Vite passed. |
 | 4 | Implement Figma homepage | Done | Codex | `5ae9b38` | `Home.tsx`, `brandContent.ts`, homepage `.lc-*` styles; TypeScript and Vite passed. |
-| 5 | Restyle client subpages | Not Started | Pending subagent | Pending | Product, quote, history, member pages. |
+| 5 | Restyle client subpages | Done | Codex | Pending | Product, quote, history, member pages aligned with Figma style; TypeScript, Vite, and mojibake scan passed. |
 | 6 | Align mini program with Figma mobile style | Not Started | Pending subagent | Pending | `apps/miniprogram` global and pages. |
 | 7 | Content completeness and data backfill | Not Started | Pending subagent | Pending | API seeds/data only if needed. |
 | 8 | Responsive and visual verification | Not Started | Pending subagent | Pending | Client build, browser checks, mini program checklist. |
@@ -70,6 +70,10 @@
 - Task 4 homepage rebuilt with Hero, advantages, products, quote guide/form, industries, materials/crafts, cases, quality/process, testimonials, and CTA.
 - Task 4 brand content and printing visual text rewritten in clean Chinese.
 - Task 4 TypeScript and Vite verification passed.
+- Task 5 shared subpage hero added.
+- Task 5 product list, product detail, quote, history, and member center pages restyled to Figma visual language.
+- Task 5 quote calculation and save behavior preserved while visible labels and form sections were cleaned.
+- Task 5 TypeScript, Vite, and client mojibake scan passed.
 
 ### Environment Notes
 
@@ -81,7 +85,7 @@
 
 ### Next Action
 
-1. Start Task 5: restyle client subpages.
+1. Start Task 6: align mini program mobile style.
 
 ## Review Log
 
@@ -98,6 +102,8 @@
 | 2026-05-08 | 3 | Spec/code quality | Pass | Navigation/footer match requested structure, preserve existing routes, and remain responsive. |
 | 2026-05-08 | 4 | Self-check | Pass | Required homepage sections are represented with Figma-derived copy, layout, and reusable visual primitives. |
 | 2026-05-08 | 4 | Spec/code quality | Pass | Homepage covers all required homepage modules and keeps quote flow routed to the existing quote page. |
+| 2026-05-08 | 5 | Self-check | Pass | Client subpages now share `PageHero`, `.lc-card`, Figma form styling, clean Chinese copy, and existing quote behavior. |
+| 2026-05-08 | 5 | Spec/code quality | Pass | Product, detail, quote, history, and member routes build; no visible mojibake pattern remains under `apps/client/src`. |
 
 ## Verification Log
 
@@ -117,3 +123,6 @@
 | 2026-05-08 | Task 3 root Node + `vite build` | Pass | Production build remains green after shell replacement. |
 | 2026-05-08 | Task 4 root Node + `tsc --noEmit` | Pass | Homepage modules and clean brand content type-check. |
 | 2026-05-08 | Task 4 root Node + `vite build` | Pass | Production build remains green after homepage replacement. |
+| 2026-05-08 | Task 5 root Node + `tsc --noEmit` | Pass | Subpage Figma restyle type-checks. |
+| 2026-05-08 | Task 5 root Node + `vite build` | Pass | Production build remains green after subpage restyle. |
+| 2026-05-08 | Task 5 `rg` mojibake scan under `apps/client/src` | Pass | No configured mojibake patterns found. |

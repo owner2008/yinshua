@@ -73,7 +73,7 @@ function formatRequirementValue(key: string, value: unknown) {
     return `${value} mm`;
   }
   if (key === 'piecesPerRoll') {
-    return `${value} 个/卷`;
+    return `${value} 枚/卷`;
   }
   return String(value);
 }

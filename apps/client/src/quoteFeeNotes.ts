@@ -7,7 +7,7 @@ export interface QuoteFeeNote {
 }
 
 const extraFeeDescriptions: Record<string, string> = {
-  white_ink: '透明膜、深色底材或需要遮盖底色时，通常要先铺白墨，因此会增加开机、油墨和印刷校准成本。',
+  white_ink: '透明膜、深色底材或需要遮盖底色时，通常需要先铺白墨，因此会增加开机、油墨和印刷校准成本。',
   variable_data: '流水号、条码、二维码等可变内容需要逐张生成和校验，会增加数据处理与印刷检测成本。',
   protective_finish: '防水、防刮等表面处理会增加涂层或后道处理成本，适合冷藏、潮湿、摩擦频繁等使用环境。',
   roll_split: '按每卷数量分卷交付时，需要额外复卷、计数和包装，所以会按分卷数量计入整理费用。',
