@@ -40,7 +40,7 @@
 | 3 | Replace client shell with Figma navigation/footer | Done | Codex | `6ae1783` | `BrandShell.tsx`, `App.tsx`; TypeScript and Vite passed. |
 | 4 | Implement Figma homepage | Done | Codex | `5ae9b38` | `Home.tsx`, `brandContent.ts`, homepage `.lc-*` styles; TypeScript and Vite passed. |
 | 5 | Restyle client subpages | Done | Codex | `fc61fdc` | Product, quote, history, member pages aligned with Figma style; TypeScript, Vite, and mojibake scan passed. |
-| 6 | Align mini program with Figma mobile style | Done | Codex | Pending | Global WXSS, homepage, product, quote, history, member pages aligned; JS syntax, client build, and mojibake scan passed. |
+| 6 | Align mini program with Figma mobile style | Done | Codex | `2d1c8af` | Global WXSS, homepage, product, quote, history, member pages aligned; JS syntax, client build, and mojibake scan passed. |
 | 7 | Content completeness and data backfill | Not Started | Pending subagent | Pending | API seeds/data only if needed. |
 | 8 | Responsive and visual verification | Not Started | Pending subagent | Pending | Client build, browser checks, mini program checklist. |
 
