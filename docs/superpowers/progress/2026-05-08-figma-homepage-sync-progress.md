@@ -22,6 +22,7 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 | 10 | Homepage visual fidelity and product imagery pass | Done | Pending commit | Reworked product imagery, quality control and trust modules |
 | 11 | Subpage typography refinement | Done | Pending commit | Reduced oversized functional page titles and section headings |
 | 12 | Quote page spacing refinement | Done | Pending commit | Added breathing room to quote layout, cards and form fields |
+| 13 | Material craft section spacing refinement | Done | Pending commit | Added inner spacing to material/craft sample panels |
 
 ## Completed Details
 
@@ -224,6 +225,23 @@ Plan: `docs/superpowers/plans/2026-05-08-figma-homepage-sync.md`
 - Verification:
   - Browser quote page scan confirmed `基础报价参数` and `工艺选择` sections render.
   - Browser quote page scan found no raw `HTTP 500` and no mojibake markers.
+  - Browser console error check returned no errors.
+  - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
+  - Client `vite build`: passed.
+
+### Task 13 - Material Craft Section Spacing Refinement
+
+- Status: Done
+- Reason:
+  - Manual screenshot review showed the `丰富材质与后道工艺` section content was too close to card edges.
+- Changes:
+  - Increased sample panel padding and inner gaps.
+  - Increased material sample padding and vertical alignment.
+  - Increased craft chip spacing and chip horizontal padding.
+  - Adjusted QR block spacing inside the craft panel.
+- Verification:
+  - Browser homepage scan confirmed material/craft section content renders.
+  - Browser scan found no raw `HTTP 500` and no mojibake markers.
   - Browser console error check returned no errors.
   - Client `tsc -p apps/client/tsconfig.json --noEmit`: passed.
   - Client `vite build`: passed.
