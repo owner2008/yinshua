@@ -36,7 +36,7 @@
 | --- | --- | --- | --- | --- | --- |
 | 0 | Worktree and progress tracking setup | Done | Codex | `e38e390` | Worktree created; progress doc added and committed. |
 | 1 | Extract brand content and clean fallback data | Done | Codex | `b923ba4`, `0e4a708` | Brand constants and clean fallback sample data implemented; local spec/quality review passed. |
-| 2 | Build Figma-derived design system | Not Started | Pending subagent | Pending | Shared cards, printing visuals, global CSS tokens. |
+| 2 | Build Figma-derived design system | Done | Codex | Pending | Shared cards, printing visuals, and `.lc-*` CSS tokens/classes added; local review passed. |
 | 3 | Replace client shell with Figma navigation/footer | Not Started | Pending subagent | Pending | `BrandShell.tsx`, `App.tsx`. |
 | 4 | Implement Figma homepage | Not Started | Pending subagent | Pending | `HomeSections.tsx`, `Home.tsx`. |
 | 5 | Restyle client subpages | Not Started | Pending subagent | Pending | Product, quote, history, member pages. |
@@ -61,6 +61,10 @@
 - Task 1B TypeScript and Vite verification passed.
 - Task 1 local spec compliance review passed.
 - Task 1 local code quality review passed.
+- Task 2 shared card components and printing visual components added.
+- Task 2 Figma-derived `.lc-*` CSS token and component classes added without deleting legacy styles.
+- Task 2 TypeScript and Vite verification passed.
+- Task 2 local spec/code quality review passed.
 
 ### Environment Notes
 
@@ -72,8 +76,8 @@
 
 ### Next Action
 
-1. Start Task 2: build Figma-derived design system.
-2. Keep Task 2 scoped to shared cards, printing visuals, and global CSS tokens.
+1. Commit Task 2.
+2. Start Task 3: replace client shell with Figma navigation/footer.
 
 ## Review Log
 
@@ -84,6 +88,8 @@
 | 2026-05-08 | 1B | Self-check | Pass | Rewrote fallback categories/products/templates with clean Chinese and kept template relationships valid. |
 | 2026-05-08 | 1 | Spec compliance | Pass | Required exports exist; fallback products/templates remain compatible; catalog notices are clean Chinese. |
 | 2026-05-08 | 1 | Code quality | Pass | Changes are scoped, typed, and buildable. Terminal display may show mojibake due shell encoding, but TypeScript/Vite pass. |
+| 2026-05-08 | 2 | Self-check | Pass | New design-system files are scoped to shared cards, printing visuals, and `.lc-*` CSS classes. |
+| 2026-05-08 | 2 | Spec/code quality | Pass | Buildable, scoped additions; legacy styles retained to avoid mid-migration breakage. |
 
 ## Verification Log
 
@@ -97,3 +103,5 @@
 | 2026-05-08 | Task 1A root Node + `vite build` | Pass | Production build remains green. |
 | 2026-05-08 | Task 1B root Node + `tsc --noEmit` | Pass | Clean fallback data type-checks. |
 | 2026-05-08 | Task 1B root Node + `vite build` | Pass | Production build remains green after sample data rewrite. |
+| 2026-05-08 | Task 2 root Node + `tsc --noEmit` | Pass | Shared components type-check. |
+| 2026-05-08 | Task 2 root Node + `vite build` | Pass | Production build remains green after `.lc-*` CSS additions. |
