@@ -19,7 +19,22 @@ export const navItems = [
   { label: '联系我们', href: '/contact' },
 ] as const;
 
-const officialAsset = (path: string) => `http://www.qddflc.com/${path}`;
+const officialAssetMap: Record<string, string> = {
+  'uploads/image/20140606/1402073029.jpg': '/official/qddflc/label-self-adhesive.jpg',
+  'uploads/image/20140611/1402504974.jpg': '/official/qddflc/label-roll.jpg',
+  'uploads/image/20140611/1402500548.jpg': '/official/qddflc/product-insert.jpg',
+  'uploads/image/20140611/1402496559.jpg': '/official/qddflc/packaging-bag-box.jpg',
+  'uploads/image/20140611/1402503868.jpg': '/official/qddflc/brochure-print.jpg',
+  'uploads/image/20190810/1565408204.jpg': '/official/qddflc/equipment-uv-line.jpg',
+  'uploads/image/20190810/1565411248.jpg': '/official/qddflc/equipment-heidelberg.jpg',
+  'uploads/image/20140613/1402669288.jpg': '/official/qddflc/equipment-label-machine.jpg',
+  'uploads/image/20140613/1402673876.jpg': '/official/qddflc/equipment-roll-machine.jpg',
+  'uploads/image/20140613/1402671819.jpg': '/official/qddflc/equipment-print-machine.jpg',
+  'uploads/image/20140611/1402505008.jpg': '/official/qddflc/equipment-diecut.jpg',
+  'data/watermark/erweima.jpg': '/official/qddflc/wechat-qr.jpg',
+};
+
+const officialAsset = (path: string) => officialAssetMap[path] ?? '/official/qddflc/label-self-adhesive.jpg';
 
 export const companyProfile = {
   title: '专注标签印刷、包装印刷与企业定制印刷服务',
