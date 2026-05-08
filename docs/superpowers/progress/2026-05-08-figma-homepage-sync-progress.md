@@ -37,7 +37,7 @@
 | 0 | Worktree and progress tracking setup | Done | Codex | `e38e390` | Worktree created; progress doc added and committed. |
 | 1 | Extract brand content and clean fallback data | Done | Codex | `b923ba4`, `0e4a708` | Brand constants and clean fallback sample data implemented; local spec/quality review passed. |
 | 2 | Build Figma-derived design system | Done | Codex | `801e099` | Shared cards, printing visuals, and `.lc-*` CSS tokens/classes added; local review passed. |
-| 3 | Replace client shell with Figma navigation/footer | Done | Codex | `c15f2dc` | `BrandShell.tsx`, `App.tsx`; TypeScript and Vite passed. |
+| 3 | Replace client shell with Figma navigation/footer | Done | Codex | `6ae1783` | `BrandShell.tsx`, `App.tsx`; TypeScript and Vite passed. |
 | 4 | Implement Figma homepage | In Progress | Codex | Pending | `HomeSections.tsx`, `Home.tsx`. |
 | 5 | Restyle client subpages | Not Started | Pending subagent | Pending | Product, quote, history, member pages. |
 | 6 | Align mini program with Figma mobile style | Not Started | Pending subagent | Pending | `apps/miniprogram` global and pages. |
