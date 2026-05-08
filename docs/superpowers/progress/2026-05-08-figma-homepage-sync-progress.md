@@ -53,11 +53,20 @@
 - `.worktrees/` and `worktrees/` are ignored by git.
 - Isolated worktree created at `D:\study\Web\Dflc\yinshua\.worktrees\figma-homepage-sync`.
 - Progress tracker committed in `e38e390`.
+- Baseline client TypeScript check passed.
+- Baseline client Vite build passed.
+
+### Environment Notes
+
+- This worktree does not contain `.tools` because it is ignored and project-local.
+- The package script `apps/client build` references `..\..\.tools\node\node.exe`, so direct `pnpm --dir apps/client build` fails in the worktree.
+- Use the root checkout Node for verification while developing in this worktree:
+  - `D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps/client/node_modules/typescript/bin/tsc --noEmit`
+  - `D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps/client/node_modules/vite/bin/vite.js build`
 
 ### Next Action
 
-1. Run a baseline client build if available in this worktree.
-2. Dispatch Task 1 implementer subagent with the relevant plan excerpt.
+1. Dispatch Task 1 implementer subagent with the relevant plan excerpt.
 
 ## Review Log
 
@@ -70,3 +79,6 @@
 | Date | Command | Result | Notes |
 | --- | --- | --- | --- |
 | 2026-05-08 | `git worktree add ... -b figma-homepage-sync` | Pass | Worktree created successfully. |
+| 2026-05-08 | `pnpm --dir apps/client build` | Fail | Worktree lacks `.tools`; package script path cannot resolve. |
+| 2026-05-08 | root Node + `tsc --noEmit` | Pass | Manual equivalent TypeScript baseline passed. |
+| 2026-05-08 | root Node + `vite build` | Pass | Manual equivalent production build passed. |
