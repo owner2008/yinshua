@@ -1,0 +1,57 @@
+services:
+  qddflc-web:
+    image: nginx:alpine
+    container_name: qddflc-web
+    ports:
+      - "8088:80"
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - qddflc-api
+    restart: unless-stopped
+
+  qddflc-api:
+    image: node:20-alpine
+    container_name: qddflc-api
+    working_dir: /app
+    environment:
+      PORT: "3000"
+      DATABASE_URL: "mysql://yinshua:yinshua_password@qddflc-db:3306/yinshua"
+      MEMBER_AUTH_SECRET: "change-me-member-secret"
+      ADMIN_AUTH_SECRET: "change-me-admin-secret"
+      WECHAT_APPID: ""
+      WECHAT_APP_SECRET: ""
+    volumes:
+      - ./api:/app
+    command: >
+      sh -c "apk add --no-cache openssl &&
+      corepack enable &&
+      corepack prepare pnpm@9.0.0 --activate &&
+      pnpm install --frozen-lockfile &&
+      pnpm prisma:generate &&
+      pnpm prisma:push &&
+      if [ ! -f .seeded ]; then pnpm db:seed && touch .seeded; fi &&
+      pnpm build &&
+      node dist/main.js"
+    depends_on:
+      - qddflc-db
+    restart: unless-stopped
+
+  qddflc-db:
+    image: mysql:8.4
+    container_name: qddflc-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "root_password_change_me"
+      MYSQL_DATABASE: "yinshua"
+      MYSQL_USER: "yinshua"
+      MYSQL_PASSWORD: "yinshua_password"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - qddflc-mysql-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  qddflc-mysql-data:
