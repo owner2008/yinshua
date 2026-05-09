@@ -33,7 +33,7 @@ services:
       pnpm prisma:push &&
       if [ ! -f .seeded ]; then pnpm db:seed && touch .seeded; fi &&
       pnpm build &&
-      node dist/main.js"
+      node dist/src/main.js"
     depends_on:
       - qddflc-db
     restart: unless-stopped
