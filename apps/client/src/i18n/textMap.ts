@@ -1,7 +1,13 @@
 export const englishTextMap: Record<string, string> = {
   '青岛东方丽彩包装印刷公司': 'Qingdao Dongfang Licai Packaging & Printing Co., Ltd.',
+  '青岛东方丽彩包装有限公司': 'Qingdao Dongfang Licai Packaging Co., Ltd.',
   东方丽彩: 'Dongfang Licai',
+  东方丽彩包装印刷: 'Dongfang Licai Printing',
   '青岛标签印刷': 'Qingdao Label Printing',
+  '标签印刷 / 包装定制 / 数字溯源':
+    'Label Printing / Packaging Customization / Digital Traceability',
+  尚经理: 'Manager Shang',
+  青岛市城阳区书雨路118号: 'No. 118 Shuyu Road, Chengyang District, Qingdao',
   '不干胶标签': 'Self-adhesive Labels',
   '卷标标签': 'Roll Labels',
   '食品饮料标签': 'Food & Beverage Labels',

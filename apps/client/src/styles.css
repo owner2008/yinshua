@@ -3722,6 +3722,12 @@ body {
     font-size: 15px;
   }
 
+  .lc-h5-page-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   .lc-h5-page-menu {
     display: grid;
     width: 36px;
