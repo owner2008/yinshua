@@ -2700,12 +2700,12 @@ body {
 
 @media (min-width: 901px) and (max-width: 1180px) {
   html:lang(en-US) .lc-header {
-    grid-template-columns: minmax(190px, 230px) minmax(0, 1fr) auto;
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 12px;
   }
 
   html:lang(en-US) .lc-logo {
-    max-width: 230px;
+    max-width: 260px;
   }
 
   html:lang(en-US) .lc-logo small {
@@ -2713,17 +2713,23 @@ body {
   }
 
   html:lang(en-US) .lc-nav {
+    grid-column: 1 / -1;
+    order: 3;
+    width: 100%;
+    overflow: visible;
+    flex-wrap: wrap;
     justify-content: flex-start;
-    gap: 3px;
+    gap: 6px;
   }
 
   html:lang(en-US) .lc-nav a {
-    padding: 9px 8px;
+    padding: 8px 10px;
     font-size: 13px;
   }
 
   html:lang(en-US) .lc-header-actions {
     gap: 6px;
+    max-width: 100%;
   }
 
   html:lang(en-US) .lc-header-link {
