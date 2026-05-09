@@ -7,10 +7,10 @@ import { InfoChip, SectionHeading } from '../components/cards';
 import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 import { ProductVisual } from '../components/PrintingVisuals';
+import { useI18n } from '../i18n';
 import { getExtraFeeNotes } from '../quoteFeeNotes';
 import type { Product, ProductTemplate, QuoteInput, QuoteResult, TemplateOption } from '../types';
 
-const money = new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' });
 const deliveryForms = ['卷装', '张装', '单张裁切', '折叠 / 风琴折'];
 const labelingMethods = ['手工贴标', '自动贴标', '半自动贴标'];
 const rollDirections = ['上出', '下出', '左出', '右出', '内卷', '外卷'];
@@ -24,6 +24,7 @@ function templatesForProduct(templates: ProductTemplate[], productId: number) {
 
 export function QuotePage() {
   const { products, templates, setNotice, ensureSession } = useCatalog();
+  const { t, text } = useI18n();
   const [params] = useSearchParams();
   const productListRef = useRef<HTMLElement | null>(null);
   const initialProductId = Number(params.get('productId')) || Number(products[0]?.id ?? 1);
@@ -96,14 +97,14 @@ export function QuotePage() {
       return;
     }
     setBusy(true);
-    setLocalNotice('正在计算报价');
+    setLocalNotice(t('quote.notice.calculating'));
     try {
       const result = await calculateQuote(normalizeQuoteInput(quoteInput));
       setQuoteResult(result);
-      setLocalNotice('报价已生成');
-      setNotice('报价已生成');
+      setLocalNotice(t('quote.notice.generated'));
+      setNotice(t('quote.notice.generated'));
     } catch (error) {
-      setLocalNotice(error instanceof Error ? error.message : '报价失败');
+      setLocalNotice(error instanceof Error ? error.message : t('quote.notice.failed'));
     } finally {
       setBusy(false);
     }
@@ -114,15 +115,16 @@ export function QuotePage() {
       return;
     }
     setBusy(true);
-    setLocalNotice('正在保存报价');
+    setLocalNotice(t('quote.notice.saving'));
     try {
       await ensureSession();
       const result = await saveQuote(normalizeQuoteInput(quoteInput));
       setQuoteResult(result);
-      setLocalNotice(`报价单 ${result.quoteNo} 已保存`);
-      setNotice(`报价单 ${result.quoteNo} 已保存`);
+      const message = `${t('quote.result.quoteNo')} ${result.quoteNo} ${t('quote.notice.saved')}`;
+      setLocalNotice(message);
+      setNotice(message);
     } catch (error) {
-      setLocalNotice(error instanceof Error ? error.message : '保存失败');
+      setLocalNotice(error instanceof Error ? error.message : t('quote.notice.saveFailed'));
     } finally {
       setBusy(false);
     }
@@ -130,15 +132,11 @@ export function QuotePage() {
 
   return (
     <div className="lc-subpage">
-      <H5PageChrome title="在线报价" subtitle="选择产品、尺寸、材质和工艺，快速生成参考报价" />
-      <PageHero
-        kicker="Online Quote"
-        title="在线报价"
-        desc="选择产品、尺寸、材质、数量与工艺后生成参考报价；复杂工艺可补充说明，由客服复核。"
-      >
+      <H5PageChrome title={t('quote.hero.title')} subtitle={t('quote.hero.subtitle')} />
+      <PageHero kicker={t('quote.hero.eyebrow')} title={t('quote.hero.title')} desc={t('quote.hero.desc')}>
         <div className="lc-page-stat">
           <strong>3</strong>
-          <span>步提交需求</span>
+          <span>{t('quote.hero.steps')}</span>
         </div>
       </PageHero>
 
@@ -153,8 +151,8 @@ export function QuotePage() {
               type="button"
             >
               <ProductVisual product={product} tone={index % 4} />
-              <strong>{product.name}</strong>
-              <small>{product.applicationScenario ?? '支持按需定制'}</small>
+              <strong>{text(product.name)}</strong>
+              <small>{text(product.applicationScenario) || text(product.description) || t('products.card.descFallback')}</small>
             </button>
           ))}
         </aside>
@@ -164,15 +162,15 @@ export function QuotePage() {
             <section className="lc-card lc-selected-product">
               <ProductVisual product={selectedProduct} tone={1} />
               <div>
-                <p className="lc-kicker">当前产品</p>
-                <h2>{selectedProduct?.name}</h2>
-                <p>{selectedProduct?.description ?? selectedProduct?.applicationScenario}</p>
-                {selectedProduct ? <Link to={`/products/${selectedProduct.id}`}>查看产品详情</Link> : null}
+                <p className="lc-kicker">{t('quote.currentProduct')}</p>
+                <h2>{text(selectedProduct?.name)}</h2>
+                <p>{text(selectedProduct?.description ?? selectedProduct?.applicationScenario)}</p>
+                {selectedProduct ? <Link to={`/products/${selectedProduct.id}`}>{t('quote.viewProduct')}</Link> : null}
               </div>
             </section>
 
-            <FormPanel title="基础报价参数" desc="尺寸、数量、材质和印刷方式会直接影响基础成本。">
-              <Field label="报价模板">
+            <FormPanel title={t('quote.basic.title')} desc={t('quote.basic.subtitle')}>
+              <Field label={t('quote.field.template')}>
                 <select
                   value={quoteInput.productTemplateId}
                   onChange={(event) => {
@@ -183,59 +181,59 @@ export function QuotePage() {
                 >
                   {productTemplates.map((template) => (
                     <option key={template.id} value={Number(template.id)}>
-                      {template.templateName}
+                      {text(template.templateName)}
                     </option>
                   ))}
                 </select>
               </Field>
-              <Field label="宽度（毫米）">
+              <Field label={t('quote.field.width')}>
                 <input type="number" min={1} value={quoteInput.widthMm} onChange={(event) => updateInput('widthMm', Number(event.target.value))} />
               </Field>
-              <Field label="高度（毫米）">
+              <Field label={t('quote.field.height')}>
                 <input type="number" min={1} value={quoteInput.heightMm} onChange={(event) => updateInput('heightMm', Number(event.target.value))} />
               </Field>
-              <Field label="数量">
+              <Field label={t('quote.field.quantity')}>
                 <input type="number" min={1} value={quoteInput.quantity} onChange={(event) => updateInput('quantity', Number(event.target.value))} />
               </Field>
-              <Field label="材料">
+              <Field label={t('quote.field.material')}>
                 <select value={quoteInput.materialId} onChange={(event) => updateInput('materialId', Number(event.target.value))}>
                   {options.materials.map((option) => (
                     <option key={option.optionValue} value={Number(option.optionValue)}>
-                      {option.optionLabel}
+                      {text(option.optionLabel)}
                     </option>
                   ))}
                 </select>
               </Field>
-              <Field label="印刷方式">
+              <Field label={t('quote.field.print')}>
                 <select value={quoteInput.printMode} onChange={(event) => updateInput('printMode', event.target.value)}>
                   {options.printModes.map((option) => (
                     <option key={option.optionValue} value={option.optionValue}>
-                      {option.optionLabel}
+                      {text(option.optionLabel)}
                     </option>
                   ))}
                 </select>
               </Field>
-              <Field label="形状">
+              <Field label={t('quote.field.shape')}>
                 <select value={quoteInput.shapeType} onChange={(event) => updateInput('shapeType', event.target.value)}>
                   {options.shapes.map((option) => (
                     <option key={option.optionValue} value={option.optionValue}>
-                      {option.optionLabel}
+                      {text(option.optionLabel)}
                     </option>
                   ))}
                 </select>
               </Field>
-              <Field label="客户类型">
+              <Field label={t('quote.field.customerType')}>
                 <select value={quoteInput.customerType} onChange={(event) => updateInput('customerType', event.target.value as QuoteInput['customerType'])}>
-                  <option value="personal">个人客户</option>
-                  <option value="company">企业客户</option>
+                  <option value="personal">{t('quote.customer.personal')}</option>
+                  <option value="company">{t('quote.customer.company')}</option>
                 </select>
               </Field>
             </FormPanel>
 
             <section className="lc-card lc-form-panel">
-              <SectionHeading kicker="Craft" title="工艺选择" desc={selectedTemplate.templateName} />
+              <SectionHeading kicker={t('quote.craft.kicker')} title={t('quote.craft.title')} desc={text(selectedTemplate.templateName)} />
               {options.processes.length === 0 ? (
-                <p className="lc-empty-copy">该模板暂无可选工艺</p>
+                <p className="lc-empty-copy">{t('quote.craft.empty')}</p>
               ) : (
                 <div className="lc-chip-filter">
                   {options.processes.map((option) => (
@@ -245,7 +243,7 @@ export function QuotePage() {
                       className={quoteInput.processCodes.includes(option.optionValue) ? 'active' : ''}
                       onClick={() => toggleProcess(option.optionValue)}
                     >
-                      {option.optionLabel}
+                      {text(option.optionLabel)}
                     </button>
                   ))}
                 </div>
@@ -253,121 +251,60 @@ export function QuotePage() {
               <div className="lc-toggle-row">
                 <label>
                   <input type="checkbox" checked={quoteInput.isProofing} onChange={(event) => updateInput('isProofing', event.target.checked)} />
-                  打样确认
+                  {t('quote.craft.proofing')}
                 </label>
                 <label>
                   <input type="checkbox" checked={quoteInput.isUrgent} onChange={(event) => updateInput('isUrgent', event.target.checked)} />
-                  加急生产
+                  {t('quote.craft.urgent')}
                 </label>
               </div>
             </section>
 
-            <FormPanel title="交付与贴标" desc="卷标方向、卷芯和每卷数量会影响后道整理和贴标适配。">
-              <Field label="交付形式">
-                <select value={quoteInput.deliveryForm ?? ''} onChange={(event) => updateInput('deliveryForm', event.target.value)}>
-                  {deliveryForms.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="贴标方式">
-                <select value={quoteInput.labelingMethod ?? ''} onChange={(event) => updateInput('labelingMethod', event.target.value)}>
-                  {labelingMethods.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="出标 / 卷标方向">
-                <select value={quoteInput.rollDirection ?? ''} onChange={(event) => updateInput('rollDirection', event.target.value)}>
-                  {rollDirections.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="卷芯内径（毫米）">
+            <FormPanel title={t('quote.delivery.title')} desc={t('quote.delivery.desc')}>
+              <SelectField label={t('quote.field.deliveryForm')} value={quoteInput.deliveryForm} options={deliveryForms} onChange={(value) => updateInput('deliveryForm', value)} />
+              <SelectField label={t('quote.field.labelingMethod')} value={quoteInput.labelingMethod} options={labelingMethods} onChange={(value) => updateInput('labelingMethod', value)} />
+              <SelectField label={t('quote.field.rollDirection')} value={quoteInput.rollDirection} options={rollDirections} onChange={(value) => updateInput('rollDirection', value)} />
+              <Field label={t('quote.field.rollCore')}>
                 <input type="number" min={0} value={quoteInput.rollCoreMm ?? 76} onChange={(event) => updateInput('rollCoreMm', Number(event.target.value))} />
               </Field>
-              <Field label="每卷数量">
+              <Field label={t('quote.field.piecesPerRoll')}>
                 <input type="number" min={0} value={quoteInput.piecesPerRoll ?? 1000} onChange={(event) => updateInput('piecesPerRoll', Number(event.target.value))} />
               </Field>
             </FormPanel>
 
-            <FormPanel title="材料环境与文件" desc="补充使用环境、表面处理和设计文件，便于客服复核报价。">
-              <Field label="胶性 / 使用环境">
-                <select value={quoteInput.adhesiveType ?? ''} onChange={(event) => updateInput('adhesiveType', event.target.value)}>
-                  {adhesiveTypes.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
+            <FormPanel title={t('quote.file.title')} desc={t('quote.file.desc')}>
+              <SelectField label={t('quote.field.adhesive')} value={quoteInput.adhesiveType} options={adhesiveTypes} onChange={(value) => updateInput('adhesiveType', value)} />
+              <SelectField label={t('quote.field.surface')} value={quoteInput.surfaceFinish} options={surfaceFinishes} onChange={(value) => updateInput('surfaceFinish', value)} />
+              <SelectField label={t('quote.field.color')} value={quoteInput.colorMode} options={colorModes} onChange={(value) => updateInput('colorMode', value)} />
+              <Field label={t('quote.field.environment')}>
+                <input value={quoteInput.usageEnvironment ?? ''} placeholder={t('quote.placeholder.environment')} onChange={(event) => updateInput('usageEnvironment', event.target.value)} />
               </Field>
-              <Field label="表面处理">
-                <select value={quoteInput.surfaceFinish ?? ''} onChange={(event) => updateInput('surfaceFinish', event.target.value)}>
-                  {surfaceFinishes.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
+              <Field label={t('quote.field.designFile')}>
+                <input value={quoteInput.designFileUrl ?? ''} placeholder={t('quote.placeholder.designFile')} onChange={(event) => updateInput('designFileUrl', event.target.value)} />
               </Field>
-              <Field label="印刷颜色">
-                <select value={quoteInput.colorMode ?? ''} onChange={(event) => updateInput('colorMode', event.target.value)}>
-                  {colorModes.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
+              <Field label={t('quote.field.packaging')}>
+                <input value={quoteInput.packagingMethod ?? ''} placeholder={t('quote.placeholder.packaging')} onChange={(event) => updateInput('packagingMethod', event.target.value)} />
               </Field>
-              <Field label="使用环境说明">
-                <input value={quoteInput.usageEnvironment ?? ''} placeholder="如冷冻、户外、防水、耐油等" onChange={(event) => updateInput('usageEnvironment', event.target.value)} />
-              </Field>
-              <Field label="设计文件地址">
-                <input value={quoteInput.designFileUrl ?? ''} placeholder="可填写网盘、图片或文件链接" onChange={(event) => updateInput('designFileUrl', event.target.value)} />
-              </Field>
-              <Field label="包装与发货要求">
-                <input value={quoteInput.packagingMethod ?? ''} placeholder="如按卷分装、纸箱、发货地区等" onChange={(event) => updateInput('packagingMethod', event.target.value)} />
-              </Field>
-              <Field label="期望交期">
-                <input value={quoteInput.expectedDeliveryDate ?? ''} placeholder="如 3 天内、下周五前" onChange={(event) => updateInput('expectedDeliveryDate', event.target.value)} />
+              <Field label={t('quote.field.deliveryDate')}>
+                <input value={quoteInput.expectedDeliveryDate ?? ''} placeholder={t('quote.placeholder.deliveryDate')} onChange={(event) => updateInput('expectedDeliveryDate', event.target.value)} />
               </Field>
               <label className="field lc-field-wide">
-                <span>补充说明</span>
-                <textarea
-                  value={quoteInput.quoteRemark ?? ''}
-                  placeholder="可补充贴标设备、卷外径、特殊工艺、文件状态等信息"
-                  onChange={(event) => updateInput('quoteRemark', event.target.value)}
-                />
+                <span>{t('quote.field.remark')}</span>
+                <textarea value={quoteInput.quoteRemark ?? ''} placeholder={t('quote.placeholder.remark')} onChange={(event) => updateInput('quoteRemark', event.target.value)} />
               </label>
               <div className="lc-toggle-row lc-field-wide">
-                <label>
-                  <input type="checkbox" checked={Boolean(quoteInput.hasDesignFile)} onChange={(event) => updateInput('hasDesignFile', event.target.checked)} />
-                  已有设计文件
-                </label>
-                <label>
-                  <input type="checkbox" checked={Boolean(quoteInput.needDesignService)} onChange={(event) => updateInput('needDesignService', event.target.checked)} />
-                  需要设计协助
-                </label>
-                <label>
-                  <input type="checkbox" checked={Boolean(quoteInput.needSampleApproval)} onChange={(event) => updateInput('needSampleApproval', event.target.checked)} />
-                  需要样稿确认
-                </label>
+                <CheckboxField checked={Boolean(quoteInput.hasDesignFile)} label={t('quote.flag.hasDesignFile')} onChange={(value) => updateInput('hasDesignFile', value)} />
+                <CheckboxField checked={Boolean(quoteInput.needDesignService)} label={t('quote.flag.needDesignService')} onChange={(value) => updateInput('needDesignService', value)} />
+                <CheckboxField checked={Boolean(quoteInput.needSampleApproval)} label={t('quote.flag.needSampleApproval')} onChange={(value) => updateInput('needSampleApproval', value)} />
               </div>
             </FormPanel>
 
             <div className="lc-action-row">
               <button className="lc-button primary" disabled={busy} type="submit">
-                {busy ? '处理中...' : '计算报价'}
+                {busy ? t('quote.action.calculating') : t('quote.action.calculate')}
               </button>
               <button className="lc-button ghost" type="button" disabled={busy || !quoteResult} onClick={save}>
-                保存报价
+                {t('quote.action.save')}
               </button>
               {localNotice ? <p>{localNotice}</p> : null}
             </div>
@@ -376,10 +313,10 @@ export function QuotePage() {
           <section className="lc-card lc-selected-product">
             <ProductVisual product={selectedProduct} tone={1} />
             <div>
-              <p className="lc-kicker">当前产品</p>
-              <h2>{selectedProduct?.name ?? '未选择'}</h2>
-              <p className="lc-empty-copy">该产品暂未配置报价模板，暂时无法生成在线报价。</p>
-              {selectedProduct ? <Link to={`/products/${selectedProduct.id}`}>查看产品详情</Link> : null}
+              <p className="lc-kicker">{t('quote.currentProduct')}</p>
+              <h2>{text(selectedProduct?.name) || t('quote.noTemplate.title')}</h2>
+              <p className="lc-empty-copy">{t('quote.noTemplate.desc')}</p>
+              {selectedProduct ? <Link to={`/products/${selectedProduct.id}`}>{t('quote.viewProduct')}</Link> : null}
             </div>
           </section>
         )}
@@ -392,12 +329,18 @@ export function QuotePage() {
 }
 
 function QuoteResultPanel({ result }: { result: QuoteResult | null }) {
+  const { locale, t, text } = useI18n();
+  const money = useMemo(
+    () => new Intl.NumberFormat(locale === 'en-US' ? 'en-US' : 'zh-CN', { style: 'currency', currency: 'CNY' }),
+    [locale],
+  );
+
   if (!result) {
     return (
       <aside className="lc-card lc-quote-result empty">
-        <p className="lc-kicker">Quote Result</p>
-        <h2>等待计算</h2>
-        <p>填写参数并点击计算后，这里会显示参考价格和费用明细。</p>
+        <p className="lc-kicker">{t('quote.result.kicker')}</p>
+        <h2>{t('quote.result.waiting')}</h2>
+        <p>{t('quote.result.waitingDesc')}</p>
       </aside>
     );
   }
@@ -406,25 +349,29 @@ function QuoteResultPanel({ result }: { result: QuoteResult | null }) {
 
   return (
     <aside className="lc-card lc-quote-result">
-      <p className="lc-kicker">报价单 {result.quoteNo}</p>
+      <p className="lc-kicker">
+        {t('quote.result.quoteNo')} {result.quoteNo}
+      </p>
       <h2>{money.format(result.summary.finalPrice)}</h2>
-      <div className="lc-unit-price">单价 {money.format(result.summary.unitPrice)} / 枚</div>
+      <div className="lc-unit-price">
+        {t('quote.result.unitPrice')} {money.format(result.summary.unitPrice)} / {t('quote.result.perPiece')}
+      </div>
       <dl>
-        <ResultLine label="基础成本" value={money.format(result.summary.baseCost)} />
-        <ResultLine label="材料成本" value={money.format(result.material.cost)} />
-        <ResultLine label="印刷成本" value={money.format(result.print.cost)} />
+        <ResultLine label={t('quote.result.baseCost')} value={money.format(result.summary.baseCost)} />
+        <ResultLine label={t('quote.result.materialCost')} value={money.format(result.material.cost)} />
+        <ResultLine label={t('quote.result.printCost')} value={money.format(result.print.cost)} />
         {result.processes.map((process) => (
-          <ResultLine key={process.code} label={process.name} value={money.format(process.cost)} />
+          <ResultLine key={process.code} label={text(process.name)} value={money.format(process.cost)} />
         ))}
         {result.extraFees.map((fee) => (
-          <ResultLine key={fee.code} label={fee.name} value={money.format(fee.amount)} />
+          <ResultLine key={fee.code} label={text(fee.name)} value={money.format(fee.amount)} />
         ))}
       </dl>
       {feeNotes.length ? (
         <div className="lc-fee-notes">
-          <strong>费用说明</strong>
+          <strong>{t('quote.result.feeNotes')}</strong>
           {feeNotes.map((note) => (
-            <InfoChip key={note.code}>{note.title}</InfoChip>
+            <InfoChip key={note.code}>{text(note.title)}</InfoChip>
           ))}
         </div>
       ) : null}
@@ -455,6 +402,41 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
     <label className="field">
       <span>{label}</span>
       {children}
+    </label>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value?: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  const { text } = useI18n();
+
+  return (
+    <Field label={label}>
+      <select value={value ?? ''} onChange={(event) => onChange(event.target.value)}>
+        {options.map((item) => (
+          <option key={item} value={item}>
+            {text(item)}
+          </option>
+        ))}
+      </select>
+    </Field>
+  );
+}
+
+function CheckboxField({ checked, label, onChange }: { checked: boolean; label: string; onChange: (value: boolean) => void }) {
+  return (
+    <label>
+      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
+      {label}
     </label>
   );
 }
