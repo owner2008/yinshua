@@ -2442,9 +2442,9 @@ body {
   top: 0;
   z-index: 40;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr) auto;
   align-items: center;
-  gap: 28px;
+  gap: 18px;
   width: min(1180px, calc(100% - 48px));
   margin: 18px auto 0;
   padding: 12px 14px;
@@ -2459,9 +2459,16 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  min-width: 214px;
+  min-width: 0;
+  max-width: 300px;
+  overflow: hidden;
   color: var(--lc-ink);
   text-decoration: none;
+}
+
+.lc-logo > div {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .lc-logo > span {
@@ -2483,6 +2490,9 @@ body {
 .lc-logo small {
   display: block;
   line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lc-logo strong {
@@ -2491,9 +2501,10 @@ body {
 }
 
 .lc-logo small {
+  max-width: 236px;
   margin-top: 4px;
   color: var(--lc-muted);
-  font-size: 11px;
+  font-size: clamp(9px, 0.78vw, 11px);
   text-transform: uppercase;
 }
 
@@ -2512,10 +2523,10 @@ body {
 
 .lc-nav a {
   flex: 0 0 auto;
-  padding: 10px 12px;
+  padding: 10px clamp(8px, 0.8vw, 12px);
   border-radius: 999px;
   color: var(--lc-muted);
-  font-size: 14px;
+  font-size: clamp(12px, 0.95vw, 14px);
   font-weight: 700;
   text-decoration: none;
   transition:
@@ -2538,7 +2549,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: clamp(6px, 0.7vw, 10px);
   white-space: nowrap;
 }
 
@@ -2546,12 +2557,12 @@ body {
   min-height: 36px;
   display: inline-flex;
   align-items: center;
-  padding: 0 12px;
+  padding: 0 clamp(9px, 0.8vw, 12px);
   border: 1px solid rgb(10 108 255 / 14%);
   border-radius: 999px;
   color: var(--lc-muted);
   background: rgb(247 250 254 / 68%);
-  font-size: 13px;
+  font-size: clamp(12px, 0.85vw, 13px);
   font-weight: 800;
   text-decoration: none;
   transition:
