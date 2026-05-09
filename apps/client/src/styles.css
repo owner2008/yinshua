@@ -2698,7 +2698,7 @@ body {
   background-size: 14px 14px;
 }
 
-@media (min-width: 901px) and (max-width: 1180px) {
+@media (min-width: 901px) {
   html:lang(en-US) .lc-header {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px 12px;
