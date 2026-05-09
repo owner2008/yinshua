@@ -4083,6 +4083,109 @@ body {
     gap: 8px;
   }
 
+  .lc-member-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .lc-member-title {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .lc-member-title h2 {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .lc-member-title span {
+    flex: 0 0 auto;
+    max-width: 100%;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: #eef5ff;
+    color: #0a6cff;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .lc-member-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .lc-notice,
+  .lc-error-copy {
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .lc-address-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .lc-address-list li {
+    padding: 12px;
+    border-radius: 15px;
+    background: #f6f9ff;
+  }
+
+  .lc-address-list strong,
+  .lc-address-list span {
+    line-height: 1.55;
+  }
+
+  .lc-address-list div {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .lc-address-list button {
+    min-height: 32px;
+    border-radius: 999px;
+  }
+
+  .lc-history-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .lc-history-card {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px 14px;
+  }
+
+  .lc-history-card h3 {
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .lc-history-card p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .lc-history-price {
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: 14px;
+    background: #f6f9ff;
+  }
+
+  .lc-history-price strong {
+    font-size: 24px;
+  }
+
+  .lc-requirement-list {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
   .lc-container {
     width: calc(100% - 24px);
   }

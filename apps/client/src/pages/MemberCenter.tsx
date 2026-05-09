@@ -10,6 +10,7 @@ import {
   setDefaultMyAddress,
 } from '../api';
 import { useCatalog } from '../catalogContext';
+import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 import type { MemberAddress, MemberProfile } from '../types';
 
@@ -136,6 +137,7 @@ export function MemberCenterPage() {
 
   return (
     <div className="lc-subpage">
+      <H5PageChrome title="会员中心" subtitle="维护企业资料、联系人和收货地址" />
       <PageHero kicker="Member Center" title="会员中心" desc="维护企业资料、联系人和收货地址，方便报价保存、复购和后续交付沟通。">
         <div className="lc-member-actions">
           <button className="lc-button ghost" type="button" onClick={load} disabled={loading}>
@@ -264,6 +266,7 @@ export function MemberCenterPage() {
           </section>
         </div>
       </section>
+      <H5TabBar />
     </div>
   );
 }

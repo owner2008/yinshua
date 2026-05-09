@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchMyQuotes } from '../api';
 import { useCatalog } from '../catalogContext';
+import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 import { getExtraFeeNotes, type QuoteFeeNote } from '../quoteFeeNotes';
 import { getQuoteRequirementItems } from '../quoteRequirements';
@@ -35,6 +36,7 @@ export function HistoryPage() {
 
   return (
     <div className="lc-subpage">
+      <H5PageChrome title="报价历史" subtitle="查看已保存报价、参数和费用说明" />
       <PageHero kicker="Quote History" title="报价历史" desc="查看已保存的报价单、需求参数和费用说明，方便企业采购复盘与再次下单。">
         <button className="lc-button ghost" onClick={load} type="button">
           {loading ? '刷新中...' : '刷新'}
@@ -75,6 +77,7 @@ export function HistoryPage() {
           )}
         </div>
       </section>
+      <H5TabBar />
     </div>
   );
 }

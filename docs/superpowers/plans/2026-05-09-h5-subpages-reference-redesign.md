@@ -479,7 +479,7 @@ Append:
 
 Run frontend build from `apps/client`. Expected: exit code `0`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git -c safe.directory=D:/study/Web/Dflc/yinshua/.worktrees/figma-homepage-sync add apps/client/src/pages/Contact.tsx apps/client/src/styles.css
@@ -579,7 +579,7 @@ git -c safe.directory=D:/study/Web/Dflc/yinshua/.worktrees/figma-homepage-sync c
 - Modify: `apps/client/src/pages/History.tsx`
 - Modify: `apps/client/src/styles.css`
 
-- [ ] **Step 1: Add H5 chrome to member center**
+- [x] **Step 1: Add H5 chrome to member center**
 
 In `MemberCenter.tsx`, import:
 
@@ -595,7 +595,7 @@ Inside top-level `.lc-subpage`, add:
 
 Add `<H5TabBar />` before closing top-level wrapper.
 
-- [ ] **Step 2: Add H5 chrome to history page**
+- [x] **Step 2: Add H5 chrome to history page**
 
 In `History.tsx`, import:
 
@@ -611,7 +611,7 @@ Inside top-level `.lc-subpage`, add:
 
 Add `<H5TabBar />` before closing top-level wrapper.
 
-- [ ] **Step 3: Add member/history H5 CSS**
+- [x] **Step 3: Add member/history H5 CSS**
 
 Append:
 
@@ -650,7 +650,7 @@ Append:
 }
 ```
 
-- [ ] **Step 4: Build**
+- [x] **Step 4: Build**
 
 Run frontend build from `apps/client`. Expected: exit code `0`.
 
