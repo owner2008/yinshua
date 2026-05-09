@@ -3887,6 +3887,66 @@ body {
     gap: 12px;
   }
 
+  .lc-contact-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .lc-contact-intro,
+  .lc-contact-card {
+    padding: 18px 14px;
+  }
+
+  .lc-contact-intro h2,
+  .lc-contact-card h2 {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .lc-contact-intro p,
+  .lc-contact-card dd {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .lc-contact-card dl {
+    gap: 10px;
+    margin: 14px 0;
+  }
+
+  .lc-contact-card dl div {
+    padding: 11px 12px;
+    border-radius: 14px;
+    background: #f6f9ff;
+  }
+
+  .lc-contact-card img {
+    width: 132px;
+    height: 132px;
+    margin: 12px auto 0;
+  }
+
+  .lc-official-gallery,
+  .lc-official-gallery.equipment {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .lc-official-gallery .lc-card {
+    padding: 10px;
+  }
+
+  .lc-official-gallery img {
+    height: 108px;
+    border-radius: 14px;
+  }
+
+  .lc-official-gallery strong {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
   .lc-container {
     width: calc(100% - 24px);
   }

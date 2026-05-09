@@ -7,11 +7,13 @@ import {
   qrCodeImage,
 } from '../brandContent';
 import { InfoChip, SectionHeading } from '../components/cards';
+import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 
 export function ContactPage() {
   return (
     <div className="lc-subpage">
+      <H5PageChrome title="联系我们" subtitle="业务咨询、样品确认、企业定制与到厂沟通" />
       <PageHero
         kicker="Contact Us"
         title="联系我们"
@@ -96,6 +98,7 @@ export function ContactPage() {
           </div>
         </div>
       </section>
+      <H5TabBar />
     </div>
   );
 }
