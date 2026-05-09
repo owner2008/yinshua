@@ -46,4 +46,100 @@ export const englishTextMap: Record<string, string> = {
   物流仓储: 'Logistics & Warehousing',
   农产品: 'Agricultural Products',
   电商零售: 'E-commerce & Retail',
+  '专业标签印刷与一物一码解决方案':
+    'Professional Label Printing and One-code-per-item Solutions',
+  '提供不干胶标签、卷标、产品说明书、包装印刷、可变二维码、防伪标签等定制印刷服务，支持快速报价、批量生产与多行业应用。':
+    'Custom printing for self-adhesive labels, roll labels, product manuals, packaging, variable QR codes, and anti-counterfeit labels, with fast quotation, batch production, and multi-industry applications.',
+  '24h 快速响应': '24h Fast Response',
+  支持打样确认: 'Proofing Available',
+  多行业批量供货: 'Batch Supply for Multiple Industries',
+  报: 'Quote',
+  材: 'Mat.',
+  质: 'QC',
+  定: 'Custom',
+  行: 'Ind.',
+  快速报价: 'Fast Quotation',
+  多种材质: 'Multiple Materials',
+  工艺齐全: 'Complete Finishing',
+  质量稳定: 'Stable Quality',
+  支持定制: 'Customizable',
+  多行业应用: 'Multi-industry Applications',
+  '在线填写尺寸、材质、数量与工艺，快速获取专属报价。':
+    'Submit size, material, quantity, and finish details online for a dedicated quote.',
+  '铜版纸、哑银、PET、PP、合成纸、透明膜等灵活选择。':
+    'Flexible options including coated paper, matte silver, PET, PP, synthetic paper, and transparent film.',
+  '覆膜、烫金、击凸、局部 UV、模切、可变二维码均可定制。':
+    'Lamination, hot stamping, embossing, spot UV, die cutting, and variable QR codes can be customized.',
+  '色彩精准、粘性可靠、批量一致性好，交付更安心。':
+    'Accurate color, reliable adhesion, and consistent batch quality for easier delivery.',
+  '尺寸、形状、材质、工艺和包装方式均可按需定制。':
+    'Size, shape, material, finish, and packaging methods can all be customized.',
+  '覆盖食品、饮料、日化、医药、工业、电商和物流。':
+    'Serving food, beverage, personal care, healthcare, industrial, e-commerce, and logistics fields.',
+  '适用于食品、日化、工业等多场景。':
+    'Suitable for food, personal care, industrial, and other scenarios.',
+  '自动贴标、批量生产的稳定方案。':
+    'Stable solution for automatic labeling and batch production.',
+  '耐冷藏、防潮、贴合瓶罐包装。':
+    'Cold-resistant, moisture-proof, and suitable for bottle and jar packaging.',
+  '强调质感、色彩与货架表现。':
+    'Designed for texture, color, and shelf impact.',
+  '信息清晰，批量一致，可靠耐用。':
+    'Clear information, consistent batches, reliable and durable.',
+  '耐磨、耐候、可追溯识别。':
+    'Wear-resistant, weather-resistant, and traceable.',
+  '提升品牌可信度与渠道管控能力。':
+    'Improves brand trust and channel control.',
+  '可变二维码，支持溯源与营销。':
+    'Variable QR codes for traceability and marketing.',
+  '折页、说明书、随箱资料印刷。':
+    'Foldouts, manuals, and in-box document printing.',
+  '品牌包装与宣传资料配套生产。':
+    'Supporting production for brand packaging and promotional materials.',
+  '选择产品类型、尺寸与材质': 'Select product type, size, and material',
+  '填写数量、工艺与使用场景': 'Enter quantity, finish, and use scenario',
+  '提交需求，客服快速确认报价': 'Submit requirements and receive quick confirmation',
+  '不干胶卷标印刷': 'Self-adhesive Roll Label Printing',
+  化妆品标签: 'Cosmetics Labels',
+  '说明书、宣传册、海报': 'Manuals, Brochures, and Posters',
+  工业设备标签: 'Industrial Equipment Labels',
+  二维码溯源标签: 'QR Traceability Labels',
+  '包装盒、手提袋': 'Packaging Boxes and Carry Bags',
+  标签卷标: 'Roll Labels',
+  宣传物料: 'Promotional Materials',
+  一物一码: 'One-code-per-item',
+  包装印刷: 'Packaging Printing',
+  '铜版纸 / PET / PP': 'Coated Paper / PET / PP',
+  '透明膜 + 烫金': 'Transparent Film + Hot Stamping',
+  '铜版纸 / 双胶纸': 'Coated Paper / Offset Paper',
+  '哑银 PET': 'Matte Silver PET',
+  可变数据印刷: 'Variable Data Printing',
+  '卡纸 / 覆膜 / 模切': 'Cardstock / Lamination / Die Cutting',
+  '适合批量标签和自动贴标': 'Suitable for batch labels and automatic labeling',
+  提升货架质感: 'Improves shelf presentation',
+  '图文清晰，适合企业宣传': 'Clear text and images for business promotion',
+  耐磨耐候: 'Wear and weather resistant',
+  扫码追溯防伪: 'Scan-based traceability and anti-counterfeiting',
+  品牌包装配套生产: 'Supporting production for brand packaging',
+  先进印刷设备: 'Advanced Printing Equipment',
+  严格色彩管理: 'Strict Color Management',
+  出货前质量检测: 'Outgoing Quality Inspection',
+  批量生产稳定: 'Stable Batch Production',
+  售后跟进服务: 'After-sales Follow-up',
+  提交需求: 'Submit Requirements',
+  确认报价: 'Confirm Quote',
+  '设计 / 文件检查': 'Design / File Check',
+  打样确认: 'Proof Confirmation',
+  批量生产: 'Batch Production',
+  质检发货: 'Inspection & Shipping',
+  售后服务: 'After-sales Service',
+  '沟通效率高，报价和打样反馈很快，适合新品上线节奏。':
+    'Communication is efficient, with fast quote and proofing feedback for new product launches.',
+  '批量标签颜色一致，贴标稳定，售后也能及时跟进。':
+    'Batch label colors are consistent, labeling is stable, and after-sales support follows up quickly.',
+  '二维码标签数据准确，帮助我们做了渠道追溯和营销活动。':
+    'QR code label data is accurate and supports our channel traceability and marketing campaigns.',
+  东方丽彩包装印刷设备展示: 'Dongfang Licai Packaging Printing Equipment Display',
+  出货前质检: 'Pre-shipment Inspection',
+  批量色彩校准: 'Batch Color Calibration',
 };
