@@ -1,17 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchMyQuotes } from '../api';
 import { useCatalog } from '../catalogContext';
 import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
+import { useI18n } from '../i18n';
 import { getExtraFeeNotes, type QuoteFeeNote } from '../quoteFeeNotes';
 import { getQuoteRequirementItems } from '../quoteRequirements';
 import type { MemberQuote, QuoteResult } from '../types';
 
-const money = new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' });
-
 export function HistoryPage() {
   const { ensureSession } = useCatalog();
+  const { locale, t } = useI18n();
+  const money = useMemo(
+    () => new Intl.NumberFormat(locale === 'en-US' ? 'en-US' : 'zh-CN', { style: 'currency', currency: 'CNY' }),
+    [locale],
+  );
   const [history, setHistory] = useState<MemberQuote[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +27,7 @@ export function HistoryPage() {
       await ensureSession();
       setHistory(await fetchMyQuotes());
     } catch (e) {
-      setError(toFriendlyHistoryError(e));
+      setError(toFriendlyHistoryError(e, t));
       setHistory([]);
     } finally {
       setLoading(false);
@@ -36,10 +40,10 @@ export function HistoryPage() {
 
   return (
     <div className="lc-subpage">
-      <H5PageChrome title="报价历史" subtitle="查看已保存报价、参数和费用说明" />
-      <PageHero kicker="Quote History" title="报价历史" desc="查看已保存的报价单、需求参数和费用说明，方便企业采购复盘与再次下单。">
+      <H5PageChrome title={t('history.hero.title')} subtitle={t('history.hero.subtitle')} />
+      <PageHero kicker={t('history.hero.eyebrow')} title={t('history.hero.title')} desc={t('history.hero.desc')}>
         <button className="lc-button ghost" onClick={load} type="button">
-          {loading ? '刷新中...' : '刷新'}
+          {loading ? t('member.refreshing') : t('member.refresh')}
         </button>
       </PageHero>
 
@@ -48,10 +52,10 @@ export function HistoryPage() {
           {error ? <p className="lc-error-copy">{error}</p> : null}
           {history.length === 0 ? (
             <div className="lc-empty-state lc-card">
-              <h3>暂无报价历史</h3>
-              <p>您可以先提交一次报价需求，系统会在保存后记录报价单和关键参数。</p>
+              <h3>{t('history.empty.title')}</h3>
+              <p>{t('history.empty.desc')}</p>
               <Link className="lc-button primary" to="/quote">
-                立即获取报价
+                {t('common.getQuote')}
               </Link>
             </div>
           ) : (
@@ -59,17 +63,20 @@ export function HistoryPage() {
               {history.map((quote) => (
                 <article key={quote.quoteNo} className="lc-card lc-history-card">
                   <div>
-                    <span className="lc-card-kicker">报价单</span>
+                    <span className="lc-card-kicker">{t('history.card.quoteNo')}</span>
                     <h3>{quote.quoteNo}</h3>
                     <p>
-                      产品编号 {quote.productId} / 模板编号 {quote.productTemplateId}
+                      {t('history.card.productId')} {quote.productId} / {t('history.card.templateId')}{' '}
+                      {quote.productTemplateId}
                     </p>
                     <RequirementPreview quote={quote} />
                     <FeeNotePreview notes={getHistoryFeeNotes(quote)} />
                   </div>
                   <div className="lc-history-price">
                     <strong>{getQuoteSummary(quote) ? money.format(getQuoteSummary(quote)!.finalPrice) : '-'}</strong>
-                    <span>{quote.quantity} 枚</span>
+                    <span>
+                      {quote.quantity} {t('history.quantityUnit')}
+                    </span>
                   </div>
                 </article>
               ))}
@@ -83,21 +90,23 @@ export function HistoryPage() {
 }
 
 function FeeNotePreview({ notes }: { notes: QuoteFeeNote[] }) {
+  const { t, text } = useI18n();
   if (notes.length === 0) {
     return null;
   }
 
   return (
     <div className="lc-fee-notes">
-      <strong>费用说明</strong>
+      <strong>{t('quote.result.feeNotes')}</strong>
       {notes.map((note) => (
-        <span key={note.code}>{note.title}</span>
+        <span key={note.code}>{text(note.title)}</span>
       ))}
     </div>
   );
 }
 
 function RequirementPreview({ quote }: { quote: MemberQuote }) {
+  const { text } = useI18n();
   const items = getQuoteRequirementItems(quote).slice(0, 6);
   if (items.length === 0) {
     return null;
@@ -107,8 +116,8 @@ function RequirementPreview({ quote }: { quote: MemberQuote }) {
     <dl className="lc-requirement-list">
       {items.map((item) => (
         <div key={item.key}>
-          <dt>{item.label}</dt>
-          <dd>{item.value}</dd>
+          <dt>{text(item.label)}</dt>
+          <dd>{text(item.value)}</dd>
         </div>
       ))}
     </dl>
@@ -123,11 +132,11 @@ function getHistoryFeeNotes(quote: MemberQuote): QuoteFeeNote[] {
   return getExtraFeeNotes(quote.snapshot?.fullSnapshotJson?.extraFees);
 }
 
-function toFriendlyHistoryError(error: unknown): string {
+function toFriendlyHistoryError(error: unknown, t: ReturnType<typeof useI18n>['t']): string {
   const message = error instanceof Error ? error.message : '';
   if (/HTTP\s*5\d\d|Failed to fetch|NetworkError/i.test(message)) {
-    return '报价历史暂时无法连接服务器，您仍可以先提交新的报价需求，稍后再回来查看历史记录。';
+    return t('history.error.network');
   }
 
-  return message || '报价历史加载失败，请稍后重试。';
+  return message || t('history.error.default');
 }

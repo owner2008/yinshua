@@ -1,80 +1,69 @@
 import { Link } from 'react-router-dom';
-import {
-  brand,
-  companyProfile,
-  officialEquipmentShowcase,
-  officialProductShowcase,
-  qrCodeImage,
-} from '../brandContent';
+import { brand, companyProfile, officialEquipmentShowcase, officialProductShowcase, qrCodeImage } from '../brandContent';
 import { InfoChip, SectionHeading } from '../components/cards';
 import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
+import { useI18n } from '../i18n';
 
 export function ContactPage() {
+  const { t, text } = useI18n();
+
   return (
     <div className="lc-subpage">
-      <H5PageChrome title="联系我们" subtitle="业务咨询、样品确认、企业定制与到厂沟通" />
-      <PageHero
-        kicker="Contact Us"
-        title="联系我们"
-        desc="欢迎通过电话、手机或到厂方式咨询标签印刷、卷标不干胶、产品说明书、包装与宣传册等定制印刷需求。"
-      >
+      <H5PageChrome title={t('contact.hero.title')} subtitle={t('contact.hero.subtitle')} />
+      <PageHero kicker={t('contact.hero.eyebrow')} title={t('contact.hero.title')} desc={t('contact.hero.desc')}>
         <Link className="lc-button primary" to="/quote">
-          提交报价需求
+          {t('contact.hero.cta')}
         </Link>
       </PageHero>
 
       <section className="lc-section">
         <div className="lc-container lc-contact-layout">
           <article className="lc-card lc-contact-intro">
-            <p className="lc-kicker">Company Profile</p>
-            <h2>{brand.companyName}</h2>
-            <p>{companyProfile.desc}</p>
+            <p className="lc-kicker">{t('contact.profile.kicker')}</p>
+            <h2>{text(brand.companyName)}</h2>
+            <p>{text(companyProfile.desc)}</p>
             <div className="lc-chip-cloud">
               {companyProfile.services.map((item) => (
-                <InfoChip key={item}>{item}</InfoChip>
+                <InfoChip key={item}>{text(item)}</InfoChip>
               ))}
             </div>
           </article>
 
           <aside className="lc-card lc-contact-card">
-            <p className="lc-kicker">Contact</p>
-            <h2>业务咨询</h2>
+            <p className="lc-kicker">{t('contact.card.kicker')}</p>
+            <h2>{t('contact.card.title')}</h2>
             <dl>
               <div>
-                <dt>座机</dt>
+                <dt>{t('contact.phone')}</dt>
                 <dd>{brand.phone}</dd>
               </div>
               <div>
-                <dt>手机</dt>
+                <dt>{t('contact.mobile')}</dt>
                 <dd>{brand.mobile}</dd>
               </div>
               <div>
-                <dt>联系人</dt>
-                <dd>{brand.contactPerson}</dd>
+                <dt>{t('contact.person')}</dt>
+                <dd>{text(brand.contactPerson)}</dd>
               </div>
               <div>
-                <dt>地址</dt>
-                <dd>{brand.address}</dd>
+                <dt>{t('contact.address')}</dt>
+                <dd>{text(brand.address)}</dd>
               </div>
             </dl>
-            <img src={qrCodeImage} alt="东方丽彩包装微信二维码" loading="lazy" referrerPolicy="no-referrer" />
+            <img src={qrCodeImage} alt={t('contact.qrAlt')} loading="lazy" referrerPolicy="no-referrer" />
           </aside>
         </div>
       </section>
 
       <section className="lc-section lc-section-soft">
         <div className="lc-container">
-          <SectionHeading
-            kicker="Products"
-            title="原站产品展示"
-            desc="以下图片整理自公司原官网公开展示内容，用于补充真实产品与印刷品类展示。"
-          />
+          <SectionHeading kicker={t('contact.products.eyebrow')} title={t('contact.products.title')} desc={t('contact.products.desc')} />
           <div className="lc-official-gallery">
             {officialProductShowcase.map((item) => (
               <article className="lc-card" key={item.title}>
-                <img src={item.imageUrl} alt={item.title} loading="lazy" referrerPolicy="no-referrer" />
-                <strong>{item.title}</strong>
+                <img src={item.imageUrl} alt={text(item.title)} loading="lazy" referrerPolicy="no-referrer" />
+                <strong>{text(item.title)}</strong>
               </article>
             ))}
           </div>
@@ -83,16 +72,12 @@ export function ContactPage() {
 
       <section className="lc-section">
         <div className="lc-container">
-          <SectionHeading
-            kicker="Equipment"
-            title="设备展示"
-            desc="公司原站展示了标签印刷机、不干胶卷标印刷机、全自动标签模切机等设备图片。"
-          />
+          <SectionHeading kicker={t('contact.equipment.eyebrow')} title={t('contact.equipment.title')} desc={t('contact.equipment.desc')} />
           <div className="lc-official-gallery equipment">
             {officialEquipmentShowcase.map((item) => (
               <article className="lc-card" key={`${item.title}-${item.imageUrl}`}>
-                <img src={item.imageUrl} alt={item.title} loading="lazy" referrerPolicy="no-referrer" />
-                <strong>{item.title}</strong>
+                <img src={item.imageUrl} alt={text(item.title)} loading="lazy" referrerPolicy="no-referrer" />
+                <strong>{text(item.title)}</strong>
               </article>
             ))}
           </div>

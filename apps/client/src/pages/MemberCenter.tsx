@@ -12,6 +12,7 @@ import {
 import { useCatalog } from '../catalogContext';
 import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
+import { useI18n } from '../i18n';
 import type { MemberAddress, MemberProfile } from '../types';
 
 const emptyProfile: MemberProfile = {
@@ -37,6 +38,7 @@ const emptyAddress: Omit<MemberAddress, 'id'> = {
 
 export function MemberCenterPage() {
   const { session, ensureSession, resetSession } = useCatalog();
+  const { t } = useI18n();
   const [profile, setProfile] = useState<MemberProfile>(emptyProfile);
   const [addresses, setAddresses] = useState<MemberAddress[]>([]);
   const [addressDraft, setAddressDraft] = useState<Omit<MemberAddress, 'id'>>(emptyAddress);
@@ -59,7 +61,7 @@ export function MemberCenterPage() {
       }
       setAddresses(remoteAddresses ?? []);
     } catch (error) {
-      setNotice(toFriendlyMemberError(error, 'load'));
+      setNotice(toFriendlyMemberError(error, 'load', t));
     } finally {
       setLoading(false);
     }
@@ -81,9 +83,9 @@ export function MemberCenterPage() {
         source: profile.source ?? 'h5_register',
       });
       setProfile({ ...emptyProfile, ...saved });
-      setNotice(profile.memberNo ? '资料已更新' : '会员注册成功');
+      setNotice(profile.memberNo ? t('member.profileUpdated') : t('member.registered'));
     } catch (error) {
-      setNotice(toFriendlyMemberError(error, 'save'));
+      setNotice(toFriendlyMemberError(error, 'save', t));
     } finally {
       setSavingProfile(false);
     }
@@ -96,9 +98,9 @@ export function MemberCenterPage() {
       const created = await createMyAddress(addressDraft);
       setAddresses((current) => [created, ...current]);
       setAddressDraft(emptyAddress);
-      setNotice('地址已新增');
+      setNotice(t('member.address.created'));
     } catch (error) {
-      setNotice(toFriendlyMemberError(error, 'address'));
+      setNotice(toFriendlyMemberError(error, 'address', t));
     } finally {
       setSavingAddress(false);
     }
@@ -109,19 +111,19 @@ export function MemberCenterPage() {
     resetSession(null);
     setProfile(emptyProfile);
     setAddresses([]);
-    setNotice('已退出当前登录');
+    setNotice(t('member.loggedOut'));
   }
 
   async function removeAddress(id: string | number) {
-    if (!window.confirm('确认删除这条地址吗？')) {
+    if (!window.confirm(t('member.address.confirmDelete'))) {
       return;
     }
     try {
       await deleteMyAddress(id);
       setAddresses((current) => current.filter((item) => String(item.id) !== String(id)));
-      setNotice('地址已删除');
+      setNotice(t('member.address.deleted'));
     } catch (error) {
-      setNotice(toFriendlyMemberError(error, 'address'));
+      setNotice(toFriendlyMemberError(error, 'address', t));
     }
   }
 
@@ -129,22 +131,22 @@ export function MemberCenterPage() {
     try {
       await setDefaultMyAddress(id);
       setAddresses((current) => current.map((item) => ({ ...item, isDefault: String(item.id) === String(id) })));
-      setNotice('已设为默认地址');
+      setNotice(t('member.address.defaultSet'));
     } catch (error) {
-      setNotice(toFriendlyMemberError(error, 'address'));
+      setNotice(toFriendlyMemberError(error, 'address', t));
     }
   }
 
   return (
     <div className="lc-subpage">
-      <H5PageChrome title="会员中心" subtitle="维护企业资料、联系人和收货地址" />
-      <PageHero kicker="Member Center" title="会员中心" desc="维护企业资料、联系人和收货地址，方便报价保存、复购和后续交付沟通。">
+      <H5PageChrome title={t('member.hero.title')} subtitle={t('member.hero.subtitle')} />
+      <PageHero kicker={t('member.hero.eyebrow')} title={t('member.hero.title')} desc={t('member.hero.desc')}>
         <div className="lc-member-actions">
           <button className="lc-button ghost" type="button" onClick={load} disabled={loading}>
-            {loading ? '刷新中...' : '刷新'}
+            {loading ? t('member.refreshing') : t('member.refresh')}
           </button>
           <button className="lc-button ghost" type="button" onClick={logout}>
-            退出登录
+            {t('member.logout')}
           </button>
         </div>
       </PageHero>
@@ -154,46 +156,45 @@ export function MemberCenterPage() {
           <section className="lc-card lc-form-panel">
             <div className="lc-member-title">
               <div>
-                <p className="lc-kicker">Profile</p>
-                <h2>{profile.memberNo ? '会员资料' : '会员注册'}</h2>
+                <p className="lc-kicker">{t('member.profile.kicker')}</p>
+                <h2>{profile.memberNo ? t('member.profile.title') : t('member.register.title')}</h2>
               </div>
-              <span>{profile.memberNo ? `会员编号 ${profile.memberNo}` : '填写后即可成为会员'}</span>
+              <span>
+                {profile.memberNo ? `${t('member.memberNo')} ${profile.memberNo}` : t('member.registerHint')}
+              </span>
             </div>
             {notice ? <p className="lc-notice">{notice}</p> : null}
             <form className="lc-form-grid" onSubmit={saveProfile}>
-              <Field label="昵称">
+              <Field label={t('member.field.nickname')}>
                 <input value={profile.nickname ?? session?.user?.nickname ?? ''} onChange={(event) => setProfile((current) => ({ ...current, nickname: event.target.value }))} />
               </Field>
-              <Field label="手机号">
+              <Field label={t('member.field.mobile')}>
                 <input value={profile.mobile ?? ''} onChange={(event) => setProfile((current) => ({ ...current, mobile: event.target.value }))} />
               </Field>
-              <Field label="客户类型">
-                <select
-                  value={profile.customerType ?? 'personal'}
-                  onChange={(event) => setProfile((current) => ({ ...current, customerType: event.target.value as MemberProfile['customerType'] }))}
-                >
-                  <option value="personal">个人客户</option>
-                  <option value="company">企业客户</option>
+              <Field label={t('member.field.customerType')}>
+                <select value={profile.customerType ?? 'personal'} onChange={(event) => setProfile((current) => ({ ...current, customerType: event.target.value as MemberProfile['customerType'] }))}>
+                  <option value="personal">{t('quote.customer.personal')}</option>
+                  <option value="company">{t('quote.customer.company')}</option>
                 </select>
               </Field>
-              <Field label="联系人">
+              <Field label={t('member.field.contactName')}>
                 <input value={profile.contactName ?? ''} onChange={(event) => setProfile((current) => ({ ...current, contactName: event.target.value }))} />
               </Field>
-              <Field label="企业名称">
+              <Field label={t('member.field.companyName')}>
                 <input value={profile.companyName ?? ''} onChange={(event) => setProfile((current) => ({ ...current, companyName: event.target.value }))} />
               </Field>
-              <Field label="税号">
+              <Field label={t('member.field.taxNo')}>
                 <input value={profile.taxNo ?? ''} onChange={(event) => setProfile((current) => ({ ...current, taxNo: event.target.value }))} />
               </Field>
-              <Field label="所属行业">
+              <Field label={t('member.field.industry')}>
                 <input value={profile.industry ?? ''} onChange={(event) => setProfile((current) => ({ ...current, industry: event.target.value }))} />
               </Field>
-              <Field label="备注">
+              <Field label={t('member.field.remark')}>
                 <input value={profile.remark ?? ''} onChange={(event) => setProfile((current) => ({ ...current, remark: event.target.value }))} />
               </Field>
               <div className="lc-field-wide">
                 <button className="lc-button primary" type="submit" disabled={savingProfile}>
-                  {savingProfile ? '保存中...' : profile.memberNo ? '更新资料' : '注册会员'}
+                  {savingProfile ? t('member.saving') : profile.memberNo ? t('member.updateProfile') : t('member.register')}
                 </button>
               </div>
             </form>
@@ -202,20 +203,22 @@ export function MemberCenterPage() {
           <section className="lc-card lc-form-panel">
             <div className="lc-member-title">
               <div>
-                <p className="lc-kicker">Address</p>
-                <h2>收货地址</h2>
+                <p className="lc-kicker">{t('member.address.kicker')}</p>
+                <h2>{t('member.address.title')}</h2>
               </div>
-              <span>{addresses.length} 条</span>
+              <span>
+                {addresses.length} {t('member.address.count')}
+              </span>
             </div>
             {addresses.length === 0 ? (
-              <p className="lc-empty-copy">暂无地址</p>
+              <p className="lc-empty-copy">{t('member.address.empty')}</p>
             ) : (
               <ul className="lc-address-list">
                 {addresses.map((address) => (
                   <li key={address.id}>
                     <strong>
                       {address.consignee} / {address.mobile}
-                      {address.isDefault ? <em>默认</em> : null}
+                      {address.isDefault ? <em>{t('member.address.default')}</em> : null}
                     </strong>
                     <span>
                       {address.province} {address.city} {address.district ?? ''} {address.detail}
@@ -223,11 +226,11 @@ export function MemberCenterPage() {
                     <div>
                       {!address.isDefault ? (
                         <button type="button" onClick={() => makeDefault(address.id)}>
-                          设为默认
+                          {t('member.address.setDefault')}
                         </button>
                       ) : null}
                       <button type="button" onClick={() => removeAddress(address.id)}>
-                        删除
+                        {t('member.address.delete')}
                       </button>
                     </div>
                   </li>
@@ -235,31 +238,31 @@ export function MemberCenterPage() {
               </ul>
             )}
             <form className="lc-form-grid" onSubmit={saveAddress}>
-              <Field label="收件人">
+              <Field label={t('member.address.consignee')}>
                 <input required value={addressDraft.consignee} onChange={(event) => setAddressDraft((current) => ({ ...current, consignee: event.target.value }))} />
               </Field>
-              <Field label="手机号">
+              <Field label={t('member.field.mobile')}>
                 <input required value={addressDraft.mobile} onChange={(event) => setAddressDraft((current) => ({ ...current, mobile: event.target.value }))} />
               </Field>
-              <Field label="省">
+              <Field label={t('member.address.province')}>
                 <input required value={addressDraft.province} onChange={(event) => setAddressDraft((current) => ({ ...current, province: event.target.value }))} />
               </Field>
-              <Field label="市">
+              <Field label={t('member.address.city')}>
                 <input required value={addressDraft.city} onChange={(event) => setAddressDraft((current) => ({ ...current, city: event.target.value }))} />
               </Field>
-              <Field label="区 / 县">
+              <Field label={t('member.address.district')}>
                 <input value={addressDraft.district ?? ''} onChange={(event) => setAddressDraft((current) => ({ ...current, district: event.target.value }))} />
               </Field>
-              <Field label="详细地址">
+              <Field label={t('member.address.detail')}>
                 <input required value={addressDraft.detail} onChange={(event) => setAddressDraft((current) => ({ ...current, detail: event.target.value }))} />
               </Field>
               <div className="lc-toggle-row lc-field-wide">
                 <label>
                   <input type="checkbox" checked={!!addressDraft.isDefault} onChange={(event) => setAddressDraft((current) => ({ ...current, isDefault: event.target.checked }))} />
-                  设为默认
+                  {t('member.address.setAsDefault')}
                 </label>
                 <button className="lc-button primary" type="submit" disabled={savingAddress}>
-                  {savingAddress ? '保存中...' : '新增地址'}
+                  {savingAddress ? t('member.saving') : t('member.address.add')}
                 </button>
               </div>
             </form>
@@ -280,19 +283,19 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function toFriendlyMemberError(error: unknown, action: 'load' | 'save' | 'address'): string {
+function toFriendlyMemberError(error: unknown, action: 'load' | 'save' | 'address', t: ReturnType<typeof useI18n>['t']): string {
   const message = error instanceof Error ? error.message : '';
   if (/HTTP\s*5\d\d|Failed to fetch|NetworkError/i.test(message)) {
     if (action === 'load') {
-      return '会员服务暂时无法连接服务器，页面信息已保留，您可以稍后刷新重试。';
+      return t('member.error.load');
     }
 
     if (action === 'save') {
-      return '会员资料暂时无法保存，请稍后在服务器恢复后重试。';
+      return t('member.error.save');
     }
 
-    return '地址服务暂时不可用，请稍后重试。';
+    return t('member.error.address');
   }
 
-  return message || '操作失败，请稍后重试。';
+  return message || t('member.error.default');
 }
