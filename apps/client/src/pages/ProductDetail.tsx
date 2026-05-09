@@ -6,13 +6,15 @@ import { InfoChip, SectionHeading } from '../components/cards';
 import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 import { ProductVisual } from '../components/PrintingVisuals';
+import { useI18n } from '../i18n';
 import type { Product } from '../types';
 
 export function ProductDetailPage() {
   const { id } = useParams();
   const { products } = useCatalog();
+  const { t, text } = useI18n();
   const [product, setProduct] = useState<Product | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export function ProductDetailPage() {
       return;
     }
     setLoading(true);
-    setError(null);
+    setHasError(false);
     fetchCatalogProduct(id)
       .then((data) => setProduct(data))
       .catch(() => {
@@ -28,7 +30,7 @@ export function ProductDetailPage() {
         if (fallback) {
           setProduct(fallback);
         } else {
-          setError('产品不存在或已下架');
+          setHasError(true);
         }
       })
       .finally(() => setLoading(false));
@@ -37,11 +39,11 @@ export function ProductDetailPage() {
   if (loading) {
     return (
       <div className="lc-subpage">
-        <H5PageChrome title="产品详情" subtitle="正在同步产品配置和报价模板" />
+        <H5PageChrome title={t('products.detail.title')} subtitle={t('products.detail.loadingSubtitle')} />
         <div className="lc-container">
           <div className="lc-empty-state lc-card">
-            <h3>正在加载产品详情</h3>
-            <p>正在同步产品配置和报价模板。</p>
+            <h3>{t('products.detail.loadingTitle')}</h3>
+            <p>{t('products.detail.loadingDesc')}</p>
           </div>
         </div>
         <H5TabBar />
@@ -49,16 +51,16 @@ export function ProductDetailPage() {
     );
   }
 
-  if (error || !product) {
+  if (hasError || !product) {
     return (
       <div className="lc-subpage">
-        <H5PageChrome title="产品详情" subtitle="当前产品暂时无法展示" />
+        <H5PageChrome title={t('products.detail.title')} subtitle={t('products.detail.unavailableSubtitle')} />
         <div className="lc-container">
           <div className="lc-empty-state lc-card">
-            <h3>{error ?? '产品不存在'}</h3>
-            <p>可以返回产品中心查看其他标签印刷产品。</p>
+            <h3>{t('products.detail.notFound')}</h3>
+            <p>{t('products.detail.backListDesc')}</p>
             <Link className="lc-button primary" to="/products">
-              返回产品列表
+              {t('products.detail.backList')}
             </Link>
           </div>
         </div>
@@ -72,14 +74,14 @@ export function ProductDetailPage() {
 
   return (
     <div className="lc-subpage">
-      <H5PageChrome title={product.name} subtitle={product.category?.name ?? '定制印刷产品详情'} />
+      <H5PageChrome title={text(product.name)} subtitle={text(product.category?.name) || t('products.detail.categoryFallback')} />
       <PageHero
-        kicker={product.category?.name ?? 'Product Detail'}
-        title={product.name}
-        desc={product.description ?? product.applicationScenario ?? '支持按尺寸、材质、数量和工艺进行定制报价。'}
+        kicker={text(product.category?.name) || 'Product Detail'}
+        title={text(product.name)}
+        desc={text(product.description ?? product.applicationScenario) || t('products.detail.descFallback')}
       >
         <Link className="lc-button primary" to={`/quote?productId=${product.id}`}>
-          按此产品报价
+          {t('products.detail.quoteCta')}
         </Link>
       </PageHero>
 
@@ -87,26 +89,29 @@ export function ProductDetailPage() {
         <div className="lc-container lc-detail-layout">
           <div className="lc-card lc-detail-media">
             {product.coverImage ? (
-              <img src={toAssetUrl(product.coverImage)} alt={product.name} loading="lazy" />
+              <img src={toAssetUrl(product.coverImage)} alt={text(product.name)} loading="lazy" />
             ) : (
               <ProductVisual product={product} tone={1} />
             )}
           </div>
           <div className="lc-detail-copy">
-            <SectionHeading kicker="Application" title="应用场景与定制重点" />
-            <p>{product.applicationScenario ?? '适合多行业产品包装、品牌识别、防伪追溯和物流管理。'}</p>
+            <SectionHeading
+              kicker={t('products.detail.applicationEyebrow')}
+              title={t('products.detail.applicationTitle')}
+            />
+            <p>{text(product.applicationScenario) || t('products.detail.applicationFallback')}</p>
             <div className="lc-chip-cloud">
-              <InfoChip>支持定制尺寸</InfoChip>
-              <InfoChip>多材质选择</InfoChip>
-              <InfoChip>可打样确认</InfoChip>
-              <InfoChip>批量稳定生产</InfoChip>
+              <InfoChip>{t('products.detail.chip.size')}</InfoChip>
+              <InfoChip>{t('products.detail.chip.material')}</InfoChip>
+              <InfoChip>{t('products.detail.chip.proofing')}</InfoChip>
+              <InfoChip>{t('products.detail.chip.batch')}</InfoChip>
             </div>
             <div className="lc-detail-actions">
               <Link className="lc-button primary" to={`/quote?productId=${product.id}`}>
-                在线报价
+                {t('products.detail.onlineQuote')}
               </Link>
               <Link className="lc-button ghost" to="/products">
-                返回产品中心
+                {t('products.detail.backProducts')}
               </Link>
             </div>
           </div>
@@ -116,10 +121,14 @@ export function ProductDetailPage() {
       {gallery.length > 0 ? (
         <section className="lc-section lc-section-soft">
           <div className="lc-container">
-            <SectionHeading kicker="Gallery" title="案例图集" desc={`${gallery.length} 张产品案例图片`} />
+            <SectionHeading
+              kicker={t('products.detail.galleryEyebrow')}
+              title={t('products.detail.galleryTitle')}
+              desc={`${gallery.length} ${t('products.detail.galleryCount')}`}
+            />
             <div className="lc-gallery-grid">
               {gallery.map((src) => (
-                <img key={src} src={toAssetUrl(src)} alt={product.name} loading="lazy" />
+                <img key={src} src={toAssetUrl(src)} alt={text(product.name)} loading="lazy" />
               ))}
             </div>
           </div>
@@ -128,23 +137,27 @@ export function ProductDetailPage() {
 
       <section className="lc-section lc-section-soft">
         <div className="lc-container">
-          <SectionHeading kicker="Quote Templates" title="可用报价模板" desc="模板限定了可报价的尺寸、数量和工艺范围，实际价格以在线报价结果为准。" />
+          <SectionHeading
+            kicker={t('products.detail.templateEyebrow')}
+            title={t('products.detail.templateTitle')}
+            desc={t('products.detail.templateDesc')}
+          />
           {templates.length === 0 ? (
             <div className="lc-empty-state lc-card">
-              <h3>暂未配置报价模板</h3>
-              <p>可以提交定制需求，由客服根据产品参数人工确认报价。</p>
+              <h3>{t('products.detail.templateEmptyTitle')}</h3>
+              <p>{t('products.detail.templateEmptyDesc')}</p>
             </div>
           ) : (
             <div className="lc-grid-3">
               {templates.map((template) => (
                 <article className="lc-card lc-template-card" key={template.id}>
-                  <h3>{template.templateName}</h3>
+                  <h3>{text(template.templateName)}</h3>
                   <p>
-                    宽 {String(template.widthMin)} - {String(template.widthMax)} mm / 高 {String(template.heightMin)} -{' '}
-                    {String(template.heightMax)} mm
+                    {t('products.detail.templateWidth')} {String(template.widthMin)} - {String(template.widthMax)} mm /{' '}
+                    {t('products.detail.templateHeight')} {String(template.heightMin)} - {String(template.heightMax)} mm
                   </p>
                   <strong>
-                    数量 {template.quantityMin} - {template.quantityMax}
+                    {t('products.detail.templateQuantity')} {template.quantityMin} - {template.quantityMax}
                   </strong>
                 </article>
               ))}
