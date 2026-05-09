@@ -11,6 +11,9 @@ qddflc-web
 ├─ dist
 │  ├─ index.html
 │  └─ assets
+│  └─ admin
+│     ├─ index.html
+│     └─ assets
 ├─ api
 │  ├─ package.json
 │  ├─ pnpm-lock.yaml
@@ -22,6 +25,8 @@ qddflc-web
 ```
 
 `dist` 来自本地 `apps/client/dist`。
+
+`dist/admin` 来自本地 `apps/admin/dist`，用于通过同一个域名访问后台。
 
 `api` 来自本地 `apps/api`，上传时不要上传 Windows 环境的 `node_modules`。
 
@@ -48,8 +53,16 @@ qddflc-web
 
 ```text
 https://remote-access-8088.zconnect.cn/
+https://remote-access-8088.zconnect.cn/admin/
 https://remote-access-8088.zconnect.cn/member
 https://remote-access-8088.zconnect.cn/history
+```
+
+后台默认账号来自种子数据：
+
+```text
+账号：admin
+密码：admin123
 ```
 
 如果会员中心和历史页仍然没有数据，检查 `qddflc-api` 和 `qddflc-db` 容器日志。
