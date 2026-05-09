@@ -21,7 +21,8 @@ export function HomePage() {
   const displayProducts = productCategories.slice(0, 10);
 
   return (
-    <div className="lc-home">
+    <>
+    <div className="lc-home lc-home-desktop">
       <section className="lc-hero lc-container">
         <div className="lc-hero-copy">
           <p className="lc-kicker">{heroCopy.kicker}</p>
@@ -253,6 +254,16 @@ export function HomePage() {
           </a>
         </div>
       </section>
+    </div>
+    <MobileHomePage />
+    </>
+  );
+}
+
+function MobileHomePage() {
+  return (
+    <div className="lc-h5-home" aria-label="东方丽彩印刷 H5 首页">
+      <div className="lc-h5-placeholder">H5 首页开发中</div>
     </div>
   );
 }

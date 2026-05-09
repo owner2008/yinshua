@@ -2747,6 +2747,10 @@ body {
   margin-top: -72px;
 }
 
+.lc-h5-home {
+  display: none;
+}
+
 .lc-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(360px, 0.92fr);
@@ -3253,6 +3257,23 @@ body {
 }
 
 @media (max-width: 640px) {
+  .lc-home-desktop {
+    display: none;
+  }
+
+  .lc-h5-home {
+    display: block;
+    min-height: 100vh;
+    padding-bottom: calc(86px + env(safe-area-inset-bottom));
+    color: var(--lc-text);
+    background: #f6f9ff;
+  }
+
+  .lc-h5-placeholder {
+    padding: 32px 16px;
+    text-align: center;
+  }
+
   .lc-container {
     width: calc(100% - 24px);
   }
