@@ -3448,6 +3448,137 @@ body {
     line-height: 1.25;
   }
 
+  .lc-h5-advantages {
+    padding: 24px 14px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #145ec7, #0b4aa4);
+  }
+
+  .lc-h5-advantages h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 19px;
+    line-height: 1.3;
+  }
+
+  .lc-h5-advantages h2 span {
+    color: #ffca28;
+    font-size: 30px;
+  }
+
+  .lc-h5-advantages > div {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .lc-h5-advantages article {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .lc-h5-advantages article span {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 55%);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .lc-h5-advantages article strong {
+    margin-top: 9px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .lc-h5-advantages article p {
+    display: none;
+  }
+
+  .lc-h5-case-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .lc-h5-case-list article {
+    display: grid;
+    gap: 8px;
+  }
+
+  .lc-h5-case-list img {
+    width: 100%;
+    height: 96px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  .lc-h5-case-list strong {
+    color: #10243d;
+    font-size: 12px;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .lc-h5-more {
+    display: flex;
+    width: 168px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    margin: 18px auto 0;
+    border: 1px solid #0a6cff;
+    border-radius: 999px;
+    color: #0a6cff;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .lc-h5-quote-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 16px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #145ec7, #0a6cff);
+  }
+
+  .lc-h5-quote-band strong,
+  .lc-h5-quote-band span {
+    display: block;
+  }
+
+  .lc-h5-quote-band strong {
+    font-size: 22px;
+  }
+
+  .lc-h5-quote-band span {
+    margin-top: 3px;
+    font-size: 13px;
+  }
+
+  .lc-h5-quote-band a {
+    display: inline-flex;
+    min-width: 104px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: #ffffff;
+    background: #ff9f1a;
+    font-size: 14px;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
   .lc-container {
     width: calc(100% - 24px);
   }

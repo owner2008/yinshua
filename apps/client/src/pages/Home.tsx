@@ -309,6 +309,47 @@ function MobileHomePage() {
           ))}
         </div>
       </section>
+
+      <section className="lc-h5-advantages">
+        <h2>
+          选择东方丽彩的 <span>4</span> 大优势
+        </h2>
+        <div>
+          {advantages.slice(0, 4).map((item) => (
+            <article key={item.title}>
+              <span>{item.mark}</span>
+              <strong>{item.title}</strong>
+              <p>{item.desc}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="lc-h5-section lc-h5-cases">
+        <div className="lc-h5-section-title">
+          <h2>案例展示</h2>
+          <p>为众多行业客户提供优质印刷产品和服务</p>
+        </div>
+        <div className="lc-h5-case-list">
+          {cases.slice(0, 4).map((item) => (
+            <article key={item.title}>
+              <img src={item.imageUrl} alt={item.title} />
+              <strong>{item.title}</strong>
+            </article>
+          ))}
+        </div>
+        <Link className="lc-h5-more" to="/products">
+          查看更多案例
+        </Link>
+      </section>
+
+      <section className="lc-h5-quote-band">
+        <div>
+          <strong>快速报价</strong>
+          <span>3 分钟获取专属方案</span>
+        </div>
+        <Link to="/quote">立即报价</Link>
+      </section>
     </div>
   );
 }
