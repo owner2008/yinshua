@@ -4,7 +4,9 @@ import {
   CreatePrintPriceDto,
   CreateProcessDto,
   CreateProcessPriceDto,
+  UpdatePrintPriceDto,
   UpdateProcessDto,
+  UpdateProcessPriceDto,
 } from '../dto/admin-process.dto';
 import { AuditLogService } from './audit-log.service';
 
@@ -89,6 +91,30 @@ export class AdminProcessesService {
     });
   }
 
+  async updateProcessPrice(id: number, dto: UpdateProcessPriceDto) {
+    await this.ensureProcess(dto.processId);
+    const before = await this.ensureProcessPrice(id);
+    const after = await this.prisma.processPrice.update({
+      where: { id: BigInt(id) },
+      data: {
+        processId: BigInt(dto.processId),
+        feeMode: dto.feeMode,
+        unitPrice: dto.unitPrice,
+        minFee: dto.minFee ?? 0,
+        setupFee: dto.setupFee ?? 0,
+      },
+    });
+    await this.audit.record({
+      module: 'process-price',
+      action: 'update',
+      targetType: 'process_price',
+      targetId: after.id,
+      before,
+      after,
+    });
+    return after;
+  }
+
   findPrintPrices() {
     return this.prisma.printPrice.findMany({
       orderBy: { effectiveFrom: 'desc' },
@@ -124,11 +150,49 @@ export class AdminProcessesService {
     });
   }
 
+  async updatePrintPrice(id: number, dto: UpdatePrintPriceDto) {
+    const before = await this.ensurePrintPrice(id);
+    const after = await this.prisma.printPrice.update({
+      where: { id: BigInt(id) },
+      data: {
+        printMode: dto.printMode,
+        feeMode: dto.feeMode,
+        unitPrice: dto.unitPrice,
+        setupFee: dto.setupFee ?? 0,
+      },
+    });
+    await this.audit.record({
+      module: 'print-price',
+      action: 'update',
+      targetType: 'print_price',
+      targetId: after.id,
+      before,
+      after,
+    });
+    return after;
+  }
+
   private async ensureProcess(id: number) {
     const process = await this.prisma.process.findUnique({ where: { id: BigInt(id) } });
     if (!process) {
       throw new NotFoundException('工艺不存在');
     }
     return process;
+  }
+
+  private async ensureProcessPrice(id: number) {
+    const price = await this.prisma.processPrice.findUnique({ where: { id: BigInt(id) } });
+    if (!price) {
+      throw new NotFoundException('工艺价格不存在');
+    }
+    return price;
+  }
+
+  private async ensurePrintPrice(id: number) {
+    const price = await this.prisma.printPrice.findUnique({ where: { id: BigInt(id) } });
+    if (!price) {
+      throw new NotFoundException('印刷价格不存在');
+    }
+    return price;
   }
 }

@@ -5,7 +5,9 @@ import {
   CreatePrintPriceDto,
   CreateProcessDto,
   CreateProcessPriceDto,
+  UpdatePrintPriceDto,
   UpdateProcessDto,
+  UpdateProcessPriceDto,
 } from '../dto/admin-process.dto';
 import { AdminProcessesService } from '../services/admin-processes.service';
 
@@ -44,6 +46,13 @@ export class AdminProcessesController {
     return this.processes.createProcessPrice(dto);
   }
 
+  @Put('process-prices/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
+  updateProcessPrice(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProcessPriceDto) {
+    return this.processes.updateProcessPrice(id, dto);
+  }
+
   @Get('print-prices')
   findPrintPrices() {
     return this.processes.findPrintPrices();
@@ -54,5 +63,12 @@ export class AdminProcessesController {
   @RequireAdminPermission('admin:pricing')
   createPrintPrice(@Body() dto: CreatePrintPriceDto) {
     return this.processes.createPrintPrice(dto);
+  }
+
+  @Put('print-prices/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
+  updatePrintPrice(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdatePrintPriceDto) {
+    return this.processes.updatePrintPrice(id, dto);
   }
 }

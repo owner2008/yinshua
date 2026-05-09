@@ -186,6 +186,7 @@ function ProcessPriceTable() {
   const { data, loading, reload } = useRemoteList<ProcessPrice>('/admin/process-prices');
   const { data: processes } = useRemoteList<Process>('/admin/processes');
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<ProcessPrice | null>(null);
   const [currentOnly, setCurrentOnly] = useState('all');
   const [processId, setProcessId] = useState<string>();
   const [form] = Form.useForm();
@@ -199,18 +200,43 @@ function ProcessPriceTable() {
     });
   }, [currentOnly, data, processId]);
 
+  function openCreate() {
+    setEditing(null);
+    form.resetFields();
+    form.setFieldsValue({ feeMode: 'per_area', setupFee: 0, minFee: 0 });
+    setOpen(true);
+  }
+
+  function openEdit(record: ProcessPrice) {
+    setEditing(record);
+    form.setFieldsValue({
+      processId: Number(record.processId),
+      feeMode: record.feeMode,
+      unitPrice: Number(record.unitPrice),
+      setupFee: Number(record.setupFee ?? 0),
+      minFee: Number(record.minFee ?? 0),
+    });
+    setOpen(true);
+  }
+
   async function submit() {
     const values = await form.validateFields();
-    await post('/admin/process-prices', values);
-    message.success('工艺价格已创建');
+    if (editing) {
+      await put(`/admin/process-prices/${editing.id}`, values);
+      message.success('工艺价格已更新');
+    } else {
+      await post('/admin/process-prices', values);
+      message.success('工艺价格已创建');
+    }
     setOpen(false);
+    setEditing(null);
     form.resetFields();
     await reload();
   }
 
   return (
     <>
-      <PageHeader title="工艺价格" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={() => setOpen(true)}>新增价格</Button> : null} />
+      <PageHeader title="工艺价格" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={openCreate}>新增价格</Button> : null} />
       <div className="filter-bar">
         <Select
           allowClear
@@ -238,8 +264,16 @@ function ProcessPriceTable() {
         { title: '固定费', dataIndex: 'setupFee' },
         { title: '最低收费', dataIndex: 'minFee' },
         { title: '当前', dataIndex: 'isCurrent', render: (value: boolean) => <Tag color={value ? 'green' : 'default'}>{value ? '当前' : '历史'}</Tag> },
+        canWrite ? {
+          title: '操作',
+          render: (_, record) => (
+            <Button type="link" onClick={() => openEdit(record)}>
+              编辑
+            </Button>
+          ),
+        } : {},
       ]} />
-      <Modal title="新增工艺价格" open={open} onOk={submit} onCancel={() => setOpen(false)}>
+      <Modal title={editing ? '编辑工艺价格' : '新增工艺价格'} open={open} onOk={submit} onCancel={() => setOpen(false)}>
         <Form form={form} layout="vertical" initialValues={{ feeMode: 'per_area', setupFee: 0, minFee: 0 }}>
           <Form.Item name="processId" label="工艺" rules={[{ required: true }]}>
             <Select options={processes.map((item) => ({ label: `${item.name} (${item.code})`, value: Number(item.id) }))} />
@@ -260,6 +294,7 @@ function PrintPriceTable() {
   const { message } = App.useApp();
   const { data, loading, reload } = useRemoteList<PrintPrice>('/admin/print-prices');
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<PrintPrice | null>(null);
   const [currentOnly, setCurrentOnly] = useState('all');
   const [printMode, setPrintMode] = useState<string>();
   const [form] = Form.useForm();
@@ -281,18 +316,42 @@ function PrintPriceTable() {
     });
   }, [currentOnly, data, printMode]);
 
+  function openCreate() {
+    setEditing(null);
+    form.resetFields();
+    form.setFieldsValue({ feeMode: 'per_area', setupFee: 0 });
+    setOpen(true);
+  }
+
+  function openEdit(record: PrintPrice) {
+    setEditing(record);
+    form.setFieldsValue({
+      printMode: record.printMode,
+      feeMode: record.feeMode,
+      unitPrice: Number(record.unitPrice),
+      setupFee: Number(record.setupFee ?? 0),
+    });
+    setOpen(true);
+  }
+
   async function submit() {
     const values = await form.validateFields();
-    await post('/admin/print-prices', values);
-    message.success('印刷价格已创建');
+    if (editing) {
+      await put(`/admin/print-prices/${editing.id}`, values);
+      message.success('印刷价格已更新');
+    } else {
+      await post('/admin/print-prices', values);
+      message.success('印刷价格已创建');
+    }
     setOpen(false);
+    setEditing(null);
     form.resetFields();
     await reload();
   }
 
   return (
     <>
-      <PageHeader title="印刷价格" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={() => setOpen(true)}>新增价格</Button> : null} />
+      <PageHeader title="印刷价格" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={openCreate}>新增价格</Button> : null} />
       <div className="filter-bar">
         <Select allowClear placeholder="印刷方式" value={printMode} onChange={setPrintMode} style={{ width: 180 }} options={visiblePrintModeOptions} />
         <Select
@@ -312,8 +371,16 @@ function PrintPriceTable() {
         { title: '单价', dataIndex: 'unitPrice' },
         { title: '开机费', dataIndex: 'setupFee' },
         { title: '当前', dataIndex: 'isCurrent', render: (value: boolean) => <Tag color={value ? 'green' : 'default'}>{value ? '当前' : '历史'}</Tag> },
+        canWrite ? {
+          title: '操作',
+          render: (_, record) => (
+            <Button type="link" onClick={() => openEdit(record)}>
+              编辑
+            </Button>
+          ),
+        } : {},
       ]} />
-      <Modal title="新增印刷价格" open={open} onOk={submit} onCancel={() => setOpen(false)}>
+      <Modal title={editing ? '编辑印刷价格' : '新增印刷价格'} open={open} onOk={submit} onCancel={() => setOpen(false)}>
         <Form form={form} layout="vertical" initialValues={{ feeMode: 'per_area', setupFee: 0 }}>
           <Form.Item name="printMode" label="印刷方式" rules={[{ required: true }]}>
             <Select options={printModeLabelOptions} />

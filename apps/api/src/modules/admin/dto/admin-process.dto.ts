@@ -62,6 +62,8 @@ export class CreateProcessPriceDto {
   setupFee?: number;
 }
 
+export class UpdateProcessPriceDto extends CreateProcessPriceDto {}
+
 export class CreatePrintPriceDto {
   @IsString()
   printMode!: string;
@@ -78,3 +80,5 @@ export class CreatePrintPriceDto {
   @Min(0)
   setupFee?: number;
 }
+
+export class UpdatePrintPriceDto extends CreatePrintPriceDto {}
