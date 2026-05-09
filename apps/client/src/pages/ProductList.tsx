@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { PageHero } from '../components/PageHero';
+import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { ProductVisual } from '../components/PrintingVisuals';
 import { SectionHeading } from '../components/cards';
 import { useCatalog } from '../catalogContext';
@@ -19,6 +20,7 @@ export function ProductListPage() {
 
   return (
     <div className="lc-subpage">
+      <H5PageChrome title="产品中心" subtitle="标签、卷标、包装印刷与一物一码产品快速浏览" />
       <PageHero
         kicker="Product Center"
         title="产品中心"
@@ -75,6 +77,7 @@ export function ProductListPage() {
           )}
         </div>
       </section>
+      <H5TabBar />
     </div>
   );
 }

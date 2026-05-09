@@ -87,7 +87,7 @@ Follow the approved H5 homepage and `D:\study\Web\Dflc\yinshua\images\index.png`
 - Create: `apps/client/src/components/H5Chrome.tsx`
 - Modify: `apps/client/src/styles.css`
 
-- [ ] **Step 1: Create shared H5 chrome component**
+- [x] **Step 1: Create shared H5 chrome component**
 
 Create `apps/client/src/components/H5Chrome.tsx`:
 
@@ -132,7 +132,7 @@ export function H5TabBar() {
 }
 ```
 
-- [ ] **Step 2: Add shared H5 chrome CSS**
+- [x] **Step 2: Add shared H5 chrome CSS**
 
 Append to `apps/client/src/styles.css`:
 
@@ -288,7 +288,7 @@ Append to `apps/client/src/styles.css`:
 }
 ```
 
-- [ ] **Step 3: Run typecheck**
+- [x] **Step 3: Run typecheck**
 
 ```powershell
 D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps\client\node_modules\typescript\bin\tsc -p apps\client\tsconfig.json --noEmit
@@ -311,7 +311,7 @@ git -c safe.directory=D:/study/Web/Dflc/yinshua/.worktrees/figma-homepage-sync c
 - Modify: `apps/client/src/pages/ProductDetail.tsx`
 - Modify: `apps/client/src/styles.css`
 
-- [ ] **Step 1: Add H5 chrome to product list**
+- [x] **Step 1: Add H5 chrome to product list**
 
 In `ProductList.tsx`, import:
 
@@ -327,7 +327,7 @@ Inside the top-level returned `.lc-subpage`, add `H5PageChrome` before the exist
 
 Add `<H5TabBar />` before the closing top-level `</div>`.
 
-- [ ] **Step 2: Add H5 chrome to product detail**
+- [x] **Step 2: Add H5 chrome to product detail**
 
 In `ProductDetail.tsx`, import:
 
@@ -343,7 +343,7 @@ Inside the top-level returned `.lc-subpage`, add:
 
 Add `<H5TabBar />` before the closing top-level `</div>`.
 
-- [ ] **Step 3: Add product H5 CSS**
+- [x] **Step 3: Add product H5 CSS**
 
 Append:
 
@@ -402,7 +402,7 @@ Append:
 }
 ```
 
-- [ ] **Step 4: Build**
+- [x] **Step 4: Build**
 
 ```powershell
 D:\study\Web\Dflc\yinshua\.tools\node\node.exe node_modules\vite\bin\vite.js build

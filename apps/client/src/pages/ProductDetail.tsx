@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchCatalogProduct, toAssetUrl } from '../api';
 import { useCatalog } from '../catalogContext';
 import { InfoChip, SectionHeading } from '../components/cards';
+import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 import { ProductVisual } from '../components/PrintingVisuals';
 import type { Product } from '../types';
@@ -36,12 +37,14 @@ export function ProductDetailPage() {
   if (loading) {
     return (
       <div className="lc-subpage">
+        <H5PageChrome title="产品详情" subtitle="正在同步产品配置和报价模板" />
         <div className="lc-container">
           <div className="lc-empty-state lc-card">
             <h3>正在加载产品详情</h3>
             <p>正在同步产品配置和报价模板。</p>
           </div>
         </div>
+        <H5TabBar />
       </div>
     );
   }
@@ -49,6 +52,7 @@ export function ProductDetailPage() {
   if (error || !product) {
     return (
       <div className="lc-subpage">
+        <H5PageChrome title="产品详情" subtitle="当前产品暂时无法展示" />
         <div className="lc-container">
           <div className="lc-empty-state lc-card">
             <h3>{error ?? '产品不存在'}</h3>
@@ -58,6 +62,7 @@ export function ProductDetailPage() {
             </Link>
           </div>
         </div>
+        <H5TabBar />
       </div>
     );
   }
@@ -67,6 +72,7 @@ export function ProductDetailPage() {
 
   return (
     <div className="lc-subpage">
+      <H5PageChrome title={product.name} subtitle={product.category?.name ?? '定制印刷产品详情'} />
       <PageHero
         kicker={product.category?.name ?? 'Product Detail'}
         title={product.name}
@@ -146,6 +152,7 @@ export function ProductDetailPage() {
           )}
         </div>
       </section>
+      <H5TabBar />
     </div>
   );
 }
