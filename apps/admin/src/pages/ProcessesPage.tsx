@@ -23,21 +23,6 @@ const printModeLabelOptions = [
   { label: '单色印刷', value: 'single_color' },
 ];
 
-type ProcessPriceDraft = {
-  processId: number;
-  feeMode: string;
-  unitPrice: number;
-  setupFee: number;
-  minFee: number;
-};
-
-type PrintPriceDraft = {
-  printMode: string;
-  feeMode: string;
-  unitPrice: number;
-  setupFee: number;
-};
-
 export function ProcessesPage() {
   return (
     <div className="page-card">
@@ -206,8 +191,6 @@ function ProcessPriceTable() {
   const { data: processes } = useRemoteList<Process>('/admin/processes');
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<ProcessPrice | null>(null);
-  const [editingRowId, setEditingRowId] = useState<string | null>(null);
-  const [draft, setDraft] = useState<ProcessPriceDraft | null>(null);
   const [currentOnly, setCurrentOnly] = useState('all');
   const [processId, setProcessId] = useState<string>();
   const [form] = Form.useForm();
@@ -229,58 +212,15 @@ function ProcessPriceTable() {
   }
 
   function openEdit(record: ProcessPrice) {
-    setEditingRowId(String(record.id));
-    setDraft({
+    setEditing(record);
+    form.setFieldsValue({
       processId: Number(record.processId),
       feeMode: record.feeMode,
       unitPrice: Number(record.unitPrice),
       setupFee: Number(record.setupFee ?? 0),
       minFee: Number(record.minFee ?? 0),
     });
-  }
-
-  function updateDraft<K extends keyof ProcessPriceDraft>(key: K, value: ProcessPriceDraft[K]) {
-    setDraft((current) => (current ? { ...current, [key]: value } : current));
-  }
-
-  function cancelEdit() {
-    setEditingRowId(null);
-    setDraft(null);
-  }
-
-  async function saveEdit(record: ProcessPrice) {
-    if (!draft) {
-      return;
-    }
-    await put(`/admin/process-prices/${record.id}`, draft);
-    message.success('工艺价格已更新');
-    cancelEdit();
-    await reload();
-  }
-
-  function renderProcessPriceEditor(record: ProcessPrice) {
-    if (editingRowId !== String(record.id) || !draft) {
-      return null;
-    }
-
-    return (
-      <Space wrap>
-        <Select
-          value={draft.processId}
-          onChange={(value) => updateDraft('processId', value)}
-          style={{ width: 240 }}
-          options={processes.map((item) => ({ label: `${item.name} (${item.code})`, value: Number(item.id) }))}
-        />
-        <Select value={draft.feeMode} onChange={(value) => updateDraft('feeMode', value)} style={{ width: 160 }} options={feeModeOptions} />
-        <InputNumber value={draft.unitPrice} min={0} step={0.01} addonBefore="单价" onChange={(value) => updateDraft('unitPrice', Number(value ?? 0))} />
-        <InputNumber value={draft.setupFee} min={0} step={0.01} addonBefore="固定费" onChange={(value) => updateDraft('setupFee', Number(value ?? 0))} />
-        <InputNumber value={draft.minFee} min={0} step={0.01} addonBefore="最低收费" onChange={(value) => updateDraft('minFee', Number(value ?? 0))} />
-        <Button type="primary" onClick={() => saveEdit(record)}>
-          保存
-        </Button>
-        <Button onClick={cancelEdit}>取消</Button>
-      </Space>
-    );
+    setOpen(true);
   }
 
   async function submit() {
@@ -324,12 +264,6 @@ function ProcessPriceTable() {
         rowKey="id"
         loading={loading}
         dataSource={filteredData}
-        expandable={{
-          expandedRowKeys: editingRowId ? [editingRowId] : [],
-          expandedRowRender: renderProcessPriceEditor,
-          expandIcon: () => null,
-          rowExpandable: (record) => editingRowId === String(record.id),
-        }}
         columns={[
         { title: '编号', dataIndex: 'id' },
         { title: '工艺', render: (_, record) => record.process ? `${record.process.name} (${record.process.code})` : record.processId },
@@ -369,8 +303,6 @@ function PrintPriceTable() {
   const { data, loading, reload } = useRemoteList<PrintPrice>('/admin/print-prices');
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PrintPrice | null>(null);
-  const [editingRowId, setEditingRowId] = useState<string | null>(null);
-  const [draft, setDraft] = useState<PrintPriceDraft | null>(null);
   const [currentOnly, setCurrentOnly] = useState('all');
   const [printMode, setPrintMode] = useState<string>();
   const [form] = Form.useForm();
@@ -400,51 +332,14 @@ function PrintPriceTable() {
   }
 
   function openEdit(record: PrintPrice) {
-    setEditingRowId(String(record.id));
-    setDraft({
+    setEditing(record);
+    form.setFieldsValue({
       printMode: record.printMode,
       feeMode: record.feeMode,
       unitPrice: Number(record.unitPrice),
       setupFee: Number(record.setupFee ?? 0),
     });
-  }
-
-  function updateDraft<K extends keyof PrintPriceDraft>(key: K, value: PrintPriceDraft[K]) {
-    setDraft((current) => (current ? { ...current, [key]: value } : current));
-  }
-
-  function cancelEdit() {
-    setEditingRowId(null);
-    setDraft(null);
-  }
-
-  async function saveEdit(record: PrintPrice) {
-    if (!draft) {
-      return;
-    }
-    await put(`/admin/print-prices/${record.id}`, draft);
-    message.success('印刷价格已更新');
-    cancelEdit();
-    await reload();
-  }
-
-  function renderPrintPriceEditor(record: PrintPrice) {
-    if (editingRowId !== String(record.id) || !draft) {
-      return null;
-    }
-
-    return (
-      <Space wrap>
-        <Select value={draft.printMode} onChange={(value) => updateDraft('printMode', value)} style={{ width: 180 }} options={printModeLabelOptions} />
-        <Select value={draft.feeMode} onChange={(value) => updateDraft('feeMode', value)} style={{ width: 160 }} options={feeModeOptions} />
-        <InputNumber value={draft.unitPrice} min={0} step={0.01} addonBefore="单价" onChange={(value) => updateDraft('unitPrice', Number(value ?? 0))} />
-        <InputNumber value={draft.setupFee} min={0} step={0.01} addonBefore="开机费" onChange={(value) => updateDraft('setupFee', Number(value ?? 0))} />
-        <Button type="primary" onClick={() => saveEdit(record)}>
-          保存
-        </Button>
-        <Button onClick={cancelEdit}>取消</Button>
-      </Space>
-    );
+    setOpen(true);
   }
 
   async function submit() {
@@ -481,12 +376,6 @@ function PrintPriceTable() {
         rowKey="id"
         loading={loading}
         dataSource={filteredData}
-        expandable={{
-          expandedRowKeys: editingRowId ? [editingRowId] : [],
-          expandedRowRender: renderPrintPriceEditor,
-          expandIcon: () => null,
-          rowExpandable: (record) => editingRowId === String(record.id),
-        }}
         columns={[
         { title: '编号', dataIndex: 'id' },
         { title: '印刷方式', dataIndex: 'printMode', render: renderPrintMode },
