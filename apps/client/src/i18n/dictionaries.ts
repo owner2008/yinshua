@@ -320,7 +320,7 @@ export const dictionaries = {
     'common.contact': 'Contact us',
     'brand.homeAria': 'Dongfang Licai Packaging & Printing home',
     'brand.shortName': 'Dongfang Licai Printing',
-    'brand.subtitle': 'Label Printing / Packaging Customization / Digital Traceability',
+    'brand.subtitle': 'Labels / Packaging / Traceability',
     'brand.h5Name': 'DFLC Printing',
     'nav.aria': 'Primary navigation',
     'nav.actionsAria': 'Quick user links',

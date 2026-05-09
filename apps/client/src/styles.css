@@ -2698,6 +2698,45 @@ body {
   background-size: 14px 14px;
 }
 
+@media (min-width: 901px) and (max-width: 1180px) {
+  html:lang(en-US) .lc-header {
+    grid-template-columns: minmax(190px, 230px) minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+
+  html:lang(en-US) .lc-logo {
+    max-width: 230px;
+  }
+
+  html:lang(en-US) .lc-logo small {
+    display: none;
+  }
+
+  html:lang(en-US) .lc-nav {
+    justify-content: flex-start;
+    gap: 3px;
+  }
+
+  html:lang(en-US) .lc-nav a {
+    padding: 9px 8px;
+    font-size: 13px;
+  }
+
+  html:lang(en-US) .lc-header-actions {
+    gap: 6px;
+  }
+
+  html:lang(en-US) .lc-header-link {
+    max-width: 128px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html:lang(en-US) .lc-header-cta {
+    padding-inline: 16px;
+  }
+}
+
 @media (max-width: 900px) {
   .lc-header {
     grid-template-columns: 1fr auto;
