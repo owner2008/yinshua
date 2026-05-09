@@ -261,6 +261,8 @@ export function HomePage() {
 }
 
 function MobileHomePage() {
+  const h5Products = productCategories.slice(0, 7);
+
   return (
     <div className="lc-h5-home" aria-label="东方丽彩印刷 H5 首页">
       <header className="lc-h5-header">
@@ -290,6 +292,21 @@ function MobileHomePage() {
           <span className="active" />
           <span />
           <span />
+        </div>
+      </section>
+
+      <section className="lc-h5-section lc-h5-products">
+        <div className="lc-h5-section-title">
+          <h2>产品中心</h2>
+          <p>为客户提供一站式印刷解决方案</p>
+        </div>
+        <div className="lc-h5-product-grid">
+          {h5Products.map((item) => (
+            <Link className="lc-h5-product-card" to="/products" key={item.name}>
+              <img src={item.imageUrl} alt={item.name} />
+              <strong>{item.name}</strong>
+            </Link>
+          ))}
         </div>
       </section>
     </div>
