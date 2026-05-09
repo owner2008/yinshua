@@ -3579,6 +3579,40 @@ body {
     text-decoration: none;
   }
 
+  .lc-h5-bottom-cta {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 70;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -12px 28px rgb(7 26 48 / 18%);
+  }
+
+  .lc-h5-bottom-cta a {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: #0a6cff;
+    font-size: 13px;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .lc-h5-bottom-cta .primary {
+    background: #ff9f1a;
+  }
+
+  .lc-h5-bottom-cta a:last-child {
+    background: #00a886;
+  }
+
   .lc-container {
     width: calc(100% - 24px);
   }

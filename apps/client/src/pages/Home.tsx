@@ -13,6 +13,7 @@ import {
   quoteSteps,
   testimonials,
   trustLogos,
+  brand,
 } from '../brandContent';
 import { FeatureCard, InfoChip, ProcessStep, SectionHeading, StatCard } from '../components/cards';
 import { HeroPrintingVisual, MaterialSample, ProductPhoto, QrVisual } from '../components/PrintingVisuals';
@@ -350,6 +351,14 @@ function MobileHomePage() {
         </div>
         <Link to="/quote">立即报价</Link>
       </section>
+
+      <nav className="lc-h5-bottom-cta" aria-label="H5 快捷操作">
+        <a href={`tel:${brand.mobile}`}>在线咨询</a>
+        <Link className="primary" to="/quote">
+          立即报价
+        </Link>
+        <a href={`tel:${brand.mobile}`}>拨打电话</a>
+      </nav>
     </div>
   );
 }
