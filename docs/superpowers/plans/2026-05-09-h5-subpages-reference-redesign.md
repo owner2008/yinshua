@@ -654,7 +654,7 @@ Append:
 
 Run frontend build from `apps/client`. Expected: exit code `0`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git -c safe.directory=D:/study/Web/Dflc/yinshua/.worktrees/figma-homepage-sync add apps/client/src/pages/MemberCenter.tsx apps/client/src/pages/History.tsx apps/client/src/styles.css
@@ -667,7 +667,7 @@ git -c safe.directory=D:/study/Web/Dflc/yinshua/.worktrees/figma-homepage-sync c
 
 - Modify: none unless verification shows issues.
 
-- [ ] **Step 1: Typecheck**
+- [x] **Step 1: Typecheck**
 
 ```powershell
 D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps\client\node_modules\typescript\bin\tsc -p apps\client\tsconfig.json --noEmit
@@ -675,7 +675,7 @@ D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps\client\node_modules\typescri
 
 Expected: exit code `0`.
 
-- [ ] **Step 2: Build**
+- [x] **Step 2: Build**
 
 From `apps/client`:
 
@@ -685,7 +685,7 @@ D:\study\Web\Dflc\yinshua\.tools\node\node.exe node_modules\vite\bin\vite.js bui
 
 Expected: `✓ built` and exit code `0`.
 
-- [ ] **Step 3: Local mobile check**
+- [x] **Step 3: Local mobile check**
 
 Open `http://127.0.0.1:5174/` and check these routes at 390px width:
 
@@ -707,7 +707,7 @@ Expected:
 - Bottom tabbar appears on subpages.
 - Existing business flows still render.
 
-- [ ] **Step 4: Desktop check**
+- [x] **Step 4: Desktop check**
 
 Open the same routes at desktop width.
 
@@ -717,7 +717,7 @@ Expected:
 - PC subpage heroes still appear.
 - No H5 tabbar appears.
 
-- [ ] **Step 5: Commit polish if needed**
+- [x] **Step 5: Commit polish if needed**
 
 Only if verification required additional CSS fixes:
 

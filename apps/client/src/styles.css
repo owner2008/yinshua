@@ -3274,6 +3274,13 @@ body {
     background: #f6f9ff;
   }
 
+  .app-shell:has(.lc-h5-home),
+  .app-shell:has(.lc-subpage) {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   .app-shell:has(.lc-h5-home) > .lc-header,
   .app-shell:has(.lc-h5-home) > .lc-footer {
     display: none;
@@ -4186,6 +4193,11 @@ body {
     gap: 8px;
   }
 
+  .lc-subpage-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
   .lc-container {
     width: calc(100% - 24px);
   }
@@ -5073,5 +5085,50 @@ body {
 
   .lc-chip-filter button {
     min-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell:has(.lc-h5-home),
+  .app-shell:has(.lc-subpage) {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lc-subpage {
+    padding-top: 0;
+    padding-bottom: calc(74px + env(safe-area-inset-bottom));
+    background: #f6f9ff;
+  }
+
+  .lc-subpage .lc-chip-filter {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    margin: 0 -12px 18px;
+    padding: 0 12px 4px;
+  }
+
+  .lc-subpage .lc-chip-filter button {
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+
+  .lc-subpage-product-grid,
+  .lc-official-gallery,
+  .lc-official-gallery.equipment {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .lc-product-selector button {
+    flex: 0 0 132px;
+  }
+
+  .lc-form-panel,
+  .lc-selected-product,
+  .lc-quote-result {
+    padding: 16px 14px;
+    border-radius: 18px;
   }
 }
