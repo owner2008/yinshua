@@ -296,7 +296,7 @@ D:\study\Web\Dflc\yinshua\.tools\node\node.exe apps\client\node_modules\typescri
 
 Expected: exit code `0`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git -c safe.directory=D:/study/Web/Dflc/yinshua/.worktrees/figma-homepage-sync add apps/client/src/components/H5Chrome.tsx apps/client/src/styles.css
@@ -493,7 +493,7 @@ git -c safe.directory=D:/study/Web/Dflc/yinshua/.worktrees/figma-homepage-sync c
 - Modify: `apps/client/src/pages/Quote.tsx`
 - Modify: `apps/client/src/styles.css`
 
-- [ ] **Step 1: Add H5 chrome**
+- [x] **Step 1: Add H5 chrome**
 
 In `Quote.tsx`, import:
 
@@ -509,7 +509,7 @@ Inside the top-level `.lc-subpage`, add:
 
 Add `<H5TabBar />` before closing the top-level wrapper.
 
-- [ ] **Step 2: Add quote H5 CSS**
+- [x] **Step 2: Add quote H5 CSS**
 
 Append:
 
@@ -560,7 +560,7 @@ Append:
 }
 ```
 
-- [ ] **Step 3: Build**
+- [x] **Step 3: Build**
 
 Run frontend build from `apps/client`. Expected: exit code `0`.
 

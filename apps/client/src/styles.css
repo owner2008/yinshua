@@ -3947,6 +3947,142 @@ body {
     line-height: 1.35;
   }
 
+  .lc-quote-page {
+    display: grid;
+    gap: 14px;
+    padding-top: 16px;
+  }
+
+  .lc-product-selector {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    max-height: none;
+    margin: 0 -12px;
+    padding: 0 12px 4px;
+    scrollbar-width: none;
+  }
+
+  .lc-product-selector::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lc-product-selector button {
+    flex: 0 0 132px;
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  .lc-product-selector .lc-product-visual {
+    height: 92px;
+    border-radius: 13px;
+  }
+
+  .lc-product-selector strong {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .lc-product-selector small {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .lc-quote-main {
+    display: grid;
+    gap: 14px;
+  }
+
+  .lc-selected-product {
+    grid-template-columns: 96px 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .lc-selected-product .lc-product-visual {
+    height: 96px;
+    border-radius: 14px;
+  }
+
+  .lc-selected-product h2 {
+    margin-top: 4px;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .lc-selected-product p {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .lc-form-panel {
+    padding: 16px 14px;
+  }
+
+  .lc-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .field span {
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    min-height: 46px;
+    border-radius: 13px;
+    font-size: 14px;
+  }
+
+  .field textarea {
+    min-height: 92px;
+  }
+
+  .lc-toggle-row {
+    display: grid;
+    gap: 10px;
+  }
+
+  .lc-toggle-row label {
+    min-height: 36px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #f6f9ff;
+  }
+
+  .lc-action-row {
+    display: grid;
+    gap: 10px;
+  }
+
+  .lc-action-row p {
+    margin: 0;
+    text-align: center;
+  }
+
+  .lc-quote-result {
+    position: static;
+    padding: 18px 14px;
+  }
+
+  .lc-quote-result h2 {
+    font-size: 26px;
+  }
+
+  .lc-quote-result dl {
+    gap: 8px;
+  }
+
   .lc-container {
     width: calc(100% - 24px);
   }

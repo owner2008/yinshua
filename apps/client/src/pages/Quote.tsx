@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { calculateQuote, saveQuote } from '../api';
 import { useCatalog } from '../catalogContext';
 import { InfoChip, SectionHeading } from '../components/cards';
+import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 import { ProductVisual } from '../components/PrintingVisuals';
 import { getExtraFeeNotes } from '../quoteFeeNotes';
@@ -129,6 +130,7 @@ export function QuotePage() {
 
   return (
     <div className="lc-subpage">
+      <H5PageChrome title="在线报价" subtitle="选择产品、尺寸、材质和工艺，快速生成参考报价" />
       <PageHero
         kicker="Online Quote"
         title="在线报价"
@@ -384,6 +386,7 @@ export function QuotePage() {
 
         <QuoteResultPanel result={quoteResult} />
       </section>
+      <H5TabBar />
     </div>
   );
 }
