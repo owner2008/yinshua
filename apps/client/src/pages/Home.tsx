@@ -263,7 +263,35 @@ export function HomePage() {
 function MobileHomePage() {
   return (
     <div className="lc-h5-home" aria-label="东方丽彩印刷 H5 首页">
-      <div className="lc-h5-placeholder">H5 首页开发中</div>
+      <header className="lc-h5-header">
+        <Link to="/" className="lc-h5-brand" aria-label="东方丽彩印刷首页">
+          <span className="lc-h5-logo-mark">LC</span>
+          <strong>东方丽彩印刷</strong>
+        </Link>
+        <button className="lc-h5-menu" type="button" aria-label="打开菜单">
+          <span />
+          <span />
+          <span />
+        </button>
+      </header>
+
+      <section className="lc-h5-hero">
+        <div className="lc-h5-hero-copy">
+          <h1>
+            专业印刷 <span>品质传递价值</span>
+          </h1>
+          <p>标签 · 卷标 · 不干胶 · 产品说明书 · 包装 · 宣传册</p>
+          <p>可变二维码 · 一物一码标签等印刷产品</p>
+        </div>
+        <div className="lc-h5-hero-media">
+          <img src="/official/qddflc/equipment-uv-line.jpg" alt="标签印刷设备与产品展示" />
+        </div>
+        <div className="lc-h5-dots" aria-hidden="true">
+          <span className="active" />
+          <span />
+          <span />
+        </div>
+      </section>
     </div>
   );
 }

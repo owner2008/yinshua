@@ -3269,9 +3269,126 @@ body {
     background: #f6f9ff;
   }
 
-  .lc-h5-placeholder {
-    padding: 32px 16px;
-    text-align: center;
+  .app-shell:has(.lc-h5-home) > .lc-header,
+  .app-shell:has(.lc-h5-home) > .lc-footer {
+    display: none;
+  }
+
+  .lc-h5-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    padding: 0 16px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgb(7 26 48 / 8%);
+  }
+
+  .lc-h5-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #10243d;
+    text-decoration: none;
+  }
+
+  .lc-h5-logo-mark {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    background: conic-gradient(from 30deg, #0a6cff, #00a886, #ffca28, #ff7a1a, #0a6cff);
+  }
+
+  .lc-h5-brand strong {
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  .lc-h5-menu {
+    display: grid;
+    gap: 4px;
+    width: 36px;
+    height: 36px;
+    place-content: center;
+    border: 0;
+    background: transparent;
+  }
+
+  .lc-h5-menu span {
+    display: block;
+    width: 21px;
+    height: 2px;
+    border-radius: 999px;
+    background: #0a6cff;
+  }
+
+  .lc-h5-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 28px 18px 20px;
+    background:
+      radial-gradient(circle at 18% 18%, rgb(255 255 255 / 90%), transparent 34%),
+      linear-gradient(135deg, #eef6ff 0%, #dcecff 100%);
+  }
+
+  .lc-h5-hero-copy h1 {
+    margin: 0;
+    color: #071a30;
+    font-size: 24px;
+    line-height: 1.24;
+    font-weight: 950;
+  }
+
+  .lc-h5-hero-copy h1 span {
+    color: #0a54d6;
+  }
+
+  .lc-h5-hero-copy p {
+    margin: 7px 0 0;
+    color: #243b55;
+    font-size: 12px;
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  .lc-h5-hero-media {
+    margin-top: 14px;
+  }
+
+  .lc-h5-hero-media img {
+    display: block;
+    width: 100%;
+    height: 170px;
+    border-radius: 14px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .lc-h5-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .lc-h5-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #c8d5e6;
+  }
+
+  .lc-h5-dots .active {
+    width: 18px;
+    background: #0a6cff;
   }
 
   .lc-container {
