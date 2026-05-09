@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { CatalogProvider } from './catalogContext';
 import { BrandFooter, BrandHeader } from './components/BrandShell';
+import { I18nProvider } from './i18n';
 import { ContactPage } from './pages/Contact';
 import { HistoryPage } from './pages/History';
 import { HomePage } from './pages/Home';
@@ -11,9 +12,11 @@ import { QuotePage } from './pages/Quote';
 
 export function App() {
   return (
-    <CatalogProvider>
-      <Shell />
-    </CatalogProvider>
+    <I18nProvider>
+      <CatalogProvider>
+        <Shell />
+      </CatalogProvider>
+    </I18nProvider>
   );
 }
 

@@ -2567,6 +2567,46 @@ body {
   background: rgb(10 108 255 / 8%);
 }
 
+.lc-lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid rgb(25 82 146 / 14%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 82%);
+  box-shadow: 0 8px 20px rgb(13 44 84 / 6%);
+}
+
+.lc-lang-switch button {
+  min-width: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #52667d;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  padding: 7px 9px;
+}
+
+.lc-lang-switch button.active {
+  background: var(--lc-blue);
+  color: #fff;
+  box-shadow: 0 8px 18px rgb(11 99 255 / 18%);
+}
+
+.lc-lang-switch--compact {
+  padding: 2px;
+}
+
+.lc-lang-switch--compact button {
+  min-width: 34px;
+  padding: 6px 7px;
+  font-size: 11px;
+}
+
 .lc-footer {
   display: grid;
   grid-template-columns: minmax(260px, 1.4fr) minmax(220px, 1fr) minmax(240px, 0.9fr) 112px;
