@@ -144,7 +144,7 @@ export interface QuoteInput {
   widthMm: number;
   heightMm: number;
   quantity: number;
-  styleCount?: number;
+  styleCount: number;
   materialId: number;
   printMode: string;
   shapeType: string;

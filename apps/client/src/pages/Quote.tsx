@@ -460,6 +460,7 @@ function createDefaultQuote(product: Product | undefined, template: ProductTempl
     widthMm: defaultWidth,
     heightMm: defaultHeight,
     quantity: defaultQuantity,
+    styleCount: 1,
     materialId: Number(options.materials[0]?.optionValue ?? 0),
     printMode: options.printModes[0]?.optionValue ?? '',
     shapeType: options.shapes[0]?.optionValue ?? '',
@@ -493,6 +494,7 @@ function normalizeQuoteInput(input: QuoteInput): QuoteInput {
     widthMm: Number(input.widthMm),
     heightMm: Number(input.heightMm),
     quantity: Number(input.quantity),
+    styleCount: Number(input.styleCount || 1),
     materialId: Number(input.materialId),
     processCodes: input.isProofing && !input.processCodes.includes('proofing') ? [...input.processCodes, 'proofing'] : input.processCodes,
   };
