@@ -10,6 +10,7 @@ import {
   ProductTemplateConfig,
   RuleConfig,
 } from '../interfaces/pricing-config.interface';
+import { fullLabelParameterSupport } from '../quote-parameter-options';
 import { PrismaService } from '../../../database/prisma.service';
 
 const fallbackTemplates: ProductTemplateConfig[] = [
@@ -26,6 +27,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'die_cut', 'uv', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -41,6 +43,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'die_cut', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -56,6 +59,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['hot_stamp', 'die_cut', 'proofing'],
     printModes: ['four_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -71,6 +75,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['die_cut'],
     printModes: ['single_color'],
     shapeTypes: ['rectangle'],
+    ...fullLabelParameterSupport,
     allowProofing: false,
   },
   {
@@ -86,6 +91,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'die_cut', 'uv', 'proofing'],
     printModes: ['four_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -101,6 +107,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'die_cut', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -116,6 +123,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'hot_stamp', 'uv', 'die_cut', 'proofing'],
     printModes: ['four_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -131,6 +139,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'die_cut', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -146,6 +155,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'die_cut', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -161,6 +171,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['die_cut', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -176,6 +187,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['lamination', 'die_cut', 'proofing'],
     printModes: ['four_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
   {
@@ -191,6 +203,7 @@ const fallbackTemplates: ProductTemplateConfig[] = [
     processCodes: ['die_cut', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle', 'custom'],
+    ...fullLabelParameterSupport,
     allowProofing: true,
   },
 ];
@@ -243,6 +256,9 @@ const defaultRequirementFeeConfig = {
   rollSplitFeePerRoll: 2,
   sheetCuttingFee: 30,
   fanFoldFee: 50,
+  additionalStyleFee: 30,
+  designServiceFee: 120,
+  sampleApprovalFee: 80,
 };
 
 @Injectable()
@@ -338,6 +354,11 @@ export class QuoteConfigRepository {
         processCodes: optionValues(template.options, 'process'),
         printModes: optionValues(template.options, 'print_mode'),
         shapeTypes: optionValues(template.options, 'shape'),
+        adhesiveTypes: optionalOptionValues(template.options, 'adhesive_type'),
+        deliveryForms: optionalOptionValues(template.options, 'delivery_form'),
+        surfaceFinishes: optionalOptionValues(template.options, 'surface_finish'),
+        colorModes: optionalOptionValues(template.options, 'color_mode'),
+        labelingMethods: optionalOptionValues(template.options, 'labeling_method'),
         allowProofing: template.allowProofing,
       },
       material: {
@@ -394,7 +415,7 @@ export class QuoteConfigRepository {
       throw new Error('报价规则不存在');
     }
 
-    const matchedRule = ruleSet.rules.find((rule) => matchCondition(rule.conditionJson, dto));
+    const matchedRule = ruleSet.rules.find((rule) => matchesQuoteRuleCondition(rule.conditionJson, dto));
     if (!matchedRule) {
       throw new Error('没有匹配的报价规则');
     }
@@ -430,6 +451,9 @@ export class QuoteConfigRepository {
       rollSplitFeePerRoll: jsonNumber(config.rollSplitFeePerRoll, defaultRequirementFeeConfig.rollSplitFeePerRoll),
       sheetCuttingFee: jsonNumber(config.sheetCuttingFee, defaultRequirementFeeConfig.sheetCuttingFee),
       fanFoldFee: jsonNumber(config.fanFoldFee, defaultRequirementFeeConfig.fanFoldFee),
+      additionalStyleFee: jsonNumber(config.additionalStyleFee, defaultRequirementFeeConfig.additionalStyleFee),
+      designServiceFee: jsonNumber(config.designServiceFee, defaultRequirementFeeConfig.designServiceFee),
+      sampleApprovalFee: jsonNumber(config.sampleApprovalFee, defaultRequirementFeeConfig.sampleApprovalFee),
     };
   }
 
@@ -483,6 +507,14 @@ function optionValues(
   return options.filter((option) => option.optionType === type).map((option) => option.optionValue);
 }
 
+function optionalOptionValues(
+  options: Array<{ optionType: string; optionValue: string }>,
+  type: string,
+): string[] | undefined {
+  const values = optionValues(options, type);
+  return values.length ? values : undefined;
+}
+
 function decimalToNumber(value: Prisma.Decimal): number {
   return value.toNumber();
 }
@@ -491,14 +523,41 @@ function jsonNumber(value: unknown, fallback: number): number {
   return typeof value === 'number' ? value : fallback;
 }
 
-function matchCondition(conditionJson: Prisma.JsonValue, dto: CreateQuoteDto): boolean {
+export function matchesQuoteRuleCondition(conditionJson: Prisma.JsonValue, dto: CreateQuoteDto): boolean {
   const condition = conditionJson as Prisma.JsonObject;
-  return (
+  const matchesBase =
     inRange(condition.quantityRange, dto.quantity) &&
     inRange(condition.widthRange, dto.widthMm) &&
     inRange(condition.heightRange, dto.heightMm) &&
-    inList(condition.customerTypes, dto.customerType ?? 'personal')
-  );
+    inList(condition.customerTypes, dto.customerType ?? 'personal');
+
+  if (!matchesBase) {
+    return false;
+  }
+
+  if (Array.isArray(condition.styleCountRange) && dto.styleCount) {
+    const [min, max] = condition.styleCountRange.map(Number);
+    if (Number.isFinite(min) && Number.isFinite(max) && (dto.styleCount < min || dto.styleCount > max)) {
+      return false;
+    }
+  }
+
+  const optionConditions: Array<[string, string | undefined]> = [
+    ['adhesiveTypes', dto.adhesiveType],
+    ['deliveryForms', dto.deliveryForm],
+    ['surfaceFinishes', dto.surfaceFinish],
+    ['colorModes', dto.colorMode],
+    ['labelingMethods', dto.labelingMethod],
+  ];
+
+  for (const [key, value] of optionConditions) {
+    const allowed = condition[key];
+    if (Array.isArray(allowed) && value && !allowed.includes(value)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function inRange(value: unknown, current: number): boolean {

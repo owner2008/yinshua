@@ -295,6 +295,7 @@ function jsonValue(value: unknown): Prisma.InputJsonValue {
 
 function pickQuoteRequirements(dto: CreateQuoteDto) {
   return {
+    styleCount: dto.styleCount,
     deliveryForm: dto.deliveryForm,
     labelingMethod: dto.labelingMethod,
     rollDirection: dto.rollDirection,

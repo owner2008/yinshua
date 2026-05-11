@@ -18,6 +18,11 @@ export interface ProductTemplateConfig {
   processCodes: string[];
   printModes: string[];
   shapeTypes: string[];
+  adhesiveTypes?: string[];
+  deliveryForms?: string[];
+  surfaceFinishes?: string[];
+  colorModes?: string[];
+  labelingMethods?: string[];
   allowProofing: boolean;
 }
 
@@ -62,6 +67,9 @@ export interface RuleConfig {
   rollSplitFeePerRoll: number;
   sheetCuttingFee: number;
   fanFoldFee: number;
+  additionalStyleFee: number;
+  designServiceFee: number;
+  sampleApprovalFee: number;
 }
 
 export interface MatchedQuoteConfig {

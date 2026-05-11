@@ -33,6 +33,11 @@ export class CreateQuoteDto {
   @Min(1)
   quantity!: number;
 
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  styleCount?: number;
+
   @IsInt()
   @IsPositive()
   materialId!: number;

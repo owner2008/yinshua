@@ -59,6 +59,9 @@ describe('QuoteService admin operations', () => {
         rollSplitFeePerRoll: 2,
         sheetCuttingFee: 30,
         fanFoldFee: 50,
+        additionalStyleFee: 30,
+        designServiceFee: 120,
+        sampleApprovalFee: 80,
       },
     };
     const result = {
@@ -166,10 +169,19 @@ describe('QuoteService admin operations', () => {
       audit as never,
     );
 
+    const previousDatabaseUrl = process.env.DATABASE_URL;
+    process.env.DATABASE_URL = 'mysql://unit-test';
+
     const updated = await service.updateAdminStatus(quoteNo, {
       status: 'contacted',
       followRemark: '已电话沟通，客户希望明天确认数量。',
     });
+
+    if (previousDatabaseUrl === undefined) {
+      delete process.env.DATABASE_URL;
+    } else {
+      process.env.DATABASE_URL = previousDatabaseUrl;
+    }
 
     assert.equal(updated?.status, 'contacted');
     assert.equal(updated?.followRemark, '已电话沟通，客户希望明天确认数量。');

@@ -31,9 +31,9 @@ describe('QuoteCalcService', () => {
     const result = service.calculate(
       {
         ...sampleInput,
-        colorMode: '四色 + 白墨',
-        surfaceFinish: '防水',
-        deliveryForm: '卷装',
+        colorMode: 'four_color_white_ink',
+        surfaceFinish: 'waterproof',
+        deliveryForm: 'roll',
         piecesPerRoll: 1000,
       },
       sampleConfig,
@@ -57,9 +57,9 @@ describe('QuoteCalcService', () => {
     const result = service.calculate(
       {
         ...sampleInput,
-        colorMode: '四色 + 白墨',
-        surfaceFinish: '防水',
-        deliveryForm: '卷装',
+        colorMode: 'four_color_white_ink',
+        surfaceFinish: 'waterproof',
+        deliveryForm: 'roll',
         piecesPerRoll: 1000,
       },
       {
@@ -85,6 +85,31 @@ describe('QuoteCalcService', () => {
     assert.equal(result.summary.baseCost, 602.8);
     assert.equal(result.summary.finalPrice, 773.09);
   });
+
+  it('adds style, design service, and sample approval fees from label requirements', () => {
+    const service = new QuoteCalcService();
+    const result = service.calculate(
+      {
+        ...sampleInput,
+        styleCount: 3,
+        needDesignService: true,
+        needSampleApproval: true,
+      },
+      sampleConfig,
+    );
+
+    assert.deepEqual(
+      result.extraFees.map((item) => [item.code, item.amount]),
+      [
+        ['package', 20],
+        ['additional_style', 60],
+        ['design_service', 120],
+        ['sample_approval', 80],
+      ],
+    );
+    assert.equal(result.summary.baseCost, 682.8);
+    assert.equal(result.summary.finalPrice, 875.69);
+  });
 });
 
 const sampleInput: CreateQuoteDto = {
@@ -93,6 +118,7 @@ const sampleInput: CreateQuoteDto = {
   widthMm: 100,
   heightMm: 80,
   quantity: 5000,
+  styleCount: 1,
   materialId: 2,
   printMode: 'four_color',
   shapeType: 'rectangle',
@@ -116,6 +142,11 @@ const sampleConfig: MatchedQuoteConfig = {
     processCodes: ['lamination', 'die_cut', 'uv', 'proofing'],
     printModes: ['four_color', 'single_color'],
     shapeTypes: ['rectangle', 'custom'],
+    adhesiveTypes: ['permanent', 'removable'],
+    deliveryForms: ['roll', 'sheet', 'sheet_cut', 'fan_fold'],
+    surfaceFinishes: ['matte_lamination', 'waterproof', 'white_ink'],
+    colorModes: ['four_color', 'four_color_white_ink', 'variable_data'],
+    labelingMethods: ['manual', 'automatic'],
     allowProofing: true,
   },
   material: {
@@ -165,5 +196,8 @@ const sampleConfig: MatchedQuoteConfig = {
     rollSplitFeePerRoll: 2,
     sheetCuttingFee: 30,
     fanFoldFee: 50,
+    additionalStyleFee: 30,
+    designServiceFee: 120,
+    sampleApprovalFee: 80,
   },
 };

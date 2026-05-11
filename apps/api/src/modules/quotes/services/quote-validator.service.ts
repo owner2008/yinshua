@@ -43,5 +43,36 @@ export class QuoteValidatorService {
     if (dto.isProofing && !template.allowProofing) {
       throw new BadRequestException('当前模板不支持打样');
     }
+
+    this.validateSupportedOption('胶型', dto.adhesiveType, template.adhesiveTypes);
+    this.validateSupportedOption('交付形式', dto.deliveryForm, template.deliveryForms);
+    this.validateSupportedOption('表面处理', dto.surfaceFinish, template.surfaceFinishes);
+    this.validateSupportedOption('印刷颜色', dto.colorMode, template.colorModes);
+    this.validateSupportedOption('贴标方式', dto.labelingMethod, template.labelingMethods);
+
+    if (dto.deliveryForm === 'roll') {
+      if (!dto.rollDirection) {
+        throw new BadRequestException('卷装标签必须选择出标方向');
+      }
+      if (!dto.rollCoreMm || dto.rollCoreMm <= 0) {
+        throw new BadRequestException('卷装标签必须填写卷芯内径');
+      }
+      if (!dto.piecesPerRoll || dto.piecesPerRoll <= 0) {
+        throw new BadRequestException('卷装标签必须填写每卷数量');
+      }
+    }
+
+    if (dto.hasDesignFile && !dto.designFileUrl) {
+      throw new BadRequestException('已有设计文件时必须填写文件地址');
+    }
+  }
+
+  private validateSupportedOption(label: string, value: string | undefined, supported: string[] | undefined): void {
+    if (!value || !supported?.length) {
+      return;
+    }
+    if (!supported.includes(value)) {
+      throw new BadRequestException(`当前模板不支持所选${label}：${value}`);
+    }
   }
 }

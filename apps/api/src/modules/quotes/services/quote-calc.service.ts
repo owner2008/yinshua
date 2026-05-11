@@ -138,7 +138,7 @@ function round(value: number, precision: number): number {
 function calculateRequirementFees(dto: CreateQuoteDto, areaM2: number, rule: RuleConfig) {
   const fees: Array<{ code: string; name: string; amount: number }> = [];
 
-  if (dto.colorMode?.includes('白墨')) {
+  if (dto.colorMode === 'four_color_white_ink' || dto.surfaceFinish === 'white_ink') {
     fees.push({
       code: 'white_ink',
       name: '白墨打底费',
@@ -149,7 +149,7 @@ function calculateRequirementFees(dto: CreateQuoteDto, areaM2: number, rule: Rul
     });
   }
 
-  if (dto.colorMode?.includes('可变数据')) {
+  if (dto.colorMode === 'variable_data') {
     fees.push({
       code: 'variable_data',
       name: '可变数据费',
@@ -157,10 +157,10 @@ function calculateRequirementFees(dto: CreateQuoteDto, areaM2: number, rule: Rul
     });
   }
 
-  if (dto.surfaceFinish && ['防刮', '防水'].some((keyword) => dto.surfaceFinish?.includes(keyword))) {
+  if (dto.surfaceFinish && ['scratch_resistant', 'waterproof'].includes(dto.surfaceFinish)) {
     fees.push({
       code: 'protective_finish',
-      name: `${dto.surfaceFinish}处理费`,
+      name: '表面保护处理费',
       amount: round(
         Math.max(rule.protectiveFinishMinFee, areaM2 * dto.quantity * rule.protectiveFinishUnitPrice),
         2,
@@ -168,7 +168,7 @@ function calculateRequirementFees(dto: CreateQuoteDto, areaM2: number, rule: Rul
     });
   }
 
-  const rollCount = dto.deliveryForm === '卷装' && dto.piecesPerRoll ? Math.ceil(dto.quantity / dto.piecesPerRoll) : 0;
+  const rollCount = dto.deliveryForm === 'roll' && dto.piecesPerRoll ? Math.ceil(dto.quantity / dto.piecesPerRoll) : 0;
   if (rollCount > 1) {
     fees.push({
       code: 'roll_split',
@@ -177,12 +177,29 @@ function calculateRequirementFees(dto: CreateQuoteDto, areaM2: number, rule: Rul
     });
   }
 
-  if (dto.deliveryForm === '单张裁切') {
+  if (dto.deliveryForm === 'sheet_cut') {
     fees.push({ code: 'sheet_cutting', name: '单张裁切整理费', amount: rule.sheetCuttingFee });
   }
 
-  if (dto.deliveryForm === '折叠 / 风琴折') {
-    fees.push({ code: 'fan_fold', name: '折叠整理费', amount: rule.fanFoldFee });
+  if (dto.deliveryForm === 'fan_fold') {
+    fees.push({ code: 'fan_fold', name: '折页整理费', amount: rule.fanFoldFee });
+  }
+
+  const styleCount = dto.styleCount ?? 1;
+  if (styleCount > 1) {
+    fees.push({
+      code: 'additional_style',
+      name: '多款整理费',
+      amount: round((styleCount - 1) * rule.additionalStyleFee, 2),
+    });
+  }
+
+  if (dto.needDesignService) {
+    fees.push({ code: 'design_service', name: '设计协助费', amount: rule.designServiceFee });
+  }
+
+  if (dto.needSampleApproval) {
+    fees.push({ code: 'sample_approval', name: '样稿确认费', amount: rule.sampleApprovalFee });
   }
 
   return fees;
