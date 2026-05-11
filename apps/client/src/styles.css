@@ -4717,6 +4717,17 @@ body {
   gap: 20px 18px;
 }
 
+.lc-field-checkbox {
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.lc-field-checkbox input {
+  height: 16px;
+  width: 16px;
+}
+
 .field {
   display: grid;
   gap: 8px;
@@ -4762,6 +4773,19 @@ body {
   color: var(--lc-text);
   font-size: 14px;
   font-weight: 800;
+}
+
+.lc-requirement-summary {
+  display: grid;
+  gap: 6px;
+  margin-top: 16px;
+  color: var(--lc-muted);
+  font-size: 13px;
+}
+
+.lc-requirement-summary strong {
+  color: var(--lc-text);
+  font-size: 14px;
 }
 
 .lc-action-row p,

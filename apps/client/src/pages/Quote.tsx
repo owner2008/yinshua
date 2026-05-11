@@ -3,20 +3,16 @@ import type { ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { calculateQuote, saveQuote } from '../api';
 import { useCatalog } from '../catalogContext';
-import { InfoChip, SectionHeading } from '../components/cards';
+import { SectionHeading } from '../components/cards';
 import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
 import { PageHero } from '../components/PageHero';
 import { ProductVisual } from '../components/PrintingVisuals';
+import { QuoteParameterSections } from '../components/quote/QuoteParameterSections';
+import { QuoteProductSelector } from '../components/quote/QuoteProductSelector';
+import { QuoteResultPanel } from '../components/quote/QuoteResultPanel';
 import { useI18n } from '../i18n';
-import { getExtraFeeNotes } from '../quoteFeeNotes';
+import { getDefaultRequirementValues } from '../quoteParameterConfig';
 import type { Product, ProductTemplate, QuoteInput, QuoteResult, TemplateOption } from '../types';
-
-const deliveryForms = ['卷装', '张装', '单张裁切', '折叠 / 风琴折'];
-const labelingMethods = ['手工贴标', '自动贴标', '半自动贴标'];
-const rollDirections = ['上出', '下出', '左出', '右出', '内卷', '外卷'];
-const adhesiveTypes = ['永久胶', '可移胶', '强粘胶', '冷冻胶', '耐高温胶'];
-const surfaceFinishes = ['哑膜', '亮膜', '哑油', '光油', '防刮', '防水', '白墨打底'];
-const colorModes = ['四色印刷', '单黑', '专色', '四色 + 白墨', '可变数据 / 条码'];
 
 function templatesForProduct(templates: ProductTemplate[], productId: number) {
   return templates.filter((item) => Number(item.productId) === productId);
@@ -141,21 +137,12 @@ export function QuotePage() {
       </PageHero>
 
       <section className="lc-container lc-quote-page">
-        <aside className="lc-product-selector" ref={productListRef}>
-          {products.map((product, index) => (
-            <button
-              key={product.id}
-              data-product-id={String(product.id)}
-              className={Number(product.id) === selectedProductId ? 'active' : ''}
-              onClick={() => selectProduct(product)}
-              type="button"
-            >
-              <ProductVisual product={product} tone={index % 4} />
-              <strong>{text(product.name)}</strong>
-              <small>{text(product.applicationScenario) || text(product.description) || t('products.card.descFallback')}</small>
-            </button>
-          ))}
-        </aside>
+        <QuoteProductSelector
+          products={products}
+          selectedProductId={selectedProductId}
+          listRef={productListRef}
+          onSelect={selectProduct}
+        />
 
         {quoteInput && selectedTemplate ? (
           <form className="lc-quote-main" onSubmit={calculate}>
@@ -185,15 +172,6 @@ export function QuotePage() {
                     </option>
                   ))}
                 </select>
-              </Field>
-              <Field label={t('quote.field.width')}>
-                <input type="number" min={1} value={quoteInput.widthMm} onChange={(event) => updateInput('widthMm', Number(event.target.value))} />
-              </Field>
-              <Field label={t('quote.field.height')}>
-                <input type="number" min={1} value={quoteInput.heightMm} onChange={(event) => updateInput('heightMm', Number(event.target.value))} />
-              </Field>
-              <Field label={t('quote.field.quantity')}>
-                <input type="number" min={1} value={quoteInput.quantity} onChange={(event) => updateInput('quantity', Number(event.target.value))} />
               </Field>
               <Field label={t('quote.field.material')}>
                 <select value={quoteInput.materialId} onChange={(event) => updateInput('materialId', Number(event.target.value))}>
@@ -260,44 +238,7 @@ export function QuotePage() {
               </div>
             </section>
 
-            <FormPanel title={t('quote.delivery.title')} desc={t('quote.delivery.desc')}>
-              <SelectField label={t('quote.field.deliveryForm')} value={quoteInput.deliveryForm} options={deliveryForms} onChange={(value) => updateInput('deliveryForm', value)} />
-              <SelectField label={t('quote.field.labelingMethod')} value={quoteInput.labelingMethod} options={labelingMethods} onChange={(value) => updateInput('labelingMethod', value)} />
-              <SelectField label={t('quote.field.rollDirection')} value={quoteInput.rollDirection} options={rollDirections} onChange={(value) => updateInput('rollDirection', value)} />
-              <Field label={t('quote.field.rollCore')}>
-                <input type="number" min={0} value={quoteInput.rollCoreMm ?? 76} onChange={(event) => updateInput('rollCoreMm', Number(event.target.value))} />
-              </Field>
-              <Field label={t('quote.field.piecesPerRoll')}>
-                <input type="number" min={0} value={quoteInput.piecesPerRoll ?? 1000} onChange={(event) => updateInput('piecesPerRoll', Number(event.target.value))} />
-              </Field>
-            </FormPanel>
-
-            <FormPanel title={t('quote.file.title')} desc={t('quote.file.desc')}>
-              <SelectField label={t('quote.field.adhesive')} value={quoteInput.adhesiveType} options={adhesiveTypes} onChange={(value) => updateInput('adhesiveType', value)} />
-              <SelectField label={t('quote.field.surface')} value={quoteInput.surfaceFinish} options={surfaceFinishes} onChange={(value) => updateInput('surfaceFinish', value)} />
-              <SelectField label={t('quote.field.color')} value={quoteInput.colorMode} options={colorModes} onChange={(value) => updateInput('colorMode', value)} />
-              <Field label={t('quote.field.environment')}>
-                <input value={quoteInput.usageEnvironment ?? ''} placeholder={t('quote.placeholder.environment')} onChange={(event) => updateInput('usageEnvironment', event.target.value)} />
-              </Field>
-              <Field label={t('quote.field.designFile')}>
-                <input value={quoteInput.designFileUrl ?? ''} placeholder={t('quote.placeholder.designFile')} onChange={(event) => updateInput('designFileUrl', event.target.value)} />
-              </Field>
-              <Field label={t('quote.field.packaging')}>
-                <input value={quoteInput.packagingMethod ?? ''} placeholder={t('quote.placeholder.packaging')} onChange={(event) => updateInput('packagingMethod', event.target.value)} />
-              </Field>
-              <Field label={t('quote.field.deliveryDate')}>
-                <input value={quoteInput.expectedDeliveryDate ?? ''} placeholder={t('quote.placeholder.deliveryDate')} onChange={(event) => updateInput('expectedDeliveryDate', event.target.value)} />
-              </Field>
-              <label className="field lc-field-wide">
-                <span>{t('quote.field.remark')}</span>
-                <textarea value={quoteInput.quoteRemark ?? ''} placeholder={t('quote.placeholder.remark')} onChange={(event) => updateInput('quoteRemark', event.target.value)} />
-              </label>
-              <div className="lc-toggle-row lc-field-wide">
-                <CheckboxField checked={Boolean(quoteInput.hasDesignFile)} label={t('quote.flag.hasDesignFile')} onChange={(value) => updateInput('hasDesignFile', value)} />
-                <CheckboxField checked={Boolean(quoteInput.needDesignService)} label={t('quote.flag.needDesignService')} onChange={(value) => updateInput('needDesignService', value)} />
-                <CheckboxField checked={Boolean(quoteInput.needSampleApproval)} label={t('quote.flag.needSampleApproval')} onChange={(value) => updateInput('needSampleApproval', value)} />
-              </div>
-            </FormPanel>
+            <QuoteParameterSections input={quoteInput} onChange={updateInput} />
 
             <div className="lc-action-row">
               <button className="lc-button primary" disabled={busy} type="submit">
@@ -328,66 +269,6 @@ export function QuotePage() {
   );
 }
 
-function QuoteResultPanel({ result }: { result: QuoteResult | null }) {
-  const { locale, t, text } = useI18n();
-  const money = useMemo(
-    () => new Intl.NumberFormat(locale === 'en-US' ? 'en-US' : 'zh-CN', { style: 'currency', currency: 'CNY' }),
-    [locale],
-  );
-
-  if (!result) {
-    return (
-      <aside className="lc-card lc-quote-result empty">
-        <p className="lc-kicker">{t('quote.result.kicker')}</p>
-        <h2>{t('quote.result.waiting')}</h2>
-        <p>{t('quote.result.waitingDesc')}</p>
-      </aside>
-    );
-  }
-
-  const feeNotes = getExtraFeeNotes(result.extraFees);
-
-  return (
-    <aside className="lc-card lc-quote-result">
-      <p className="lc-kicker">
-        {t('quote.result.quoteNo')} {result.quoteNo}
-      </p>
-      <h2>{money.format(result.summary.finalPrice)}</h2>
-      <div className="lc-unit-price">
-        {t('quote.result.unitPrice')} {money.format(result.summary.unitPrice)} / {t('quote.result.perPiece')}
-      </div>
-      <dl>
-        <ResultLine label={t('quote.result.baseCost')} value={money.format(result.summary.baseCost)} />
-        <ResultLine label={t('quote.result.materialCost')} value={money.format(result.material.cost)} />
-        <ResultLine label={t('quote.result.printCost')} value={money.format(result.print.cost)} />
-        {result.processes.map((process) => (
-          <ResultLine key={process.code} label={text(process.name)} value={money.format(process.cost)} />
-        ))}
-        {result.extraFees.map((fee) => (
-          <ResultLine key={fee.code} label={text(fee.name)} value={money.format(fee.amount)} />
-        ))}
-      </dl>
-      {feeNotes.length ? (
-        <div className="lc-fee-notes">
-          <strong>{t('quote.result.feeNotes')}</strong>
-          {feeNotes.map((note) => (
-            <InfoChip key={note.code}>{text(note.title)}</InfoChip>
-          ))}
-        </div>
-      ) : null}
-    </aside>
-  );
-}
-
-function ResultLine({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt>{label}</dt>
-      <dd>{value}</dd>
-    </div>
-  );
-}
-
 function FormPanel({ title, desc, children }: { title: string; desc: string; children: ReactNode }) {
   return (
     <section className="lc-card lc-form-panel">
@@ -402,41 +283,6 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
     <label className="field">
       <span>{label}</span>
       {children}
-    </label>
-  );
-}
-
-function SelectField({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value?: string;
-  options: string[];
-  onChange: (value: string) => void;
-}) {
-  const { text } = useI18n();
-
-  return (
-    <Field label={label}>
-      <select value={value ?? ''} onChange={(event) => onChange(event.target.value)}>
-        {options.map((item) => (
-          <option key={item} value={item}>
-            {text(item)}
-          </option>
-        ))}
-      </select>
-    </Field>
-  );
-}
-
-function CheckboxField({ checked, label, onChange }: { checked: boolean; label: string; onChange: (value: boolean) => void }) {
-  return (
-    <label>
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
-      {label}
     </label>
   );
 }
@@ -468,18 +314,8 @@ function createDefaultQuote(product: Product | undefined, template: ProductTempl
     isProofing: false,
     isUrgent: false,
     customerType: 'company',
-    deliveryForm: '卷装',
-    labelingMethod: '手工贴标',
-    rollDirection: '上出',
-    rollCoreMm: 76,
-    piecesPerRoll: 1000,
-    adhesiveType: '永久胶',
-    surfaceFinish: '哑膜',
-    colorMode: '四色印刷',
+    ...getDefaultRequirementValues(),
     usageEnvironment: '',
-    hasDesignFile: false,
-    needDesignService: false,
-    needSampleApproval: true,
     packagingMethod: '',
     expectedDeliveryDate: '',
     quoteRemark: '',

@@ -150,11 +150,30 @@ export const quoteRequirementLabels = Object.fromEntries(
   quoteParameterSections.flatMap((section) => section.fields.map((field) => [field.name, field.label])),
 ) as Record<string, string>;
 
+export const quoteParameterOptionLabels = Object.fromEntries(
+  [
+    ...deliveryFormOptions,
+    ...labelingMethodOptions,
+    ...rollDirectionOptions,
+    ...adhesiveTypeOptions,
+    ...surfaceFinishOptions,
+    ...colorModeOptions,
+  ].map((option) => [option.value, option.label]),
+) as Record<string, string>;
+
 export function getDefaultRequirementValues(): Partial<QuoteInput> {
-  return Object.fromEntries(
-    quoteParameterSections
-      .flatMap((section) => section.fields)
-      .filter((field) => field.defaultValue !== undefined)
-      .map((field) => [field.name, field.defaultValue]),
-  ) as Partial<QuoteInput>;
+  return {
+    deliveryForm: 'roll',
+    labelingMethod: 'manual',
+    rollDirection: 'top_out',
+    adhesiveType: 'permanent',
+    surfaceFinish: 'matte_lamination',
+    colorMode: 'four_color',
+    ...Object.fromEntries(
+      quoteParameterSections
+        .flatMap((section) => section.fields)
+        .filter((field) => field.defaultValue !== undefined)
+        .map((field) => [field.name, field.defaultValue]),
+    ),
+  } as Partial<QuoteInput>;
 }

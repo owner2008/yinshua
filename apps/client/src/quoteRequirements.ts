@@ -1,4 +1,4 @@
-import { quoteRequirementLabels } from './quoteParameterConfig';
+import { quoteParameterOptionLabels, quoteRequirementLabels } from './quoteParameterConfig';
 import type { MemberQuote, QuoteResult } from './types';
 
 const requirementKeys = Object.keys(quoteRequirementLabels);
@@ -57,7 +57,8 @@ function formatRequirementValue(key: string, value: unknown) {
   if (key === 'piecesPerRoll') {
     return `${value} 个/卷`;
   }
-  return String(value);
+  const rawValue = String(value);
+  return quoteParameterOptionLabels[rawValue] ?? rawValue;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
