@@ -1,23 +1,5 @@
+import { quoteRequirementLabels } from './quoteParameterConfig';
 import type { MemberQuote, QuoteResult } from './types';
-
-export const quoteRequirementLabels: Record<string, string> = {
-  deliveryForm: '交付形式',
-  labelingMethod: '贴标方式',
-  rollDirection: '出标 / 卷标方向',
-  rollCoreMm: '卷芯内径',
-  piecesPerRoll: '每卷数量',
-  adhesiveType: '胶性',
-  usageEnvironment: '使用环境',
-  surfaceFinish: '表面处理',
-  colorMode: '印刷颜色',
-  hasDesignFile: '已有设计文件',
-  designFileUrl: '设计文件地址',
-  needDesignService: '需要设计协助',
-  needSampleApproval: '需要样稿确认',
-  packagingMethod: '包装与发货',
-  expectedDeliveryDate: '期望交期',
-  quoteRemark: '补充说明',
-};
 
 const requirementKeys = Object.keys(quoteRequirementLabels);
 
@@ -73,7 +55,7 @@ function formatRequirementValue(key: string, value: unknown) {
     return `${value} mm`;
   }
   if (key === 'piecesPerRoll') {
-    return `${value} 枚/卷`;
+    return `${value} 个/卷`;
   }
   return String(value);
 }

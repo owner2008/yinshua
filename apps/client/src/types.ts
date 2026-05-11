@@ -144,6 +144,7 @@ export interface QuoteInput {
   widthMm: number;
   heightMm: number;
   quantity: number;
+  styleCount?: number;
   materialId: number;
   printMode: string;
   shapeType: string;
@@ -167,6 +168,7 @@ export interface QuoteInput {
   needSampleApproval?: boolean;
   packagingMethod?: string;
   expectedDeliveryDate?: string;
+  shippingRegionCode?: string;
   quoteRemark?: string;
 }
 
