@@ -552,7 +552,7 @@ export function matchesQuoteRuleCondition(conditionJson: Prisma.JsonValue, dto: 
 
   for (const [key, value] of optionConditions) {
     const allowed = condition[key];
-    if (Array.isArray(allowed) && value && !allowed.includes(value)) {
+    if (Array.isArray(allowed) && allowed.length > 0 && value && !allowed.includes(value)) {
       return false;
     }
   }

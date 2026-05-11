@@ -50,7 +50,10 @@ export function QuotesPage() {
       return matchedKeyword && matchedStatus;
     });
   }, [data, keyword, lookup, status]);
-  const requirementItems = useMemo(() => getQuoteRequirementItems(snapshot), [snapshot]);
+  const requirementItems = useMemo(
+    () => getQuoteRequirementItems((detail as unknown as Record<string, unknown> | null) ?? snapshot),
+    [detail, snapshot],
+  );
   const feeNotes = useMemo(() => getExtraFeeNotes(detail?.extraFees), [detail]);
 
   async function openDetail(record: Quote) {
@@ -164,7 +167,7 @@ export function QuotesPage() {
             ]}
           />
           <div>
-            <h3 style={{ margin: '0 0 12px' }}>询价需求</h3>
+            <h3 style={{ margin: '0 0 12px' }}>标签参数</h3>
             {requirementItems.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无额外询价项" />
             ) : (

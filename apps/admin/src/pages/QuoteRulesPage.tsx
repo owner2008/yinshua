@@ -27,11 +27,65 @@ const shapeTypeOptions = [
   { label: '异形', value: 'custom' },
 ];
 
+const adhesiveTypeOptions = [
+  { label: '永久胶', value: 'permanent' },
+  { label: '可移胶', value: 'removable' },
+  { label: '强粘胶', value: 'strong' },
+  { label: '冷冻胶', value: 'freezer' },
+  { label: '耐高温胶', value: 'heat_resistant' },
+];
+
+const deliveryFormOptions = [
+  { label: '卷装', value: 'roll' },
+  { label: '张装', value: 'sheet' },
+  { label: '单张裁切', value: 'sheet_cut' },
+  { label: '折页 / 风琴折', value: 'fan_fold' },
+];
+
+const surfaceFinishOptions = [
+  { label: '哑膜', value: 'matte_lamination' },
+  { label: '亮膜', value: 'gloss_lamination' },
+  { label: '哑油', value: 'matte_varnish' },
+  { label: '光油', value: 'gloss_varnish' },
+  { label: '防刮', value: 'scratch_resistant' },
+  { label: '防水', value: 'waterproof' },
+  { label: '白墨打底', value: 'white_ink' },
+];
+
+const colorModeOptions = [
+  { label: '四色印刷', value: 'four_color' },
+  { label: '单黑', value: 'black' },
+  { label: '专色', value: 'spot_color' },
+  { label: '四色 + 白墨', value: 'four_color_white_ink' },
+  { label: '可变数据 / 条码', value: 'variable_data' },
+];
+
+const labelingMethodOptions = [
+  { label: '手工贴标', value: 'manual' },
+  { label: '自动贴标', value: 'automatic' },
+  { label: '半自动贴标', value: 'semi_automatic' },
+];
+
+const rollDirectionOptions = [
+  { label: '上出', value: 'top_out' },
+  { label: '下出', value: 'bottom_out' },
+  { label: '左出', value: 'left_out' },
+  { label: '右出', value: 'right_out' },
+  { label: '内卷', value: 'inside' },
+  { label: '外卷', value: 'outside' },
+];
+
 const quoteConditionFieldNames = new Set([
   'quantityRange',
   'widthRange',
   'heightRange',
+  'styleCountRange',
   'customerTypes',
+  'adhesiveTypes',
+  'deliveryForms',
+  'surfaceFinishes',
+  'colorModes',
+  'labelingMethods',
 ]);
 
 const baseQuoteConfigFields = [
@@ -54,6 +108,9 @@ const requirementFeeConfigFields = [
   { name: 'rollSplitFeePerRoll', label: '分卷每卷费用', step: 1, defaultValue: 2 },
   { name: 'sheetCuttingFee', label: '单张裁切整理费', step: 1, defaultValue: 30 },
   { name: 'fanFoldFee', label: '折叠整理费', step: 1, defaultValue: 50 },
+  { name: 'additionalStyleFee', label: '多款整理费 / 款', step: 1, defaultValue: 30 },
+  { name: 'designServiceFee', label: '设计协助费', step: 1, defaultValue: 120 },
+  { name: 'sampleApprovalFee', label: '样稿确认费', step: 1, defaultValue: 80 },
 ];
 
 const quoteConfigFields = [...baseQuoteConfigFields, ...requirementFeeConfigFields];
@@ -322,7 +379,14 @@ function Rules() {
       widthMax: 500,
       heightMin: 20,
       heightMax: 500,
+      styleCountMin: 1,
+      styleCountMax: 999,
       customerTypes: ['personal'],
+      adhesiveTypes: [],
+      deliveryForms: [],
+      surfaceFinishes: [],
+      colorModes: [],
+      labelingMethods: [],
       conditionJsonExtra: '{}',
       configJsonExtra: '{}',
       ...getDefaultQuoteConfigValues(),
@@ -346,6 +410,7 @@ function Rules() {
       widthMm: 100,
       heightMm: 80,
       quantity: 5000,
+      styleCount: 1,
       materialId: defaultMaterial ? Number(defaultMaterial.id) : 2,
       printMode: defaultPrintModes[0] ?? 'four_color',
       shapeType: defaultShapeTypes[0] ?? 'rectangle',
@@ -353,6 +418,14 @@ function Rules() {
       customerType: 'company',
       isProofing: false,
       isUrgent: false,
+      adhesiveType: 'permanent',
+      deliveryForm: 'roll',
+      labelingMethod: 'manual',
+      surfaceFinish: 'matte_lamination',
+      colorMode: 'four_color',
+      rollDirection: 'top_out',
+      rollCoreMm: 76,
+      piecesPerRoll: 1000,
     });
     setPreviewOpen(true);
   }
@@ -541,14 +614,38 @@ function Rules() {
             <Form.Item name="heightMax" label="最大高度 mm" rules={[{ required: true }]}>
               <InputNumber min={1} style={{ width: '100%' }} />
             </Form.Item>
+            <Form.Item name="styleCountMin" label="最小款数" rules={[{ required: true }]}>
+              <InputNumber min={1} style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name="styleCountMax" label="最大款数" rules={[{ required: true }]}>
+              <InputNumber min={1} style={{ width: '100%' }} />
+            </Form.Item>
           </div>
           <Form.Item name="customerTypes" label="适用客户类型" rules={[{ required: true }]}>
             <Select mode="multiple" options={customerTypeOptions} />
           </Form.Item>
+          <Divider orientation="left">标签参数条件</Divider>
+          <div className="quote-rule-config-grid">
+            <Form.Item name="adhesiveTypes" label="胶型">
+              <Select mode="multiple" allowClear options={adhesiveTypeOptions} />
+            </Form.Item>
+            <Form.Item name="deliveryForms" label="交付形式">
+              <Select mode="multiple" allowClear options={deliveryFormOptions} />
+            </Form.Item>
+            <Form.Item name="surfaceFinishes" label="表面处理">
+              <Select mode="multiple" allowClear options={surfaceFinishOptions} />
+            </Form.Item>
+            <Form.Item name="colorModes" label="印刷颜色">
+              <Select mode="multiple" allowClear options={colorModeOptions} />
+            </Form.Item>
+            <Form.Item name="labelingMethods" label="贴标方式">
+              <Select mode="multiple" allowClear options={labelingMethodOptions} />
+            </Form.Item>
+          </div>
           <Form.Item
             name="conditionJsonExtra"
             label="高级匹配条件 JSON"
-            tooltip="保留暂未做成表单的匹配条件。当前后端只识别上方数量、尺寸和客户类型；这里主要给后续扩展预留。"
+            tooltip="保留暂未做成表单的匹配条件。上方已有的数量、尺寸、客户类型和标签参数会自动覆盖同名字段。"
             rules={[{ required: true }, { validator: validateJsonObject }]}
           >
             <Input.TextArea rows={2} />
@@ -620,6 +717,9 @@ function Rules() {
             <Form.Item name="quantity" label="数量" rules={[{ required: true }]}>
               <InputNumber min={1} style={{ width: '100%' }} />
             </Form.Item>
+            <Form.Item name="styleCount" label="款数" rules={[{ required: true }]}>
+              <InputNumber min={1} style={{ width: '100%' }} />
+            </Form.Item>
             <Form.Item name="materialId" label="材料" rules={[{ required: true }]}>
               <Select
                 showSearch
@@ -654,6 +754,33 @@ function Rules() {
             </Form.Item>
             <Form.Item name="isUrgent" label="是否加急" valuePropName="checked">
               <Switch />
+            </Form.Item>
+          </div>
+          <Divider orientation="left">标签参数</Divider>
+          <div className="quote-rule-config-grid">
+            <Form.Item name="adhesiveType" label="胶型">
+              <Select allowClear options={adhesiveTypeOptions} />
+            </Form.Item>
+            <Form.Item name="deliveryForm" label="交付形式">
+              <Select allowClear options={deliveryFormOptions} />
+            </Form.Item>
+            <Form.Item name="surfaceFinish" label="表面处理">
+              <Select allowClear options={surfaceFinishOptions} />
+            </Form.Item>
+            <Form.Item name="colorMode" label="印刷颜色">
+              <Select allowClear options={colorModeOptions} />
+            </Form.Item>
+            <Form.Item name="labelingMethod" label="贴标方式">
+              <Select allowClear options={labelingMethodOptions} />
+            </Form.Item>
+            <Form.Item name="rollDirection" label="出标方向">
+              <Select allowClear options={rollDirectionOptions} />
+            </Form.Item>
+            <Form.Item name="rollCoreMm" label="卷芯内径">
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name="piecesPerRoll" label="每卷数量">
+              <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
           </div>
         </Form>
@@ -781,6 +908,7 @@ function getConditionFormValues(conditionJson: Record<string, unknown>) {
   const customerTypes = Array.isArray(conditionJson.customerTypes)
     ? conditionJson.customerTypes.filter((item): item is string => typeof item === 'string')
     : ['personal'];
+  const styleCountRange = numberRange(conditionJson.styleCountRange, [1, 999]);
 
   return {
     quantityMin: quantityRange[0],
@@ -789,7 +917,14 @@ function getConditionFormValues(conditionJson: Record<string, unknown>) {
     widthMax: widthRange[1],
     heightMin: heightRange[0],
     heightMax: heightRange[1],
+    styleCountMin: styleCountRange[0],
+    styleCountMax: styleCountRange[1],
     customerTypes,
+    adhesiveTypes: stringList(conditionJson.adhesiveTypes),
+    deliveryForms: stringList(conditionJson.deliveryForms),
+    surfaceFinishes: stringList(conditionJson.surfaceFinishes),
+    colorModes: stringList(conditionJson.colorModes),
+    labelingMethods: stringList(conditionJson.labelingMethods),
   };
 }
 
@@ -798,7 +933,13 @@ function getConditionPayload(values: Record<string, unknown>) {
     quantityRange: [Number(values.quantityMin), Number(values.quantityMax)],
     widthRange: [Number(values.widthMin), Number(values.widthMax)],
     heightRange: [Number(values.heightMin), Number(values.heightMax)],
+    styleCountRange: [Number(values.styleCountMin), Number(values.styleCountMax)],
     customerTypes: Array.isArray(values.customerTypes) ? values.customerTypes : [],
+    adhesiveTypes: Array.isArray(values.adhesiveTypes) ? values.adhesiveTypes : [],
+    deliveryForms: Array.isArray(values.deliveryForms) ? values.deliveryForms : [],
+    surfaceFinishes: Array.isArray(values.surfaceFinishes) ? values.surfaceFinishes : [],
+    colorModes: Array.isArray(values.colorModes) ? values.colorModes : [],
+    labelingMethods: Array.isArray(values.labelingMethods) ? values.labelingMethods : [],
   };
 }
 
@@ -841,7 +982,22 @@ function renderConditionSummary(value: Record<string, unknown>) {
   const customers = formValues.customerTypes
     .map((type) => customerTypeOptions.find((option) => option.value === type)?.label ?? type)
     .join('、');
-  return `数量 ${formValues.quantityMin}-${formValues.quantityMax}，宽 ${formValues.widthMin}-${formValues.widthMax}mm，高 ${formValues.heightMin}-${formValues.heightMax}mm，客户：${customers || '不限'}`;
+  const labelParts = [
+    optionSummary('胶型', formValues.adhesiveTypes, adhesiveTypeOptions),
+    optionSummary('交付', formValues.deliveryForms, deliveryFormOptions),
+    optionSummary('表面', formValues.surfaceFinishes, surfaceFinishOptions),
+    optionSummary('颜色', formValues.colorModes, colorModeOptions),
+    optionSummary('贴标', formValues.labelingMethods, labelingMethodOptions),
+  ].filter(Boolean);
+  return `数量 ${formValues.quantityMin}-${formValues.quantityMax}，宽 ${formValues.widthMin}-${formValues.widthMax}mm，高 ${formValues.heightMin}-${formValues.heightMax}mm，款 ${formValues.styleCountMin}-${formValues.styleCountMax}，客户：${customers || '不限'}${labelParts.length ? `，${labelParts.join('，')}` : ''}`;
+}
+
+function optionSummary(label: string, values: string[], options: Array<{ label: string; value: string }>): string {
+  if (!values.length) {
+    return '';
+  }
+  const text = values.map((value) => options.find((option) => option.value === value)?.label ?? value).join('、');
+  return `${label}：${text}`;
 }
 
 function renderQuoteConfigSummary(value: Record<string, unknown>) {
@@ -855,6 +1011,10 @@ function numberRange(value: unknown, fallback: [number, number]): [number, numbe
   }
   const [min, max] = value;
   return typeof min === 'number' && typeof max === 'number' ? [min, max] : fallback;
+}
+
+function stringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
 }
 
 function templateOptionValues(template: ProductTemplate | undefined, type: 'material' | 'process' | 'print_mode' | 'shape'): string[] {

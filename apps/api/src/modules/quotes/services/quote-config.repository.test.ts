@@ -49,6 +49,22 @@ describe('matchesQuoteRuleCondition label parameters', () => {
       false,
     );
   });
+
+  it('treats empty label option arrays as no additional restriction', () => {
+    const dto = createDto({ adhesiveType: 'freezer', deliveryForm: 'sheet' });
+
+    assert.equal(
+      matchesQuoteRuleCondition(
+        {
+          quantityRange: [100, 10000],
+          adhesiveTypes: [],
+          deliveryForms: [],
+        },
+        dto,
+      ),
+      true,
+    );
+  });
 });
 
 function createDto(overrides: Partial<CreateQuoteDto> = {}): CreateQuoteDto {
