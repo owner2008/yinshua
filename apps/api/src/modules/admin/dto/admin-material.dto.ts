@@ -76,3 +76,5 @@ export class CreateMaterialPriceDto {
   @IsBoolean()
   isCurrent?: boolean;
 }
+
+export class UpdateMaterialPriceDto extends CreateMaterialPriceDto {}

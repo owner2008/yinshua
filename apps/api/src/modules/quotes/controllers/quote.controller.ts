@@ -1,8 +1,6 @@
 import { Body, Controller, Get, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AdminAuthGuard } from '../../auth/admin-auth.guard';
-import { CurrentMember } from '../../auth/current-member.decorator';
 import { RequireAdminPermission } from '../../auth/admin-permission.decorator';
-import { MemberAuthGuard } from '../../auth/member-auth.guard';
 import { CreateQuoteDto } from '../dto/create-quote.dto';
 import { UpdateQuoteStatusDto } from '../dto/update-quote-status.dto';
 import { QuoteService } from '../services/quote.service';
@@ -15,15 +13,11 @@ export class QuoteController {
     private readonly snapshots: QuoteSnapshotService,
   ) {}
 
-  @Post('quotes/calculate')
+  @Post('admin/quotes/calculate')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:quote')
   calculate(@Body() dto: CreateQuoteDto) {
     return this.quotes.calculate(dto);
-  }
-
-  @Post('quotes')
-  @UseGuards(MemberAuthGuard)
-  create(@Body() dto: CreateQuoteDto, @CurrentMember() member: CurrentMember) {
-    return this.quotes.create(dto, member.userId);
   }
 
   @Post('admin/quotes/preview')

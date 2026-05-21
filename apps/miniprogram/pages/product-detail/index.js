@@ -48,14 +48,6 @@ Page({
     });
   },
 
-  gotoQuote() {
-    if (!this.data.product) {
-      return;
-    }
-    wx.setStorageSync('yinshua_quote_product', this.data.product.id);
-    wx.switchTab({ url: '/pages/quote/index' });
-  },
-
   back() {
     wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/index/index' }) });
   },

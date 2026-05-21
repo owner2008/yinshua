@@ -1,400 +1,234 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  advantages,
-  brand,
-  cases,
-  cooperationSteps,
-  crafts,
-  factoryVisual,
-  heroCopy,
-  industries,
-  materials,
-  productCategories,
-  qualityItems,
-  quoteSteps,
-  testimonials,
-  trustLogos,
-} from '../brandContent';
-import { FeatureCard, InfoChip, ProcessStep, SectionHeading, StatCard } from '../components/cards';
-import { LanguageSwitch } from '../components/LanguageSwitch';
-import { HeroPrintingVisual, MaterialSample, ProductPhoto, QrVisual } from '../components/PrintingVisuals';
-import { useI18n } from '../i18n';
+
+const productTiles = [
+  {
+    title: '标签 / 卷标',
+    desc: '各类材质标签定制印刷',
+    icon: '◆',
+    image: '/images/product-label-roll.jpg',
+  },
+  {
+    title: '不干胶',
+    desc: '不干胶贴纸多种工艺可选',
+    icon: '▰',
+    image: '/images/product-food-label-roll.jpg',
+  },
+  {
+    title: '产品说明书',
+    desc: '折页说明书精美印刷',
+    icon: '▤',
+    image: '/images/product-manual.jpg',
+  },
+  {
+    title: '包装',
+    desc: '礼盒、彩盒包装定制',
+    icon: '◇',
+    image: '/images/product-packaging-box.jpg',
+  },
+  {
+    title: '宣传册',
+    desc: '企业宣传册画册印刷',
+    icon: '▥',
+    image: '/images/product-brochure.jpg',
+  },
+  {
+    title: '可变二维码',
+    desc: '可变数据印刷二维码防伪',
+    icon: '▦',
+    image: '/images/company-qrcode.jpg',
+  },
+  {
+    title: '一物一码标签',
+    desc: '一物一码精准营销',
+    icon: '▥',
+    image: '/images/product-inner-liner.jpg',
+  },
+  {
+    title: '可变二维码',
+    desc: '可变数据印刷二维码防伪',
+    icon: '◈',
+    image: '/images/company-qrcode.jpg',
+  },
+] as const;
+
+const featureItems = [
+  ['先进设备', '精密印刷工艺', '▧'],
+  ['品质稳定', '严格品控流程', '✦'],
+  ['按需定制', '满足多样需求', '▢'],
+] as const;
+
+const applications = ['食品饮料', '日化美妆', '医药保健', '电子电器', '仓储物流', '商超零售'];
+
+const advantages = [
+  ['设备先进', '引进先进印刷设备，保障高品质输出'],
+  ['工艺丰富', '覆膜、烫金、UV、模切等工艺灵活组合'],
+  ['品质严格', '从材料到成品全流程品控'],
+  ['交付准时', '科学排产，按约交付'],
+] as const;
+
+const caseImages = [
+  '/images/case-food-packaging.jpg',
+  '/images/case-cosmetic-packaging.jpg',
+  '/images/case-equipment-catalog.jpg',
+  '/images/case-tea-box.jpg',
+] as const;
+
+const factoryImages = [
+  '/images/equipment-label-press.jpg',
+  '/images/equipment-offset-press.jpg',
+  '/images/factory-printing-line.jpg',
+  '/images/equipment-finishing-line.jpg',
+] as const;
 
 export function HomePage() {
-  const { t, text } = useI18n();
-  const displayProducts = productCategories.slice(0, 10);
+  function scrollToContact() {
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   return (
-    <>
-      <div className="lc-home lc-home-desktop">
-        <section className="lc-hero lc-container">
-          <div className="lc-hero-copy">
-            <p className="lc-kicker">{text(heroCopy.kicker)}</p>
-            <h1>{text(heroCopy.title)}</h1>
-            <p>{text(heroCopy.subtitle)}</p>
-            <div className="lc-hero-actions">
-              <Link className="lc-button primary" to="/quote">
-                {t('home.hero.primaryCta')}
-              </Link>
-              <a className="lc-button ghost" href="#cases">
-                {t('home.hero.secondaryCta')}
-              </a>
-            </div>
-            <div className="lc-hero-stats">
-              <StatCard label={t('home.hero.stat.products')} value="10+" />
-              <StatCard label={t('home.hero.stat.crafts')} value="9" />
-              <StatCard label={t('home.hero.stat.industries')} value="8+" />
-            </div>
+    <div className="corporate-home mobile-reference-home">
+      <section className="reference-hero" aria-label="东方丽彩印刷首页宣传">
+        <div className="reference-hero-copy">
+          <h1>
+            专业印刷
+            <span>品质传递价值</span>
+          </h1>
+          <p>专注标签 · 包装 · 说明书 · 宣传册印刷</p>
+          <div className="reference-hero-features">
+            {featureItems.map(([title, desc, icon]) => (
+              <article key={title}>
+                <span aria-hidden="true">{icon}</span>
+                <strong>{title}</strong>
+                <small>{desc}</small>
+              </article>
+            ))}
           </div>
-          <HeroPrintingVisual />
-        </section>
-
-        <section className="lc-section">
-          <div className="lc-container">
-            <SectionHeading
-              kicker={t('home.advantages.eyebrow')}
-              title={t('home.advantages.title')}
-              desc={t('home.advantages.desc')}
-            />
-            <div className="lc-grid-3">
-              {advantages.map((item) => (
-                <FeatureCard
-                  key={item.title}
-                  mark={text(item.mark)}
-                  title={text(item.title)}
-                  desc={text(item.desc)}
-                  color={item.color}
-                />
-              ))}
-            </div>
+        </div>
+        <div className="reference-hero-media">
+          <img className="reference-hero-machine" src="/images/equipment-label-press.jpg" alt="标签印刷设备" />
+          <div className="reference-hero-products" aria-label="标签包装产品展示">
+            <img src="/images/product-label-roll.jpg" alt="标签卷标产品" />
+            <img src="/images/product-manual.jpg" alt="产品说明书" />
+            <img src="/images/product-packaging-box.jpg" alt="包装彩盒" />
           </div>
-        </section>
+        </div>
+        <div className="reference-hero-dots" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+      </section>
 
-        <section className="lc-section lc-section-soft">
-          <div className="lc-container">
-            <SectionHeading
-              kicker={t('home.products.eyebrow')}
-              title={t('home.products.title')}
-              desc={t('home.products.desc')}
-              action={<Link to="/products">{t('home.products.viewAll')}</Link>}
-            />
-            <div className="lc-grid-4">
-              {displayProducts.map((item) => (
-                <article className="lc-product-card lc-card" key={item.name}>
-                  <ProductPhoto src={item.imageUrl} alt={text(item.name)} />
-                  <h3>{text(item.name)}</h3>
-                  <p>{text(item.desc)}</p>
-                  <Link to="/products">{t('common.viewDetails')}</Link>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="lc-section" id="quote">
-          <div className="lc-container lc-quote-layout">
-            <div className="lc-quote-copy">
-              <SectionHeading
-                kicker={t('home.quote.eyebrow')}
-                title={t('home.quote.title')}
-                desc={t('home.quote.desc')}
-              />
-              <div className="lc-quote-steps">
-                {quoteSteps.map((step, index) => (
-                  <ProcessStep key={step} index={index + 1} title={text(step)} />
-                ))}
-              </div>
-            </div>
-            <form className="lc-quote-form">
-              <label>
-                {t('home.quote.field.productType')}
-                <select defaultValue={productCategories[0]?.name}>
-                  {productCategories.slice(0, 8).map((item) => (
-                    <option key={item.name} value={item.name}>
-                      {text(item.name)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                {t('home.quote.field.size')}
-                <input placeholder={t('home.quote.placeholder.size')} />
-              </label>
-              <label>
-                {t('home.quote.field.material')}
-                <select defaultValue={materials[0]}>
-                  {materials.slice(0, 6).map((item) => (
-                    <option key={item} value={item}>
-                      {text(item)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                {t('home.quote.field.quantity')}
-                <input placeholder={t('home.quote.placeholder.quantity')} />
-              </label>
-              <label className="lc-form-wide">
-                {t('home.quote.field.craft')}
-                <input placeholder={t('home.quote.placeholder.craft')} />
-              </label>
-              <label className="lc-form-wide">
-                {t('home.quote.field.contact')}
-                <input placeholder={t('home.quote.placeholder.contact')} />
-              </label>
-              <Link className="lc-button primary lc-form-submit" to="/quote">
-                {t('home.quote.submit')}
-              </Link>
-            </form>
-          </div>
-        </section>
-
-        <section className="lc-section lc-section-soft">
-          <div className="lc-container">
-            <SectionHeading kicker={t('home.industries.eyebrow')} title={t('home.industries.title')} />
-            <div className="lc-industry-grid">
-              {industries.map((item, index) => (
-                <article className="lc-industry-card" key={item}>
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  <strong>{text(item)}</strong>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="lc-section" id="craft">
-          <div className="lc-container">
-            <SectionHeading kicker={t('home.materials.eyebrow')} title={t('home.materials.title')} />
-            <div className="lc-craft-layout">
-              <div className="lc-card lc-sample-panel">
-                <h3>{t('home.materials.commonMaterials')}</h3>
-                <div className="lc-sample-grid">
-                  {materials.map((item, index) => (
-                    <MaterialSample key={item} label={text(item)} tone={index % 4} />
-                  ))}
-                </div>
-              </div>
-              <div className="lc-card lc-sample-panel">
-                <h3>{t('home.materials.commonCrafts')}</h3>
-                <div className="lc-chip-cloud">
-                  {crafts.map((item) => (
-                    <InfoChip key={item}>{text(item)}</InfoChip>
-                  ))}
-                </div>
-                <QrVisual />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="lc-section lc-section-soft" id="cases">
-          <div className="lc-container">
-            <SectionHeading kicker={t('home.cases.eyebrow')} title={t('home.cases.title')} desc={t('home.cases.desc')} />
-            <div className="lc-grid-3">
-              {cases.map((item) => (
-                <article className="lc-case-card lc-card" key={item.title}>
-                  <ProductPhoto src={item.imageUrl} alt={text(item.title)} />
-                  <div className="lc-case-body">
-                    <span>{text(item.industry)}</span>
-                    <h3>{text(item.title)}</h3>
-                    <p>{text(item.material)}</p>
-                    <strong>{text(item.highlight)}</strong>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="lc-section" id="quality">
-          <div className="lc-container">
-            <SectionHeading
-              kicker={t('home.quality.eyebrow')}
-              title={t('home.quality.title')}
-              desc={t('home.quality.desc')}
-            />
-            <div className="lc-quality-showcase">
-              <figure className="lc-factory-photo">
-                <img
-                  src={factoryVisual.imageUrl}
-                  alt={text(factoryVisual.title)}
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
-                <figcaption>
-                  <span>{t('home.quality.factoryView')}</span>
-                  <strong>{text(factoryVisual.title)}</strong>
-                </figcaption>
-              </figure>
-              <div className="lc-quality-stack">
-                <div className="lc-quality-stats">
-                  {factoryVisual.stats.map((item) => (
-                    <article key={item.label}>
-                      <strong>{item.value}</strong>
-                      <span>{text(item.label)}</span>
-                    </article>
-                  ))}
-                </div>
-                <div className="lc-quality-grid">
-                  {qualityItems.map((item, index) => (
-                    <article className="lc-quality-item" key={item}>
-                      <span>{String(index + 1).padStart(2, '0')}</span>
-                      <strong>{text(item)}</strong>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="lc-process-timeline">
-              {cooperationSteps.map((item, index) => (
-                <ProcessStep key={item} index={index + 1} title={text(item)} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="lc-section lc-section-soft">
-          <div className="lc-container lc-trust-section">
-            <SectionHeading kicker={t('home.trust.eyebrow')} title={t('home.trust.title')} desc={t('home.trust.desc')} />
-            <div className="lc-testimonials">
-              {testimonials.map((item, index) => (
-                <article className="lc-card" key={item}>
-                  <span>
-                    {t('home.trust.testimonial')} {index + 1}
-                  </span>
-                  <p>{text(item)}</p>
-                </article>
-              ))}
-            </div>
-            <div className="lc-logo-wall" aria-label={t('home.trust.logoAria')}>
-              {trustLogos.map((item) => (
-                <span key={item}>{text(item)}</span>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="lc-final-cta lc-container">
-          <h2>{t('home.finalCta.title')}</h2>
-          <p>{t('home.finalCta.subtitle')}</p>
-          <div>
-            <Link className="lc-button primary" to="/quote">
-              {t('home.hero.primaryCta')}
+      <HomeSection id="products" className="reference-products" title="产品中心" subtitle="多种印刷产品与解决方案，满足不同行业需求">
+        <div className="reference-product-grid">
+          {productTiles.map((tile, index) => (
+            <Link key={`${tile.title}-${index}`} to="/products" className="reference-product-card">
+              <img src={tile.image} alt={tile.title} loading="lazy" />
+              <span className="reference-product-icon" aria-hidden="true">
+                {tile.icon}
+              </span>
+              <strong>{tile.title}</strong>
+              <small>{tile.desc}</small>
             </Link>
-            <a className="lc-button ghost" href="#contact">
-              {t('common.contact')}
-            </a>
-          </div>
-        </section>
-      </div>
-      <MobileHomePage />
-    </>
+          ))}
+        </div>
+      </HomeSection>
+
+      <HomeSection id="applications" title="行业应用" subtitle="覆盖食品、日化、医药、电子、物流等多场景">
+        <div className="reference-chip-grid">
+          {applications.map((name) => (
+            <article key={name}>
+              <span>{name.slice(0, 1)}</span>
+              <strong>{name}</strong>
+            </article>
+          ))}
+        </div>
+      </HomeSection>
+
+      <HomeSection id="advantages" title="企业优势" subtitle="以专业设备、稳定品质与响应速度服务客户">
+        <div className="reference-advantage-grid">
+          {advantages.map(([title, desc]) => (
+            <article key={title}>
+              <span>{title.slice(0, 1)}</span>
+              <div>
+                <strong>{title}</strong>
+                <p>{desc}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </HomeSection>
+
+      <HomeSection id="cases" title="产品案例" subtitle="多行业客户的品质之选">
+        <div className="reference-case-grid">
+          {caseImages.map((image, index) => (
+            <article key={image}>
+              <img src={image} alt={`产品案例 ${index + 1}`} loading="lazy" />
+              <strong>{productTiles[index]?.title ?? '印刷案例'}</strong>
+            </article>
+          ))}
+        </div>
+      </HomeSection>
+
+      <HomeSection id="factory" title="生产实力" subtitle="现代化设备与稳定产线，保障品质与交付">
+        <div className="reference-case-grid">
+          {factoryImages.map((image, index) => (
+            <article key={image}>
+              <img src={image} alt={`生产实力 ${index + 1}`} loading="lazy" />
+              <strong>{['印刷设备', '数码设备', '制版车间', '检测设备'][index]}</strong>
+            </article>
+          ))}
+        </div>
+      </HomeSection>
+
+      <section id="contact" className="reference-contact">
+        <h2>联系我们</h2>
+        <p>期待与您合作，共创美好未来</p>
+        <div>
+          <a href="tel:053258288288">0532-5828 8288</a>
+          <span>山东省青岛市</span>
+        </div>
+      </section>
+
+      <nav className="reference-bottom-bar" aria-label="快捷操作">
+        <button type="button" onClick={scrollToContact}>
+          <span aria-hidden="true">☏</span>
+          在线咨询
+        </button>
+        <Link to="/products">
+          <span aria-hidden="true">▦</span>
+          产品中心
+        </Link>
+        <a href="tel:053258288288">
+          <span aria-hidden="true">☎</span>
+          拨打电话
+        </a>
+      </nav>
+    </div>
   );
 }
 
-function MobileHomePage() {
-  const { t, text } = useI18n();
-  const h5Products = productCategories.slice(0, 7);
-
+function HomeSection({
+  id,
+  title,
+  subtitle,
+  className,
+  children,
+}: {
+  id: string;
+  title: string;
+  subtitle: string;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <div className="lc-h5-home" aria-label={t('home.h5.aria')}>
-      <header className="lc-h5-header">
-        <Link to="/" className="lc-h5-brand" aria-label={t('brand.homeAria')}>
-          <span className="lc-h5-logo-mark">LC</span>
-          <strong>{t('brand.h5Name')}</strong>
-        </Link>
-        <div className="lc-h5-page-actions">
-          <LanguageSwitch compact />
-          <button className="lc-h5-menu" type="button" aria-label={t('h5.menuAria')}>
-            <span />
-            <span />
-            <span />
-          </button>
-        </div>
-      </header>
-
-      <section className="lc-h5-hero">
-        <div className="lc-h5-hero-copy">
-          <h1>
-            {t('home.h5.heroTitle.before')} <span>{t('home.h5.heroTitle.after')}</span>
-          </h1>
-          <p>{t('home.h5.heroLine1')}</p>
-          <p>{t('home.h5.heroLine2')}</p>
-        </div>
-        <div className="lc-h5-hero-media">
-          <img src="/official/qddflc/equipment-uv-line.jpg" alt={t('home.h5.heroImageAlt')} />
-        </div>
-        <div className="lc-h5-dots" aria-hidden="true">
-          <span className="active" />
-          <span />
-          <span />
-        </div>
-      </section>
-
-      <section className="lc-h5-section lc-h5-products">
-        <div className="lc-h5-section-title">
-          <h2>{t('home.h5.productsTitle')}</h2>
-          <p>{t('home.h5.productsDesc')}</p>
-        </div>
-        <div className="lc-h5-product-grid">
-          {h5Products.map((item) => (
-            <Link className="lc-h5-product-card" to="/products" key={item.name}>
-              <img src={item.imageUrl} alt={text(item.name)} />
-              <strong>{text(item.name)}</strong>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="lc-h5-advantages">
-        <h2>
-          {t('home.h5.advantagesTitle.before')} <span>4</span> {t('home.h5.advantagesTitle.after')}
-        </h2>
-        <div>
-          {advantages.slice(0, 4).map((item) => (
-            <article key={item.title}>
-              <span>{text(item.mark)}</span>
-              <strong>{text(item.title)}</strong>
-              <p>{text(item.desc)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="lc-h5-section lc-h5-cases">
-        <div className="lc-h5-section-title">
-          <h2>{t('home.h5.casesTitle')}</h2>
-          <p>{t('home.h5.casesDesc')}</p>
-        </div>
-        <div className="lc-h5-case-list">
-          {cases.slice(0, 4).map((item) => (
-            <article key={item.title}>
-              <img src={item.imageUrl} alt={text(item.title)} />
-              <strong>{text(item.title)}</strong>
-            </article>
-          ))}
-        </div>
-        <Link className="lc-h5-more" to="/products">
-          {t('home.h5.moreCases')}
-        </Link>
-      </section>
-
-      <section className="lc-h5-quote-band">
-        <div>
-          <strong>{t('home.h5.quickQuote')}</strong>
-          <span>{t('home.h5.quickQuoteDesc')}</span>
-        </div>
-        <Link to="/quote">{t('nav.quote')}</Link>
-      </section>
-
-      <nav className="lc-h5-bottom-cta" aria-label={t('home.h5.actionsAria')}>
-        <a href={`tel:${brand.mobile}`}>{t('home.h5.consult')}</a>
-        <Link className="primary" to="/quote">
-          {t('nav.quote')}
-        </Link>
-        <a href={`tel:${brand.mobile}`}>{t('home.h5.call')}</a>
-      </nav>
-    </div>
+    <section id={id} className={`reference-section${className ? ` ${className}` : ''}`}>
+      <div className="reference-section-heading">
+        <h2>{title}</h2>
+        <p>{subtitle}</p>
+      </div>
+      {children}
+    </section>
   );
 }

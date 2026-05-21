@@ -67,18 +67,6 @@ Page({
     wx.navigateTo({ url: `/pages/product-detail/index?id=${id}` });
   },
 
-  quoteProduct(event) {
-    const id = event.currentTarget.dataset.id;
-    wx.switchTab({ url: '/pages/quote/index' });
-    if (id) {
-      wx.setStorageSync('yinshua_quote_product', String(id));
-    }
-  },
-
-  gotoQuote() {
-    wx.switchTab({ url: '/pages/quote/index' });
-  },
-
   openBanner(event) {
     const { linkType, linkValue } = event.currentTarget.dataset;
     if (!linkType || linkType === 'none') {
@@ -94,7 +82,9 @@ Page({
       return;
     }
     if (linkType === 'custom' && linkValue) {
-      wx.setClipboardData({ data: String(linkValue) });
+      wx.setClipboardData({
+        data: String(linkValue),
+      });
     }
   },
 });

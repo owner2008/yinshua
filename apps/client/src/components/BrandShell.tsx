@@ -6,7 +6,6 @@ import { LanguageSwitch } from './LanguageSwitch';
 const navKeyByHref = {
   '/': 'nav.home',
   '/products': 'nav.products',
-  '/quote': 'nav.custom',
   '/#cases': 'nav.cases',
   '/contact': 'nav.contact',
 } as const;
@@ -32,14 +31,11 @@ export function BrandHeader() {
       </nav>
       <div className="lc-header-actions" aria-label={t('nav.actionsAria')}>
         <LanguageSwitch />
-        <NavLink className="lc-header-link" to="/history">
-          {t('nav.history')}
-        </NavLink>
         <NavLink className="lc-header-link" to="/member">
           {t('nav.member')}
         </NavLink>
-        <NavLink className="lc-button primary lc-header-cta" to="/quote">
-          {t('nav.quote')}
+        <NavLink className="lc-button primary lc-header-cta" to="/products">
+          {t('nav.products')}
         </NavLink>
       </div>
     </header>

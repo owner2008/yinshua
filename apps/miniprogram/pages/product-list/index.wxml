@@ -1,12 +1,6 @@
-<view class="page">
-  <view class="page-hero card">
-    <text class="kicker">Product Center</text>
-    <view class="title">产品中心</view>
-    <view class="muted">按标签类型筛选产品，快速进入详情或提交报价需求。</view>
-  </view>
-
+<view class="page theme-{{themeMode}}">
   <view class="card">
-    <view class="section-title">产品分类</view>
+    <view class="section-title">产品中心</view>
     <scroll-view scroll-x class="filter-scroll">
       <view class="chip {{!activeCategory ? 'active' : ''}}" data-id="" bindtap="selectCategory">全部</view>
       <block wx:for="{{categories}}" wx:key="id">
@@ -17,7 +11,7 @@
 
   <view class="card">
     <view class="section-title">
-      <text>产品</text>
+      <text>产品展示</text>
       <text class="muted">{{products.length}} 款</text>
     </view>
     <view wx:if="{{!products.length}}" class="muted">{{notice || '暂无产品'}}</view>
@@ -27,7 +21,7 @@
           <image wx:if="{{item.coverImage}}" class="tile-thumb cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
           <view wx:else class="tile-thumb tone-{{index % 3}}"></view>
           <view class="tile-name">{{item.name}}</view>
-          <view class="tile-meta muted">{{item.applicationScenario || '支持按需定制'}}</view>
+          <view class="tile-meta muted">{{item.applicationScenario || '可按需定制'}}</view>
         </view>
       </block>
     </view>

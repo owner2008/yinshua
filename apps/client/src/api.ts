@@ -2,13 +2,10 @@ import type {
   CatalogHome,
   MemberAddress,
   MemberProfile,
-  MemberQuote,
   MemberSession,
   Product,
   ProductCategory,
   ProductTemplate,
-  QuoteInput,
-  QuoteResult,
 } from './types';
 
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api';
@@ -104,18 +101,6 @@ export function fetchTemplatesByProduct(productId: string | number) {
   return request<ProductTemplate[]>('/admin/product-templates').then((list) =>
     list.filter((template) => Number(template.productId) === Number(productId)),
   );
-}
-
-export function calculateQuote(input: QuoteInput) {
-  return post<QuoteResult>('/quotes/calculate', input);
-}
-
-export function saveQuote(input: QuoteInput) {
-  return post<QuoteResult>('/quotes', input);
-}
-
-export function fetchMyQuotes() {
-  return request<MemberQuote[]>('/member/quotes');
 }
 
 export function fetchMyProfile() {

@@ -1,15 +1,22 @@
 import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { toAssetUrl } from '../api';
 import { useCatalog } from '../catalogContext';
-import { SectionHeading } from '../components/cards';
-import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
-import { PageHero } from '../components/PageHero';
-import { ProductVisual } from '../components/PrintingVisuals';
-import { useI18n } from '../i18n';
+
+const productFallbackImages = [
+  '/images/product-label-roll.jpg',
+  '/images/product-food-label-roll.jpg',
+  '/images/product-packaging-box.jpg',
+  '/images/product-handbag.jpg',
+  '/images/product-manual.jpg',
+  '/images/product-brochure.jpg',
+  '/images/product-tape.jpg',
+  '/images/product-inner-liner.jpg',
+  '/images/product-gift-box.jpg',
+];
 
 export function ProductListPage() {
   const { categories, products } = useCatalog();
-  const { t, text } = useI18n();
   const [params, setParams] = useSearchParams();
   const activeCategory = params.get('category');
 
@@ -21,61 +28,51 @@ export function ProductListPage() {
   }, [products, activeCategory]);
 
   return (
-    <div className="lc-subpage">
-      <H5PageChrome title={t('products.hero.title')} subtitle={t('products.hero.subtitle')} />
-      <PageHero kicker={t('products.hero.eyebrow')} title={t('products.hero.title')} desc={t('products.hero.desc')}>
-        <div className="lc-page-stat">
-          <strong>{filteredProducts.length}</strong>
-          <span>{t('products.available')}</span>
+    <main className="subpage product-center-page">
+      <section className="subpage-hero">
+        <div>
+          <p>Product Center</p>
+          <h1>产品中心</h1>
+          <span>覆盖标签、不干胶、包装盒、说明书、宣传册与可变数据印刷产品。</span>
         </div>
-      </PageHero>
+        <img src="/images/product-label-roll.jpg" alt="产品中心" />
+      </section>
 
-      <section className="lc-section">
-        <div className="lc-container">
-          <SectionHeading kicker={t('products.categories.eyebrow')} title={t('products.categories.title')} />
-          <div className="lc-chip-filter">
-            <button type="button" className={!activeCategory ? 'active' : ''} onClick={() => setParams({})}>
-              {t('products.filter.all')}
+      <section className="subpage-section">
+        <div className="category-filter-bar">
+          <button type="button" className={activeCategory ? '' : 'active'} onClick={() => setParams({})}>
+            全部产品
+          </button>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              type="button"
+              className={activeCategory === String(category.id) ? 'active' : ''}
+              onClick={() => setParams({ category: String(category.id) })}
+            >
+              {category.name}
             </button>
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                className={activeCategory === String(category.id) ? 'active' : ''}
-                onClick={() => setParams({ category: String(category.id) })}
-              >
-                {text(category.name)}
-              </button>
+          ))}
+        </div>
+
+        {filteredProducts.length === 0 ? (
+          <p className="subpage-empty">该分类下暂无产品。</p>
+        ) : (
+          <div className="subpage-card-grid four product-center-grid">
+            {filteredProducts.map((product, index) => (
+              <Link key={product.id} to={`/products/${product.id}`} className="product-center-card">
+                {product.coverImage ? (
+                  <img src={toAssetUrl(product.coverImage)} alt={product.name} loading="lazy" />
+                ) : (
+                  <img src={productFallbackImages[index % productFallbackImages.length]} alt={product.name} loading="lazy" />
+                )}
+                <strong>{product.name}</strong>
+                <p>{product.applicationScenario ?? product.description ?? '支持按需定制材料、尺寸与工艺。'}</p>
+              </Link>
             ))}
           </div>
-
-          {filteredProducts.length === 0 ? (
-            <div className="lc-empty-state lc-card">
-              <h3>{t('products.empty.title')}</h3>
-              <p>{t('products.empty.desc')}</p>
-              <Link className="lc-button primary" to="/quote">
-                {t('products.empty.cta')}
-              </Link>
-            </div>
-          ) : (
-            <div className="lc-grid-3 lc-subpage-product-grid">
-              {filteredProducts.map((product, index) => (
-                <article className="lc-card lc-product-card" key={product.id}>
-                  <ProductVisual product={product} tone={index % 4} />
-                  <span className="lc-card-kicker">{text(product.category?.name) || t('products.card.categoryFallback')}</span>
-                  <h3>{text(product.name)}</h3>
-                  <p>{text(product.applicationScenario ?? product.description) || t('products.card.descFallback')}</p>
-                  <div className="lc-card-actions">
-                    <Link to={`/products/${product.id}`}>{t('common.viewDetails')}</Link>
-                    <Link to={`/quote?productId=${product.id}`}>{t('products.card.quote')}</Link>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </section>
-      <H5TabBar />
-    </div>
+    </main>
   );
 }

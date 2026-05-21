@@ -4,6 +4,7 @@ import {
   CreateMaterialDto,
   CreateMaterialPriceDto,
   UpdateMaterialDto,
+  UpdateMaterialPriceDto,
 } from '../dto/admin-material.dto';
 import { AuditLogService } from './audit-log.service';
 
@@ -87,11 +88,43 @@ export class AdminMaterialsService {
     });
   }
 
+  async updatePrice(id: number, dto: UpdateMaterialPriceDto) {
+    await this.ensureMaterial(dto.materialId);
+    const before = await this.ensureMaterialPrice(id);
+    const after = await this.prisma.materialPrice.update({
+      where: { id: BigInt(id) },
+      data: {
+        materialId: BigInt(dto.materialId),
+        priceType: dto.priceType ?? 'calc',
+        unitPrice: dto.unitPrice,
+        currency: dto.currency ?? 'CNY',
+        isCurrent: dto.isCurrent ?? before.isCurrent,
+      },
+    });
+    await this.audit.record({
+      module: 'material-price',
+      action: 'update',
+      targetType: 'material_price',
+      targetId: after.id,
+      before,
+      after,
+    });
+    return after;
+  }
+
   private async ensureMaterial(id: number) {
     const material = await this.prisma.material.findUnique({ where: { id: BigInt(id) } });
     if (!material) {
       throw new NotFoundException('材料不存在');
     }
     return material;
+  }
+
+  private async ensureMaterialPrice(id: number) {
+    const price = await this.prisma.materialPrice.findUnique({ where: { id: BigInt(id) } });
+    if (!price) {
+      throw new NotFoundException('材料价格不存在');
+    }
+    return price;
   }
 }

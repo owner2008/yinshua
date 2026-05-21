@@ -5,6 +5,7 @@ import {
   CreateMaterialDto,
   CreateMaterialPriceDto,
   UpdateMaterialDto,
+  UpdateMaterialPriceDto,
 } from '../dto/admin-material.dto';
 import { AdminMaterialsService } from '../services/admin-materials.service';
 
@@ -41,5 +42,12 @@ export class AdminMaterialsController {
   @RequireAdminPermission('admin:pricing')
   createPrice(@Body() dto: CreateMaterialPriceDto) {
     return this.materials.createPrice(dto);
+  }
+
+  @Put('material-prices/:id')
+  @UseGuards(AdminAuthGuard)
+  @RequireAdminPermission('admin:pricing')
+  updatePrice(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateMaterialPriceDto) {
+    return this.materials.updatePrice(id, dto);
   }
 }

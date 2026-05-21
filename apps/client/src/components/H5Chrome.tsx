@@ -39,8 +39,6 @@ export function H5TabBar() {
         {t('h5.tab.home')}
       </NavLink>
       <NavLink to="/products">{t('h5.tab.products')}</NavLink>
-      <NavLink to="/quote">{t('h5.tab.quote')}</NavLink>
-      <NavLink to="/history">{t('h5.tab.history')}</NavLink>
       <NavLink to="/member">{t('h5.tab.member')}</NavLink>
     </nav>
   );

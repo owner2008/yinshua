@@ -14,7 +14,7 @@ export const brand = {
 export const navItems = [
   { label: '首页', href: '/' },
   { label: '产品中心', href: '/products' },
-  { label: '标签定制', href: '/quote' },
+  { label: '产品中心', href: '/products' },
   { label: '案例展示', href: '/#cases' },
   { label: '联系我们', href: '/contact' },
 ] as const;

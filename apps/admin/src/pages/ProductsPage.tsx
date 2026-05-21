@@ -5,6 +5,28 @@ import { Product, ProductCategory, ProductTemplate } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
 
+const processCodeOptions = [
+  { label: '覆膜', value: 'lamination' },
+  { label: '模切', value: 'die_cut' },
+  { label: '烫金', value: 'hot_stamp' },
+  { label: '局部 UV', value: 'uv' },
+  { label: '打样', value: 'proofing' },
+  { label: '白墨', value: 'white_ink' },
+];
+
+const printModeOptions = [
+  { label: '四色印刷', value: 'four_color' },
+  { label: '单色印刷', value: 'single_color' },
+  { label: '白墨打底', value: 'white_ink' },
+  { label: '单黑印刷', value: 'black' },
+  { label: '专色印刷', value: 'spot_color' },
+];
+
+const shapeTypeOptions = [
+  { label: '常规矩形 / 方形', value: 'rectangle' },
+  { label: '异形 / 定制形状', value: 'custom' },
+];
+
 export function ProductsPage() {
   return (
     <div className="page-card">
@@ -236,7 +258,15 @@ function TemplateList() {
   function openCreate() {
     setEditing(null);
     form.resetFields();
-    form.setFieldsValue({ productId: 1, minPrice: 300, defaultLossRate: 1.08, status: 'active' });
+    form.setFieldsValue({
+      productId: 1,
+      minPrice: 300,
+      defaultLossRate: 1.08,
+      status: 'active',
+      processCodes: ['lamination', 'die_cut'],
+      printModes: ['four_color'],
+      shapeTypes: ['rectangle'],
+    });
     setOpen(true);
   }
 
@@ -245,9 +275,9 @@ function TemplateList() {
     form.setFieldsValue({
       ...record,
       materialIds: optionValues(record, 'material'),
-      processCodes: optionValues(record, 'process'),
-      printModes: optionValues(record, 'print_mode'),
-      shapeTypes: optionValues(record, 'shape'),
+      processCodes: optionValueList(record, 'process'),
+      printModes: optionValueList(record, 'print_mode'),
+      shapeTypes: optionValueList(record, 'shape'),
     });
     setOpen(true);
   }
@@ -374,14 +404,40 @@ function TemplateList() {
             <Form.Item name="defaultLossRate" label="损耗率"><InputNumber step={0.01} /></Form.Item>
           </Space.Compact>
           <Form.Item name="materialIds" label="材料编号，逗号分隔"><Input placeholder="1,2,3" /></Form.Item>
-          <Form.Item name="processCodes" label="工艺编码，逗号分隔"><Input placeholder="lamination,die_cut" /></Form.Item>
-          <Form.Item name="printModes" label="印刷方式，逗号分隔"><Input placeholder="four_color,single_color" /></Form.Item>
-          <Form.Item name="shapeTypes" label="形状，逗号分隔"><Input placeholder="rectangle,custom" /></Form.Item>
-          <Space size="large">
+          <Form.Item name="processCodes" label="可选印后工艺" extra="用于控制该报价模板支持哪些工艺，系统会自动保存对应报价编码。">
+            <Select
+              allowClear
+              mode="multiple"
+              optionFilterProp="label"
+              placeholder="选择覆膜、模切、烫金等工艺"
+              options={processCodeOptions}
+            />
+          </Form.Item>
+          <Form.Item name="printModes" label="可选印刷方式">
+            <Select
+              allowClear
+              mode="multiple"
+              optionFilterProp="label"
+              placeholder="选择四色印刷、单色印刷等方式"
+              options={printModeOptions}
+            />
+          </Form.Item>
+          <Form.Item name="shapeTypes" label="可选成品形状">
+            <Select
+              allowClear
+              mode="multiple"
+              optionFilterProp="label"
+              placeholder="选择常规矩形或异形"
+              options={shapeTypeOptions}
+            />
+          </Form.Item>
+          <Space size="large" wrap>
             <Form.Item name="allowCustomShape" label="允许异形" valuePropName="checked"><Switch /></Form.Item>
             <Form.Item name="allowProofing" label="允许打样" valuePropName="checked"><Switch /></Form.Item>
             <Form.Item name="allowLamination" label="允许覆膜" valuePropName="checked"><Switch /></Form.Item>
             <Form.Item name="allowDieCut" label="允许模切" valuePropName="checked"><Switch /></Form.Item>
+            <Form.Item name="allowHotStamping" label="允许烫金" valuePropName="checked"><Switch /></Form.Item>
+            <Form.Item name="allowUv" label="允许 UV" valuePropName="checked"><Switch /></Form.Item>
           </Space>
           <Form.Item name="status" label="状态">
             <Select
@@ -397,7 +453,10 @@ function TemplateList() {
   );
 }
 
-function parseStringList(value?: string): string[] {
+function parseStringList(value?: string | string[]): string[] {
+  if (Array.isArray(value)) {
+    return value.map((item) => item.trim()).filter(Boolean);
+  }
   return value ? value.split(',').map((item) => item.trim()).filter(Boolean) : [];
 }
 
@@ -409,9 +468,12 @@ function parseNumberList(value?: string): number[] {
   return parseStringList(value).map(Number).filter((value) => Number.isFinite(value));
 }
 
-function optionValues(record: ProductTemplate, type: 'material' | 'process' | 'print_mode' | 'shape'): string {
+function optionValueList(record: ProductTemplate, type: 'material' | 'process' | 'print_mode' | 'shape'): string[] {
   return record.options
     ?.filter((item) => item.optionType === type)
-    .map((item) => item.optionValue)
-    .join(',') ?? '';
+    .map((item) => item.optionValue) ?? [];
+}
+
+function optionValues(record: ProductTemplate, type: 'material' | 'process' | 'print_mode' | 'shape'): string {
+  return optionValueList(record, type).join(',');
 }

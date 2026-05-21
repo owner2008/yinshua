@@ -189,6 +189,7 @@ function MaterialPrices() {
   const { data, loading, reload } = useRemoteList<MaterialPrice>('/admin/material-prices');
   const { data: materials } = useRemoteList<Material>('/admin/materials');
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<MaterialPrice | null>(null);
   const [currentOnly, setCurrentOnly] = useState<string>('all');
   const [materialId, setMaterialId] = useState<string>();
   const [form] = Form.useForm();
@@ -202,18 +203,42 @@ function MaterialPrices() {
     });
   }, [currentOnly, data, materialId]);
 
+  function openCreate() {
+    setEditing(null);
+    form.resetFields();
+    form.setFieldsValue({ priceType: 'calc', currency: 'CNY' });
+    setOpen(true);
+  }
+
+  function openEdit(record: MaterialPrice) {
+    setEditing(record);
+    form.setFieldsValue({
+      materialId: Number(record.materialId),
+      unitPrice: Number(record.unitPrice),
+      priceType: record.priceType,
+      currency: record.currency,
+    });
+    setOpen(true);
+  }
+
   async function submit() {
     const values = await form.validateFields();
-    await post('/admin/material-prices', values);
-    message.success('材料价格已创建');
+    if (editing) {
+      await put(`/admin/material-prices/${editing.id}`, values);
+      message.success('材料价格已更新');
+    } else {
+      await post('/admin/material-prices', values);
+      message.success('材料价格已创建');
+    }
     setOpen(false);
+    setEditing(null);
     form.resetFields();
     await reload();
   }
 
   return (
     <>
-      <PageHeader title="材料价格" description="新增价格后，旧的当前价格会自动失效" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={() => setOpen(true)}>新增价格</Button> : null} />
+      <PageHeader title="材料价格" description="新增价格后，旧的当前价格会自动失效" onRefresh={reload} extra={canWrite ? <Button type="primary" onClick={openCreate}>新增价格</Button> : null} />
       <div className="filter-bar">
         <Select
           allowClear
@@ -240,8 +265,26 @@ function MaterialPrices() {
         { title: '单价', dataIndex: 'unitPrice' },
         { title: '币种', dataIndex: 'currency', render: renderCurrency },
         { title: '当前', dataIndex: 'isCurrent', render: (value: boolean) => <Tag color={value ? 'green' : 'default'}>{value ? '当前' : '历史'}</Tag> },
+        canWrite ? {
+          title: '操作',
+          width: 120,
+          render: (_, record) => (
+            <Button type="link" onClick={() => openEdit(record)}>
+              编辑
+            </Button>
+          ),
+        } : {},
       ]} />
-      <Modal title="新增材料价格" open={open} onOk={submit} onCancel={() => setOpen(false)}>
+      <Modal
+        title={editing ? '编辑材料价格' : '新增材料价格'}
+        open={open}
+        onOk={submit}
+        onCancel={() => {
+          setOpen(false);
+          setEditing(null);
+          form.resetFields();
+        }}
+      >
         <Form form={form} layout="vertical" initialValues={{ priceType: 'calc', currency: 'CNY' }}>
           <Form.Item name="materialId" label="材料" rules={[{ required: true }]}>
             <Select options={materials.map((item) => ({ label: `${item.name} (${item.code})`, value: Number(item.id) }))} />

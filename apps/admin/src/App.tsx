@@ -12,6 +12,7 @@ const MaterialsPage = lazy(() => import('./pages/MaterialsPage').then((module) =
 const ProcessesPage = lazy(() => import('./pages/ProcessesPage').then((module) => ({ default: module.ProcessesPage })));
 const QuoteRulesPage = lazy(() => import('./pages/QuoteRulesPage').then((module) => ({ default: module.QuoteRulesPage })));
 const QuotesPage = lazy(() => import('./pages/QuotesPage').then((module) => ({ default: module.QuotesPage })));
+const QuoteToolPage = lazy(() => import('./pages/QuoteToolPage').then((module) => ({ default: module.QuoteToolPage })));
 const MembersPage = lazy(() => import('./pages/MembersPage').then((module) => ({ default: module.MembersPage })));
 const ContentManagementPage = lazy(() =>
   import('./pages/ContentManagementPage').then((module) => ({ default: module.ContentManagementPage })),
@@ -30,6 +31,7 @@ const menuItems = [
   { key: 'materials', label: '材料与价格', permission: 'admin:pricing' },
   { key: 'processes', label: '工艺与印刷', permission: 'admin:pricing' },
   { key: 'rules', label: '报价规则', permission: 'admin:quote-rule' },
+  { key: 'quote-tool', label: '报价工具', permission: 'admin:quote' },
   { key: 'quotes', label: '报价单', permission: 'admin:quote' },
   { key: 'members', label: '会员管理', permission: 'admin:member' },
   { key: 'content', label: '内容管理', permission: 'admin:content' },
@@ -70,6 +72,8 @@ export default function App() {
         return <ProcessesPage />;
       case 'rules':
         return <QuoteRulesPage />;
+      case 'quote-tool':
+        return <QuoteToolPage />;
       case 'quotes':
         return <QuotesPage />;
       case 'members':
@@ -148,6 +152,8 @@ function LoginScreen({ onLogin }: { onLogin: (session: AdminSession) => void }) 
       saveAdminSession(session);
       onLogin(session);
       message.success('登录成功');
+    } catch (error) {
+      message.error(getLoginErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -160,18 +166,31 @@ function LoginScreen({ onLogin }: { onLogin: (session: AdminSession) => void }) 
           不干胶印刷报价后台
         </Typography.Title>
         <Typography.Text className="muted">请输入后台账号后继续操作配置数据。</Typography.Text>
-        <Form form={form} layout="vertical" className="login-form" initialValues={{ username: 'admin' }}>
+        <Form form={form} layout="vertical" className="login-form" initialValues={{ username: 'admin' }} onFinish={submit}>
           <Form.Item name="username" label="账号" rules={[{ required: true }]}>
             <Input autoComplete="username" />
           </Form.Item>
           <Form.Item name="password" label="密码" rules={[{ required: true }]}>
             <Input.Password autoComplete="current-password" />
           </Form.Item>
-          <Button type="primary" block loading={loading} onClick={submit}>
+          <Button type="primary" block loading={loading} htmlType="submit">
             登录
           </Button>
         </Form>
       </div>
     </div>
   );
+}
+
+function getLoginErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message) {
+    if (/Failed to fetch|NetworkError|Load failed/i.test(error.message)) {
+      return '无法连接后台服务，请确认 qddflc-api 已启动并且 nginx 的 /api 代理正常。';
+    }
+    if (/401|Unauthorized|账号|密码/i.test(error.message)) {
+      return '账号或密码不正确，请重新输入。';
+    }
+    return error.message;
+  }
+  return '登录失败，请稍后重试。';
 }

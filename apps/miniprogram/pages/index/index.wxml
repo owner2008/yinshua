@@ -1,114 +1,118 @@
 <view class="page home-page">
-  <view class="brand-card card">
-    <view class="brand-logo">LC</view>
-    <view>
-      <text class="kicker">Qingdao Label Printing</text>
-      <view class="brand-name">{{(branding && branding.siteName) || '青岛东方丽彩包装印刷公司'}}</view>
-      <view class="muted">{{notice}}</view>
+  <view class="mobile-hero">
+    <view class="brand-strip">
+      <image class="brand-logo-image" src="/images/logo.png" mode="aspectFit" />
+      <view>
+        <view class="brand-title">青岛东方丽彩包装有限公司</view>
+        <view class="brand-subtitle">专业标签与包装印刷服务商</view>
+      </view>
     </view>
-  </view>
-
-  <view class="hero card">
-    <text class="kicker">标签印刷 / 包装定制 / 数字溯源</text>
-    <view class="title">{{(banners[0] && banners[0].title) || '专业标签印刷与一物一码解决方案'}}</view>
-    <view class="muted">{{(banners[0] && banners[0].subtitle) || '提供不干胶标签、卷标、产品说明书、包装印刷、可变二维码、防伪标签等定制印刷服务。'}}</view>
-    <view class="hero-tags">
-      <text>快速报价</text>
-      <text>支持打样</text>
-      <text>批量生产</text>
-      <text>多行业应用</text>
+    <view class="hero-copy">
+      <view class="hero-title">青岛东方丽彩包装有限公司</view>
+      <view class="hero-subtitle">专业标签与包装印刷服务商</view>
+      <view class="hero-desc">专注于不干胶、产品标签、包装盒、说明书、宣传册、可变二维码、一物一码标签等印刷产品。</view>
     </view>
-    <view class="hero-actions">
-      <button class="primary-button" size="mini" bindtap="gotoQuote">立即报价</button>
-      <button class="ghost-button" size="mini" bindtap="openAllProducts">产品中心</button>
-    </view>
-  </view>
-
-  <view class="card">
-    <view class="section-title">
-      <text>核心优势</text>
-      <text class="muted">企业客户服务</text>
-    </view>
-    <view class="advantage-grid">
-      <view class="advantage-item"><text>报</text><view>快速报价</view></view>
-      <view class="advantage-item"><text>材</text><view>多种材质</view></view>
-      <view class="advantage-item"><text>UV</text><view>工艺齐全</view></view>
-      <view class="advantage-item"><text>质</text><view>质量稳定</view></view>
+    <image class="hero-banner" src="/images/banner.png" mode="aspectFit" />
+    <view class="hero-feature-row">
+      <view class="hero-feature"><text>先</text><view>先进设备</view><label>品质保障</label></view>
+      <view class="hero-feature"><text>专</text><view>专业团队</view><label>用心服务</label></view>
+      <view class="hero-feature"><text>快</text><view>快速交付</view><label>高效准时</label></view>
+      <view class="hero-feature"><text>定</text><view>定制方案</view><label>按需定制</label></view>
     </view>
   </view>
 
   <view class="card">
     <view class="section-title">
-      <text>产品中心</text>
+      <text>主营产品</text>
       <text class="link" bindtap="openAllProducts">全部产品</text>
     </view>
     <view class="category-grid">
       <block wx:for="{{categories}}" wx:key="id">
         <view wx:if="{{index < 8}}" class="category-card" data-id="{{item.id}}" bindtap="openCategory">
-          <text>{{index < 9 ? '0' : ''}}{{index + 1}}</text>
-          <view>{{item.name}}</view>
+          <text class="category-index">{{index < 9 ? '0' : ''}}{{index + 1}}</text>
+          <view class="category-name">{{item.name}}</view>
         </view>
       </block>
     </view>
   </view>
 
-  <view class="card quote-guide">
-    <text class="kicker">Online Quote</text>
-    <view class="section-title">3 步获取专属报价</view>
-    <view class="step-item"><text>01</text><view><view>选择产品、尺寸与材质</view><view class="muted">先明确标签基础参数。</view></view></view>
-    <view class="step-item"><text>02</text><view><view>填写数量、工艺与场景</view><view class="muted">补充贴标、包装和交期要求。</view></view></view>
-    <view class="step-item"><text>03</text><view><view>提交需求，快速确认</view><view class="muted">客服复核后给出专业建议。</view></view></view>
+  <view class="card">
+    <view class="section-title">
+      <text>产品展示</text>
+      <text class="muted">{{hotProducts.length}} 款推荐</text>
+    </view>
+    <view class="feature-list">
+      <block wx:for="{{hotProducts}}" wx:key="id">
+        <view wx:if="{{index < 4}}" class="feature-item">
+          <image wx:if="{{item.coverImage}}" class="feature-thumb" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
+          <image wx:else class="feature-thumb" src="/images/product-label-roll.jpg" mode="aspectFill" />
+          <view class="feature-body">
+            <view class="feature-title">{{item.name}}</view>
+            <view class="feature-desc muted">{{item.applicationScenario || '适合多行业产品包装、识别与物流场景。'}}</view>
+            <button class="mini-button" size="mini" data-id="{{item.id}}" bindtap="openDetail">查看详情</button>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="card capability-card">
+    <view class="section-title">
+      <text>材质与工艺</text>
+      <text class="muted">按需求组合</text>
+    </view>
+    <view class="capability-group">
+      <view class="capability-title">常用材质</view>
+      <view class="capability-tags">
+        <text>铜版纸</text>
+        <text>PET / 透明膜</text>
+        <text>PVC / 合成纸</text>
+        <text>热敏纸</text>
+        <text>亮银 / 哑银</text>
+        <text>可移胶</text>
+      </view>
+    </view>
+    <view class="capability-group">
+      <view class="capability-title">常用工艺</view>
+      <view class="capability-tags">
+        <text>覆膜</text>
+        <text>模切</text>
+        <text>烫金</text>
+        <text>局部 UV</text>
+        <text>白墨打底</text>
+        <text>可变数据</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card factory-card">
+    <view class="section-title">
+      <text>生产实力</text>
+      <text class="muted">设备与交付</text>
+    </view>
+    <image class="factory-image" src="/images/factory-workshop.jpg" mode="aspectFill" />
+    <view class="quality-list">
+      <text>先进印刷设备</text>
+      <text>稳定品控流程</text>
+      <text>多工艺组合生产</text>
+      <text>按期交付服务</text>
+    </view>
   </view>
 
   <view class="card">
     <view class="section-title">
-      <text>热门产品</text>
-      <text class="muted">{{hotProducts.length}} 款</text>
+      <text>最新产品</text>
+      <text class="link" bindtap="openAllProducts">查看全部</text>
     </view>
     <view class="product-grid">
-      <block wx:for="{{hotProducts}}" wx:key="id">
-        <view wx:if="{{index < 6}}" class="product-tile" data-id="{{item.id}}" bindtap="openDetail">
+      <block wx:for="{{latestProducts}}" wx:key="id">
+        <view class="product-tile" data-id="{{item.id}}" bindtap="openDetail">
           <image wx:if="{{item.coverImage}}" class="tile-thumb cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load="true" />
-          <view wx:else class="tile-thumb tone-{{index % 3}}"></view>
+          <image wx:else class="tile-thumb cover" src="/images/product-label-roll.jpg" mode="aspectFill" />
           <view class="tile-name">{{item.name}}</view>
           <view class="tile-meta muted">{{item.applicationScenario || '支持按需定制'}}</view>
         </view>
       </block>
     </view>
-  </view>
-
-  <view class="card">
-    <view class="section-title">
-      <text>材质与工艺</text>
-      <text class="muted">丰富选择</text>
-    </view>
-    <view class="tag-row">
-      <text class="tag">铜版纸</text>
-      <text class="tag">PET</text>
-      <text class="tag">PP</text>
-      <text class="tag">哑银</text>
-      <text class="tag">覆膜</text>
-      <text class="tag">烫金</text>
-      <text class="tag">局部 UV</text>
-      <text class="tag">可变二维码</text>
-    </view>
-  </view>
-
-  <view class="card">
-    <view class="section-title">
-      <text>品质保障</text>
-      <text class="muted">稳定交付</text>
-    </view>
-    <view class="quality-list">
-      <text>先进印刷设备</text>
-      <text>严格色彩管理</text>
-      <text>出货前质量检测</text>
-      <text>支持打样确认</text>
-    </view>
-  </view>
-
-  <view class="bottom-cta">
-    <button class="primary-button" size="mini" bindtap="gotoQuote">立即报价</button>
-    <button class="ghost-button" size="mini" bindtap="openAllProducts">查看产品</button>
   </view>
 </view>

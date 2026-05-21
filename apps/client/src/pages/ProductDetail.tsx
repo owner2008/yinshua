@@ -2,19 +2,15 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchCatalogProduct, toAssetUrl } from '../api';
 import { useCatalog } from '../catalogContext';
-import { InfoChip, SectionHeading } from '../components/cards';
-import { H5PageChrome, H5TabBar } from '../components/H5Chrome';
-import { PageHero } from '../components/PageHero';
-import { ProductVisual } from '../components/PrintingVisuals';
-import { useI18n } from '../i18n';
 import type { Product } from '../types';
+
+const productDetailFallbackImage = '/images/product-label-roll.jpg';
 
 export function ProductDetailPage() {
   const { id } = useParams();
   const { products } = useCatalog();
-  const { t, text } = useI18n();
   const [product, setProduct] = useState<Product | null>(null);
-  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +18,6 @@ export function ProductDetailPage() {
       return;
     }
     setLoading(true);
-    setHasError(false);
     fetchCatalogProduct(id)
       .then((data) => setProduct(data))
       .catch(() => {
@@ -30,142 +25,86 @@ export function ProductDetailPage() {
         if (fallback) {
           setProduct(fallback);
         } else {
-          setHasError(true);
+          setError('产品不存在或已下架');
         }
       })
       .finally(() => setLoading(false));
   }, [id, products]);
 
   if (loading) {
-    return (
-      <div className="lc-subpage">
-        <H5PageChrome title={t('products.detail.title')} subtitle={t('products.detail.loadingSubtitle')} />
-        <div className="lc-container">
-          <div className="lc-empty-state lc-card">
-            <h3>{t('products.detail.loadingTitle')}</h3>
-            <p>{t('products.detail.loadingDesc')}</p>
-          </div>
-        </div>
-        <H5TabBar />
-      </div>
-    );
+    return <StatusPage text="正在加载产品详情..." />;
   }
 
-  if (hasError || !product) {
-    return (
-      <div className="lc-subpage">
-        <H5PageChrome title={t('products.detail.title')} subtitle={t('products.detail.unavailableSubtitle')} />
-        <div className="lc-container">
-          <div className="lc-empty-state lc-card">
-            <h3>{t('products.detail.notFound')}</h3>
-            <p>{t('products.detail.backListDesc')}</p>
-            <Link className="lc-button primary" to="/products">
-              {t('products.detail.backList')}
-            </Link>
-          </div>
-        </div>
-        <H5TabBar />
-      </div>
-    );
+  if (error || !product) {
+    return <StatusPage text={error ?? '产品不存在'} action={<Link to="/products">返回产品中心</Link>} />;
   }
 
   const gallery = product.galleryJson ?? [];
-  const templates = product.templates ?? [];
 
   return (
-    <div className="lc-subpage">
-      <H5PageChrome title={text(product.name)} subtitle={text(product.category?.name) || t('products.detail.categoryFallback')} />
-      <PageHero
-        kicker={text(product.category?.name) || 'Product Detail'}
-        title={text(product.name)}
-        desc={text(product.description ?? product.applicationScenario) || t('products.detail.descFallback')}
-      >
-        <Link className="lc-button primary" to={`/quote?productId=${product.id}`}>
-          {t('products.detail.quoteCta')}
-        </Link>
-      </PageHero>
-
-      <section className="lc-section">
-        <div className="lc-container lc-detail-layout">
-          <div className="lc-card lc-detail-media">
-            {product.coverImage ? (
-              <img src={toAssetUrl(product.coverImage)} alt={text(product.name)} loading="lazy" />
-            ) : (
-              <ProductVisual product={product} tone={1} />
-            )}
-          </div>
-          <div className="lc-detail-copy">
-            <SectionHeading
-              kicker={t('products.detail.applicationEyebrow')}
-              title={t('products.detail.applicationTitle')}
-            />
-            <p>{text(product.applicationScenario) || t('products.detail.applicationFallback')}</p>
-            <div className="lc-chip-cloud">
-              <InfoChip>{t('products.detail.chip.size')}</InfoChip>
-              <InfoChip>{t('products.detail.chip.material')}</InfoChip>
-              <InfoChip>{t('products.detail.chip.proofing')}</InfoChip>
-              <InfoChip>{t('products.detail.chip.batch')}</InfoChip>
-            </div>
-            <div className="lc-detail-actions">
-              <Link className="lc-button primary" to={`/quote?productId=${product.id}`}>
-                {t('products.detail.onlineQuote')}
-              </Link>
-              <Link className="lc-button ghost" to="/products">
-                {t('products.detail.backProducts')}
-              </Link>
-            </div>
+    <main className="subpage product-detail-page">
+      <section className="product-detail-hero">
+        <div className="product-detail-image">
+          {product.coverImage ? (
+            <img src={toAssetUrl(product.coverImage)} alt={product.name} />
+          ) : (
+            <img src={productDetailFallbackImage} alt={product.name} />
+          )}
+        </div>
+        <div className="product-detail-copy">
+          <p>{product.category?.name ?? '产品详情'}</p>
+          <h1>{product.name}</h1>
+          <span>{product.description ?? '适用于多行业包装、识别、追溯与品牌展示场景。'}</span>
+          <div className="product-detail-actions">
+            <Link className="subpage-primary-link" to="/contact">联系我们</Link>
+            <Link to="/products">返回产品中心</Link>
           </div>
         </div>
+      </section>
+
+      <section className="subpage-section product-detail-info">
+        <article>
+          <h2>应用场景</h2>
+          <p>{product.applicationScenario ?? '支持按需配置规格和工艺组合，适配产品包装、物流识别、防伪追溯等场景。'}</p>
+        </article>
+        <article>
+          <h2>服务说明</h2>
+          <p>支持按客户产品、材质、尺寸、工艺、贴标方式与包装要求进行定制生产，具体方案可联系工作人员确认。</p>
+        </article>
+        <article>
+          <h2>工艺支持</h2>
+          <p>可结合覆膜、烫金、局部 UV、模切、防伪、可变数据等工艺，满足不同品牌展示与使用环境要求。</p>
+        </article>
       </section>
 
       {gallery.length > 0 ? (
-        <section className="lc-section lc-section-soft">
-          <div className="lc-container">
-            <SectionHeading
-              kicker={t('products.detail.galleryEyebrow')}
-              title={t('products.detail.galleryTitle')}
-              desc={`${gallery.length} ${t('products.detail.galleryCount')}`}
-            />
-            <div className="lc-gallery-grid">
-              {gallery.map((src) => (
-                <img key={src} src={toAssetUrl(src)} alt={text(product.name)} loading="lazy" />
-              ))}
+        <section className="subpage-section">
+          <div className="section-heading">
+            <div>
+              <h2>案例图库</h2>
+              <p>{gallery.length} 张产品展示图片</p>
             </div>
+          </div>
+          <div className="subpage-card-grid three">
+            {gallery.map((src) => (
+              <img className="detail-gallery-image" key={src} src={toAssetUrl(src)} alt={product.name} loading="lazy" />
+            ))}
           </div>
         </section>
       ) : null}
+    </main>
+  );
+}
 
-      <section className="lc-section lc-section-soft">
-        <div className="lc-container">
-          <SectionHeading
-            kicker={t('products.detail.templateEyebrow')}
-            title={t('products.detail.templateTitle')}
-            desc={t('products.detail.templateDesc')}
-          />
-          {templates.length === 0 ? (
-            <div className="lc-empty-state lc-card">
-              <h3>{t('products.detail.templateEmptyTitle')}</h3>
-              <p>{t('products.detail.templateEmptyDesc')}</p>
-            </div>
-          ) : (
-            <div className="lc-grid-3">
-              {templates.map((template) => (
-                <article className="lc-card lc-template-card" key={template.id}>
-                  <h3>{text(template.templateName)}</h3>
-                  <p>
-                    {t('products.detail.templateWidth')} {String(template.widthMin)} - {String(template.widthMax)} mm /{' '}
-                    {t('products.detail.templateHeight')} {String(template.heightMin)} - {String(template.heightMax)} mm
-                  </p>
-                  <strong>
-                    {t('products.detail.templateQuantity')} {template.quantityMin} - {template.quantityMax}
-                  </strong>
-                </article>
-              ))}
-            </div>
-          )}
+function StatusPage({ text, action }: { text: string; action?: React.ReactNode }) {
+  return (
+    <main className="subpage">
+      <section className="subpage-section">
+        <div className="subpage-empty">
+          {text}
+          {action}
         </div>
       </section>
-      <H5TabBar />
-    </div>
+    </main>
   );
 }
