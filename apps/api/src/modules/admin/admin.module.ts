@@ -9,6 +9,7 @@ import { AdminProcessesController } from './controllers/admin-processes.controll
 import { AdminProductCategoriesController } from './controllers/admin-product-categories.controller';
 import { AdminProductsController } from './controllers/admin-products.controller';
 import { AdminQuoteRulesController } from './controllers/admin-quote-rules.controller';
+import { AdminStaticSiteController } from './controllers/admin-static-site.controller';
 import { AdminAccessService } from './services/admin-access.service';
 import { AdminContentService } from './services/admin-content.service';
 import { AdminMaterialsService } from './services/admin-materials.service';
@@ -17,6 +18,7 @@ import { AdminProcessesService } from './services/admin-processes.service';
 import { AdminProductCategoriesService } from './services/admin-product-categories.service';
 import { AdminProductsService } from './services/admin-products.service';
 import { AdminQuoteRulesService } from './services/admin-quote-rules.service';
+import { StaticSitePublisherService } from './services/static-site-publisher.service';
 import { AuditLogService } from './services/audit-log.service';
 
 @Module({
@@ -31,6 +33,7 @@ import { AuditLogService } from './services/audit-log.service';
     AdminAccessController,
     AdminContentAssetsController,
     AdminContentController,
+    AdminStaticSiteController,
   ],
   providers: [
     AdminAccessService,
@@ -41,6 +44,7 @@ import { AuditLogService } from './services/audit-log.service';
     AdminMembersService,
     AdminProcessesService,
     AdminQuoteRulesService,
+    StaticSitePublisherService,
     AuditLogService,
   ],
 })

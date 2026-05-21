@@ -402,3 +402,9 @@ export interface UploadedContentAsset {
   fileName: string;
   size: number;
 }
+
+export interface StaticSitePublishResult {
+  outputDir: string;
+  files: string[];
+  generatedAt: string;
+}

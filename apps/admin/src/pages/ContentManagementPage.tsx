@@ -24,6 +24,7 @@ import type {
   HomepageBanner,
   HomepageBranding,
   ProductCategory,
+  StaticSitePublishResult,
 } from '../types';
 import { PageHeader } from './PageHeader';
 import { useRemoteList } from './useRemoteList';
@@ -107,6 +108,8 @@ export function ContentManagementPage() {
   const [savingBranding, setSavingBranding] = useState(false);
   const [savingBanner, setSavingBanner] = useState(false);
   const [savingShowcase, setSavingShowcase] = useState(false);
+  const [publishingStaticSite, setPublishingStaticSite] = useState(false);
+  const [publishResult, setPublishResult] = useState<StaticSitePublishResult | null>(null);
   const [bannerKeyword, setBannerKeyword] = useState('');
   const [bannerStatus, setBannerStatus] = useState<string>('active');
   const [showcaseKeyword, setShowcaseKeyword] = useState('');
@@ -317,6 +320,17 @@ export function ContentManagementPage() {
     await reloadShowcases();
   }
 
+  async function publishStaticSite() {
+    setPublishingStaticSite(true);
+    try {
+      const result = await post<StaticSitePublishResult>('/admin/static-site/publish', {});
+      setPublishResult(result);
+      message.success(`静态 SEO 页面已发布，共生成 ${result.files.length} 个文件。`);
+    } finally {
+      setPublishingStaticSite(false);
+    }
+  }
+
   const categoryOptions = useMemo(
     () =>
       categories.map((item) => ({
@@ -360,6 +374,13 @@ export function ContentManagementPage() {
         title="内容管理"
         description="统一维护企业介绍、首页主题配置和分类设备展示。"
         onRefresh={refreshAll}
+        extra={
+          canWrite ? (
+            <Button type="primary" onClick={publishStaticSite} loading={publishingStaticSite}>
+              发布静态 SEO 页面
+            </Button>
+          ) : null
+        }
       />
 
       <Alert
@@ -369,6 +390,16 @@ export function ContentManagementPage() {
         message="使用建议"
         description="首页主题由后台统一控制，保存后会同步影响 H5 与小程序；前台不再提供切换入口。"
       />
+
+      {publishResult ? (
+        <Alert
+          className="inline-alert"
+          type="success"
+          showIcon
+          message="最近一次静态发布"
+          description={`生成 ${publishResult.files.length} 个文件，输出目录：${publishResult.outputDir}，时间：${new Date(publishResult.generatedAt).toLocaleString()}`}
+        />
+      ) : null}
 
       <Tabs
         activeKey={activeTab}
