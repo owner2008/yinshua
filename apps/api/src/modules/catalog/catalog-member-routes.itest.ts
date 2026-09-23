@@ -122,6 +122,21 @@ describe('catalog and member address HTTP integration', () => {
     const firstToken = createMemberToken(firstUser).token;
     const secondToken = createMemberToken(secondUser).token;
 
+    const mobile = `139${String(Date.now()).slice(-8)}`;
+    assert.equal((await api('/auth/bind-mobile', {
+      method: 'POST', body: { mobile },
+    })).status, 401);
+    const bound = await api<{ id: number; mobile: string }>('/auth/bind-mobile', {
+      method: 'POST', token: firstToken, body: { mobile },
+    });
+    assert.equal(bound.status, 201);
+    assert.equal(bound.body.id, Number(firstUser.id));
+    assert.equal(bound.body.mobile, mobile);
+    assert.equal((await api('/auth/bind-mobile', {
+      method: 'POST', token: firstToken, body: { mobile, wxOpenid: secondUser.wxOpenid },
+    })).status, 400);
+    assert.equal((await prisma.user.findUnique({ where: { id: secondUser.id } }))?.mobile, null);
+
     assert.equal((await api('/member/addresses')).status, 401);
     const addressData = {
       consignee: '测试收件人', mobile: '13800000000', province: '山东省', city: '青岛市', detail: '测试地址',
@@ -162,6 +177,24 @@ describe('catalog and member address HTTP integration', () => {
     assert.equal(remaining.body.length, 1);
     assert.equal(remaining.body[0].id, first.body.id);
     assert.equal(remaining.body[0].isDefault, true);
+  });
+
+  it('rejects mock login and previously issued mock member sessions by default', async () => {
+    const originalFlag = process.env.ALLOW_MOCK_WECHAT_LOGIN;
+    delete process.env.ALLOW_MOCK_WECHAT_LOGIN;
+    try {
+      const login = await api('/auth/wx-login', {
+        method: 'POST', body: { code: 'mock_shared' },
+      });
+      assert.equal(login.status, 401);
+
+      const oldToken = createMemberToken({ id: 999, wxOpenid: 'mock_shared' }).token;
+      const addresses = await api('/member/addresses', { token: oldToken });
+      assert.equal(addresses.status, 401);
+    } finally {
+      if (originalFlag === undefined) delete process.env.ALLOW_MOCK_WECHAT_LOGIN;
+      else process.env.ALLOW_MOCK_WECHAT_LOGIN = originalFlag;
+    }
   });
 });
 

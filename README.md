@@ -4,6 +4,8 @@
 
 **2026-09-23 当前基准：**正式 `qddflc.com` 官网运行在阿里云 WordPress；本仓库的 `apps/client` 是另一套 React H5，不是官网主题。以服务器为准同步后，当前 H5 和原生小程序均没有在线报价/历史报价页面，后端也没有会员侧的报价创建路由。下文的“第一阶段目标”是产品规划，不表示这些入口已经上线。实际进度见 [当前开发进度](docs/current-development-progress.md)。
 
+公网 8088 的会员登录和会员资料接口目前因旧发布版使用开发模拟身份而**临时关闭**；首页与产品展示仍可用，正式 WordPress 官网不受影响。本地源码已修复，尚待安全发布后再开放会员功能。操作记录见 [8088 会员接口临时保护](docs/8088-member-auth-safeguard-2026-09-23.md)。
+
 本项目不是标准电商商城，而是围绕“印刷参数化报价”设计的业务系统。核心闭环是：
 
 ```text
@@ -161,8 +163,8 @@ pnpm --dir apps/api test
 
 ```text
 本地 MySQL 可启动
-apps/api 32 个单元测试通过
-apps/api 8 个独立 MySQL 集成测试通过
+apps/api 38 个单元测试通过
+apps/api 9 个独立 MySQL 集成测试通过
 apps/admin build 通过
 apps/client build 通过
 GitHub Actions 尚未运行：当前授权缺少 workflow scope
@@ -260,8 +262,8 @@ pnpm --dir apps/admin build
 
 ```text
 typecheck 通过
-test 32/32 通过
-test:integration 8/8 通过
+test 38/38 通过
+test:integration 9/9 通过
 ```
 
 ## 核心 API

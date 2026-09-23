@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class AdminLoginDto {
   @IsString()
@@ -23,8 +23,7 @@ export class WxLoginDto {
 
 export class BindMobileDto {
   @IsString()
-  wxOpenid!: string;
-
-  @IsString()
+  @IsNotEmpty()
+  @MaxLength(32)
   mobile!: string;
 }

@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { PrismaService } from '../../database/prisma.service';
-import { createAdminToken, defaultAdminPermissions } from './admin-token';
+import { createAdminToken } from './admin-token';
 import { createMemberToken } from './member-token';
+import { mockWechatLoginEnabled } from './mock-wechat-login';
 import { AdminLoginDto, BindMobileDto, WxLoginDto } from './dto/auth.dto';
 
 @Injectable()
@@ -11,39 +12,21 @@ export class AuthService {
 
   async adminLogin(dto: AdminLoginDto) {
     const admin = await this.findDatabaseAdmin(dto.username);
-    if (admin) {
-      if (admin.status !== 'active' || !verifyPassword(dto.password, admin.passwordHash)) {
-        throw new UnauthorizedException('后台账号或密码错误');
-      }
-
-      const permissions = collectPermissions(admin);
-      const auth = createAdminToken(admin.username, permissions);
-      await this.prisma.adminUser.update({
-        where: { id: admin.id },
-        data: { lastLoginAt: new Date() },
-      });
-      return {
-        ...auth,
-        user: {
-          username: admin.username,
-          role: admin.roles[0]?.role.code ?? 'admin',
-          permissions: auth.permissions,
-        },
-      };
-    }
-
-    const username = process.env.ADMIN_USERNAME ?? 'admin';
-    const password = process.env.ADMIN_PASSWORD ?? 'admin123';
-    if (dto.username !== username || dto.password !== password) {
+    if (!admin || admin.status !== 'active' || !verifyPassword(dto.password, admin.passwordHash)) {
       throw new UnauthorizedException('后台账号或密码错误');
     }
 
-    const auth = createAdminToken(username, defaultAdminPermissions);
+    const permissions = collectPermissions(admin);
+    const auth = createAdminToken(admin.username, permissions);
+    await this.prisma.adminUser.update({
+      where: { id: admin.id },
+      data: { lastLoginAt: new Date() },
+    });
     return {
       ...auth,
       user: {
-        username,
-        role: 'admin',
+        username: admin.username,
+        role: admin.roles[0]?.role.code ?? 'admin',
         permissions: auth.permissions,
       },
     };
@@ -68,7 +51,7 @@ export class AuthService {
         },
       });
     } catch {
-      return null;
+      throw new ServiceUnavailableException('后台账号服务暂不可用');
     }
   }
 
@@ -95,8 +78,8 @@ export class AuthService {
     };
   }
 
-  async bindMobile(dto: BindMobileDto) {
-    const user = await this.prisma.user.findUnique({ where: { wxOpenid: dto.wxOpenid } });
+  async bindMobile(userId: number, dto: BindMobileDto) {
+    const user = await this.prisma.user.findUnique({ where: { id: BigInt(userId) } });
     if (!user) {
       throw new NotFoundException('用户不存在');
     }
@@ -112,7 +95,7 @@ type DatabaseAdmin = NonNullable<Awaited<ReturnType<AuthService['findDatabaseAdm
 
 function collectPermissions(admin: DatabaseAdmin): string[] {
   const permissions = admin.roles.flatMap((item) => item.role.permissions.map((rolePermission) => rolePermission.permission.code));
-  return Array.from(new Set(permissions.length > 0 ? permissions : defaultAdminPermissions));
+  return Array.from(new Set(permissions));
 }
 
 function verifyPassword(password: string, storedHash: string): boolean {
@@ -131,6 +114,9 @@ async function resolveWxIdentity(code: string): Promise<{ openid: string; unioni
   const appid = process.env.WECHAT_APPID;
   const secret = process.env.WECHAT_APP_SECRET;
   if (code.startsWith('mock_')) {
+    if (!mockWechatLoginEnabled()) {
+      throw new UnauthorizedException('开发模拟登录未启用');
+    }
     return { openid: `mock_${code.replace(/^mock_/, '')}` };
   }
   if (!appid || !secret) {

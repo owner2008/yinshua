@@ -7,20 +7,9 @@ export interface AdminTokenPayload {
   exp: number;
 }
 
-export const defaultAdminPermissions = [
-  'admin:product',
-  'admin:pricing',
-  'admin:quote-rule',
-  'admin:quote',
-  'admin:member',
-  'admin:inventory',
-  'admin:audit-log',
-  'admin:permission',
-];
-
 export function createAdminToken(
   username: string,
-  permissions: string[] = defaultAdminPermissions,
+  permissions: string[],
 ): { token: string; expiresAt: string; permissions: string[] } {
   const expiresInSeconds = Number(process.env.ADMIN_TOKEN_TTL_SECONDS ?? 60 * 60 * 8);
   const payload: AdminTokenPayload = {

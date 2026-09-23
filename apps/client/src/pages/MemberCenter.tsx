@@ -1,5 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
+  ApiRequestError,
   clearMemberSession,
   createMyAddress,
   deleteMyAddress,
@@ -42,29 +44,37 @@ export function MemberCenterPage() {
   const [savingAddress, setSavingAddress] = useState(false);
   const [notice, setNotice] = useState<string>('');
 
+  function handleMemberError(error: unknown, fallback: string) {
+    if (error instanceof ApiRequestError && error.status === 401) {
+      clearMemberSession();
+      resetSession(null);
+    }
+    setNotice(error instanceof Error ? error.message : fallback);
+  }
+
   async function load() {
     setLoading(true);
     setNotice('');
     try {
       await ensureSession();
       const [remoteProfile, remoteAddresses] = await Promise.all([
-        fetchMyProfile().catch(() => null),
-        fetchMyAddresses().catch(() => []),
+        fetchMyProfile(),
+        fetchMyAddresses(),
       ]);
       if (remoteProfile) {
         setProfile({ ...emptyProfile, ...remoteProfile });
       }
       setAddresses(remoteAddresses ?? []);
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '加载失败');
+      handleMemberError(error, '加载失败');
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    void load();
-  }, []);
+    if (session) void load();
+  }, [session?.token]);
 
   async function saveProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -80,7 +90,7 @@ export function MemberCenterPage() {
       setProfile({ ...emptyProfile, ...saved });
       setNotice(profile.memberNo ? '资料已更新' : '会员注册成功');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '保存失败');
+      handleMemberError(error, '保存失败');
     } finally {
       setSavingProfile(false);
     }
@@ -95,7 +105,7 @@ export function MemberCenterPage() {
       setAddressDraft(emptyAddress);
       setNotice('地址已新增');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '新增地址失败');
+      handleMemberError(error, '新增地址失败');
     } finally {
       setSavingAddress(false);
     }
@@ -118,7 +128,7 @@ export function MemberCenterPage() {
       setAddresses((current) => current.filter((item) => String(item.id) !== String(id)));
       setNotice('地址已删除');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '删除失败');
+      handleMemberError(error, '删除失败');
     }
   }
 
@@ -128,8 +138,21 @@ export function MemberCenterPage() {
       setAddresses((current) => current.map((item) => ({ ...item, isDefault: String(item.id) === String(id) })));
       setNotice('已设为默认地址');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : '设置失败');
+      handleMemberError(error, '设置失败');
     }
+  }
+
+  if (!session) {
+    return (
+      <main className="subpage member-page">
+        <section className="subpage-section">
+          <div className="subpage-empty">
+            <h1>会员登录暂未开放</h1>
+            <Link to="/contact">联系我们</Link>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (

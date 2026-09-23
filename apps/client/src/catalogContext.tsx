@@ -4,8 +4,6 @@ import {
   fetchCatalogHome,
   fetchCatalogProducts,
   getMemberSession,
-  loginMember,
-  saveMemberSession,
 } from './api';
 import { sampleCategories, sampleProducts } from './sampleData';
 import type { CatalogHome, MemberSession, Product, ProductCategory } from './types';
@@ -69,10 +67,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
       setSession(existing);
       return existing;
     }
-    const next = await loginMember();
-    saveMemberSession(next);
-    setSession(next);
-    return next;
+    throw new Error('会员登录暂未开放');
   }, []);
 
   const resetSession = useCallback((next: MemberSession | null) => {
@@ -81,8 +76,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     void refresh();
-    void ensureSession().catch(() => undefined);
-  }, [refresh, ensureSession]);
+  }, [refresh]);
 
   return (
     <CatalogContext.Provider

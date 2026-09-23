@@ -91,6 +91,11 @@ function template(
 }
 
 async function main() {
+  const adminUsername = process.env.ADMIN_USERNAME;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminUsername || !adminPassword || adminPassword.length < 16) {
+    throw new Error('Set ADMIN_USERNAME and an ADMIN_PASSWORD of at least 16 characters before seeding');
+  }
   await seedCategories();
   await seedContentManagement();
   await seedProducts();
@@ -100,7 +105,7 @@ async function main() {
   await seedPrintPrices();
   await seedRules();
   await seedMemberLevels();
-  await seedAdminAccount();
+  await seedAdminAccount(adminUsername, adminPassword);
 }
 
 async function seedCategories() {
@@ -462,7 +467,7 @@ async function seedMemberLevels() {
   }
 }
 
-async function seedAdminAccount() {
+async function seedAdminAccount(username: string, password: string) {
   const permissions = [
     ['admin:product', '产品与模板管理', 'product'],
     ['admin:content', '展示内容管理', 'content'],
@@ -498,11 +503,9 @@ async function seedAdminAccount() {
     });
   }
 
-  const username = process.env.ADMIN_USERNAME ?? 'admin';
-  const password = process.env.ADMIN_PASSWORD ?? 'admin123';
   const adminUser = await prisma.adminUser.upsert({
     where: { username },
-    update: { displayName: '系统管理员', status: 'active' },
+    update: { displayName: '系统管理员' },
     create: { username, displayName: '系统管理员', passwordHash: hashPassword(password) },
   });
 

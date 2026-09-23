@@ -34,13 +34,29 @@ describe('AdminAuthGuard', () => {
 describe('MemberAuthGuard', () => {
   it('attaches current member from a valid token', () => {
     const guard = new MemberAuthGuard();
-    const auth = createMemberToken({ id: 3, wxOpenid: 'mock_3' });
+    const auth = createMemberToken({ id: 3, wxOpenid: 'wx_3' });
     const request: { headers: Record<string, string>; member?: unknown } = {
       headers: { authorization: `Bearer ${auth.token}` },
     };
 
     assert.equal(guard.canActivate(contextWithRequest(request)), true);
-    assert.deepEqual(request.member, { userId: 3, wxOpenid: 'mock_3' });
+    assert.deepEqual(request.member, { userId: 3, wxOpenid: 'wx_3' });
+  });
+
+  it('rejects an existing mock session when mock login is disabled', () => {
+    const originalFlag = process.env.ALLOW_MOCK_WECHAT_LOGIN;
+    delete process.env.ALLOW_MOCK_WECHAT_LOGIN;
+    try {
+      const guard = new MemberAuthGuard();
+      const auth = createMemberToken({ id: 3, wxOpenid: 'mock_shared' });
+      assert.throws(
+        () => guard.canActivate(contextWithHeaders({ authorization: `Bearer ${auth.token}` })),
+        UnauthorizedException,
+      );
+    } finally {
+      if (originalFlag === undefined) delete process.env.ALLOW_MOCK_WECHAT_LOGIN;
+      else process.env.ALLOW_MOCK_WECHAT_LOGIN = originalFlag;
+    }
   });
 
   it('rejects missing member tokens', () => {

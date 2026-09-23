@@ -152,7 +152,7 @@ pnpm --dir apps/api db:seed
 - `PUT /api/member/addresses/:id/default`
 - `DELETE /api/member/addresses/:id`
 
-说明：`wx-login` 会返回会员 token。只有显式 `mock_` 前缀的 code 可走开发期 mock；真实微信 code 缺少 `WECHAT_APPID` / `WECHAT_APP_SECRET` 时会被拒绝，配置密钥后才调用微信 code2Session。会员资料、地址及历史报价读取需要携带 `Authorization: Bearer <member-token>`；会员保存报价的 HTTP 路由当前尚未恢复。
+说明：`wx-login` 会返回会员 token。本地新源码只在非生产环境显式配置 `ALLOW_MOCK_WECHAT_LOGIN=true` 时允许 `mock_` code，默认拒绝并废止旧模拟会话；真实微信 code 缺少 `WECHAT_APPID` / `WECHAT_APP_SECRET` 时会被拒绝，配置密钥后才调用微信 code2Session。`POST /api/auth/bind-mobile` 需会员 token，请求体只接受 `mobile`，它仅记录用户填报的号码，尚无短信核验。会员资料、地址及历史报价读取也需要会员 token；会员保存报价的 HTTP 路由当前尚未恢复。**服务器 API 尚未发布这些修复，公网 8088 会员接口暂由代理关闭。**
 
 后台配置：
 

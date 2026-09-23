@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { CatalogProvider } from './catalogContext';
+import { CatalogProvider, useCatalog } from './catalogContext';
 import {
   AboutPage,
   AdvantagesPage,
@@ -34,6 +34,7 @@ export function App() {
 }
 
 function Shell() {
+  const { session } = useCatalog();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -80,7 +81,7 @@ function Shell() {
             <NavLink to="/factory">生产实力</NavLink>
             <NavLink to="/jobs">人才招聘</NavLink>
             <NavLink to="/contact">联系我们</NavLink>
-            <NavLink to="/member">会员中心</NavLink>
+            {session ? <NavLink to="/member">会员中心</NavLink> : null}
           </nav>
           <button
             className="mobile-menu-button"

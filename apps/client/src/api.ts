@@ -23,7 +23,8 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(parseError(text) || `HTTP ${response.status}`);
+    if (response.status === 401) clearMemberSession();
+    throw new ApiRequestError(response.status, parseError(text) || `HTTP ${response.status}`);
   }
 
   if (response.status === 204) {
@@ -47,8 +48,10 @@ export function put<T>(path: string, body: unknown): Promise<T> {
   });
 }
 
-export function loginMember(code = 'mock_dev', nickname = '开发用户') {
-  return post<MemberSession>('/auth/wx-login', { code, nickname });
+export class ApiRequestError extends Error {
+  constructor(readonly status: number, message: string) {
+    super(message);
+  }
 }
 
 export function getMemberSession(): MemberSession | null {
@@ -69,10 +72,6 @@ export function getMemberSession(): MemberSession | null {
     clearMemberSession();
     return null;
   }
-}
-
-export function saveMemberSession(session: MemberSession) {
-  localStorage.setItem(MEMBER_SESSION_KEY, JSON.stringify(session));
 }
 
 export function clearMemberSession() {
