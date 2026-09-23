@@ -1,6 +1,6 @@
 # 执行状态
 
-本文档记录按 `开发落地执行文档.md` 的当前执行进度。
+本文档保留按 `开发落地执行文档.md` 推进时的**历史阶段记录**。2026-09-23 以服务器为准同步后，当前状态请先看 `docs/current-development-progress.md`、`docs/aliyun-server-sync-2026-09-23.md` 和 `docs/wordpress-site-and-domain-2026-09-23.md`。下方曾经完成的 H5/小程序报价页和公开报价路由不在当前同步后的源码中，不能据此认定现网仍有这些功能。
 
 ## 已完成
 
@@ -132,13 +132,11 @@
 
 当前报价引擎已经支持数据库读取报价配置。如果未配置 `DATABASE_URL`，或数据库不可用，会自动使用内存示例配置，便于开发期继续验证报价流程。
 
-本地最简启动顺序：
+下面是旧开发阶段的启动记录，**不得对服务器恢复的本地业务库照搬执行**。当前安全启动方法见 `docs/current-development-progress.md`，集成测试只允许独立的 `yinshua_ci` 或 `yinshua_test_*` 库。
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\dev-env.ps1
 . .\scripts\start-mysql.ps1
-pnpm --dir apps/api prisma:push
-pnpm --dir apps/api db:seed
 pnpm --dir apps/api start:dev
 pnpm --dir apps/admin dev
 pnpm --dir apps/client dev
@@ -154,15 +152,14 @@ pnpm --dir apps/client dev
 - 已验证停用最后一个权限管理员、清空最后一个权限角色权限都会返回 400。
 - 已验证用户端报价计算、微信占位登录、保存报价、会员历史报价与详情查询链路。
 - 已验证用户端保存报价未带会员 token 返回 401，mock 微信登录后带 token 保存与历史查询成功。
-- 已通过 `pnpm --dir apps/api test`，当前 10 个 API 自动化测试全部通过。
-- 已通过 `pnpm --dir apps/api test:integration`，当前 3 个 MySQL 集成测试通过。
+- 旧阶段的 10 个 API 自动化测试、3 个 MySQL 集成测试曾通过；2026-09-23 重新验证当前源码为 32 个单元测试和 8 个独立 MySQL 集成测试通过，详见 `docs/current-development-progress.md`。
 
 ## 下一步优先级
 
 1. 配置正式小程序 `WECHAT_APPID` / `WECHAT_APP_SECRET`，用真实微信 code 校验替换开发期 mock code。
 2. 配置小程序 request 合法域名或本地开发"不校验合法域名"，完成微信开发者工具与真机联调。
-3. 为 `ProductCategory` 管理、`/api/catalog/*` 与会员地址 PUT/DELETE 路由补充集成测试。
-4. 补充 Docker / Nginx / CI 脚本，统一运行 API typecheck/test/test:integration 与前端 build。
+3. `ProductCategory` 管理、`/api/catalog/*` 与会员地址 PUT/DELETE 集成测试已补，需继续做浏览器页面和小程序真机验收。
+4. Docker / Nginx 配置和本地 CI 脚本已补；GitHub Actions 工作流因当前授权缺少 `workflow` scope 尚未推送和云端验证。
 5. 为后台管理端补充页面级 smoke 测试。
 
 ## 验收用报价样例

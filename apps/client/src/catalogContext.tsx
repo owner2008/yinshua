@@ -5,16 +5,14 @@ import {
   fetchCatalogProducts,
   getMemberSession,
   loginMember,
-  request,
   saveMemberSession,
 } from './api';
-import { sampleCategories, sampleProducts, sampleTemplates } from './sampleData';
-import type { CatalogHome, MemberSession, Product, ProductCategory, ProductTemplate } from './types';
+import { sampleCategories, sampleProducts } from './sampleData';
+import type { CatalogHome, MemberSession, Product, ProductCategory } from './types';
 
 interface CatalogContextValue {
   categories: ProductCategory[];
   products: Product[];
-  templates: ProductTemplate[];
   home: CatalogHome | null;
   loading: boolean;
   usingFallback: boolean;
@@ -31,7 +29,6 @@ const CatalogContext = createContext<CatalogContextValue | null>(null);
 export function CatalogProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<ProductCategory[]>(sampleCategories);
   const [products, setProducts] = useState<Product[]>(sampleProducts);
-  const [templates, setTemplates] = useState<ProductTemplate[]>(sampleTemplates);
   const [home, setHome] = useState<CatalogHome | null>(null);
   const [loading, setLoading] = useState(false);
   const [usingFallback, setUsingFallback] = useState(true);
@@ -41,25 +38,22 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [homeData, categoryList, productList, templateList] = await Promise.all([
+      const [homeData, categoryList, productList] = await Promise.all([
         fetchCatalogHome().catch(() => null),
         fetchCatalogCategories().catch(() => [] as ProductCategory[]),
         fetchCatalogProducts().catch(() => [] as Product[]),
-        request<ProductTemplate[]>('/admin/product-templates').catch(() => [] as ProductTemplate[]),
       ]);
       const hasRemote = (productList && productList.length > 0) || (categoryList && categoryList.length > 0);
 
       if (hasRemote) {
         setCategories(categoryList.length > 0 ? categoryList : sampleCategories);
         setProducts(productList.length > 0 ? productList : sampleProducts);
-        setTemplates(templateList.length > 0 ? templateList : sampleTemplates);
         setHome(homeData);
         setUsingFallback(false);
         setNotice('产品配置已同步');
       } else {
         setCategories(sampleCategories);
         setProducts(sampleProducts);
-        setTemplates(sampleTemplates);
         setHome(null);
         setUsingFallback(true);
         setNotice('正在使用内置样例配置');
@@ -95,7 +89,6 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
       value={{
         categories,
         products,
-        templates,
         home,
         loading,
         usingFallback,

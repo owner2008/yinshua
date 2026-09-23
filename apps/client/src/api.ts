@@ -5,7 +5,6 @@ import type {
   MemberSession,
   Product,
   ProductCategory,
-  ProductTemplate,
 } from './types';
 
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api';
@@ -95,12 +94,6 @@ export function fetchCatalogProducts(categoryId?: string | number) {
 
 export function fetchCatalogProduct(id: string | number) {
   return request<Product>(`/catalog/products/${id}`);
-}
-
-export function fetchTemplatesByProduct(productId: string | number) {
-  return request<ProductTemplate[]>('/admin/product-templates').then((list) =>
-    list.filter((template) => Number(template.productId) === Number(productId)),
-  );
 }
 
 export function fetchMyProfile() {

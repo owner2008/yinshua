@@ -2,6 +2,8 @@
 
 面向不干胶印刷业务的产品展示、参数化报价、会员、库存与后台配置系统。
 
+**2026-09-23 当前基准：**正式 `qddflc.com` 官网运行在阿里云 WordPress；本仓库的 `apps/client` 是另一套 React H5，不是官网主题。以服务器为准同步后，当前 H5 和原生小程序均没有在线报价/历史报价页面，后端也没有会员侧的报价创建路由。下文的“第一阶段目标”是产品规划，不表示这些入口已经上线。实际进度见 [当前开发进度](docs/current-development-progress.md)。
+
 本项目不是标准电商商城，而是围绕“印刷参数化报价”设计的业务系统。核心闭环是：
 
 ```text
@@ -33,10 +35,12 @@
 - MySQL
 - class-validator
 
-### 规划中的前端
+### 当前前端
 
-- 用户端：Taro + React + TypeScript，支持微信小程序 / H5
-- 后台端：React + TypeScript + Ant Design，或 Vue 3 + Element Plus
+- 正式官网：WordPress + PHP 主题
+- 独立 H5：React + Vite + TypeScript
+- 微信小程序：原生小程序工程
+- 后台端：React + Vite + TypeScript + Ant Design
 
 ## 目录结构
 
@@ -44,7 +48,8 @@
 apps/
   api/      NestJS 后端
   admin/    后台管理端
-  client/   微信小程序 / H5 用户端占位
+  client/   独立 React H5 企业展示端
+  miniprogram/  原生微信小程序
   wordpress-theme/  当前 WordPress 官网主题源码
 database/   SQL 草案与种子数据
 deploy/wordpress/  官网 Nginx 配置
@@ -62,17 +67,19 @@ scripts/    本地开发环境脚本
 - P4 会员与历史报价 API
 - P5 基础库存与审计 API
 
-已完成第一版：
+当前保留的第一版：
 
 - 后台管理端页面
-- H5 用户端多页面流程
-- 微信小程序基础页面与报价流程
+- H5 企业展示、产品与会员页面
+- 微信小程序首页、产品与会员页面
+- 后端报价服务、后台试算与历史报价读取能力；会员创建报价的 HTTP 入口尚未恢复
 
 当前仍待收口：
 
 - 真实微信登录 code2Session 对接
 - 小程序真机联调与合法域名配置
-- Docker / Nginx / CI 与页面级 smoke 测试
+- H5/小程序报价入口及会员报价创建路由是否恢复、恢复到哪套前端
+- GitHub Actions 云端运行与页面级 smoke 测试
 
 详细进度见：
 
@@ -99,10 +106,10 @@ scripts/    本地开发环境脚本
 - npm 10.9.4
 - pnpm 9.15.9
 
-PowerShell 进入开发环境：
+PowerShell 在当前终端加载开发环境：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\dev-env.ps1
+. .\scripts\dev-env.ps1
 ```
 
 CMD 进入开发环境：
@@ -118,7 +125,7 @@ scripts\dev-env.cmd
 当前本机已恢复阿里云数据库快照。不要对这份数据执行 `prisma:push` 或 `db:seed`；它们只适用于新建的空开发库。先在项目根目录启动本地数据库：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\dev-env.ps1
+. .\scripts\dev-env.ps1
 . .\scripts\start-mysql.ps1
 ```
 
@@ -148,16 +155,17 @@ Client: http://127.0.0.1:5174
 pnpm --dir apps/api test
 ```
 
-集成测试会写入数据库，请在另建的测试库上运行，不要直接对服务器快照运行。重新构建前后端会覆盖本地保存的服务器发布文件；需要保持发布文件逐字节一致时不要运行构建命令或 `scripts/start-all.ps1`。
+集成测试会写入数据库，只能显式指向本机一次性 `yinshua_ci` 或 `yinshua_test_*` 库；脚本会拒绝业务库。重新构建前后端会覆盖本地保存的服务器发布文件；需要保持发布文件逐字节一致时不要运行构建命令或 `scripts/start-all.ps1`。
 
 当前已验证：
 
 ```text
 本地 MySQL 可启动
-apps/api test 通过
-apps/api test:integration 通过
+apps/api 32 个单元测试通过
+apps/api 8 个独立 MySQL 集成测试通过
 apps/admin build 通过
 apps/client build 通过
+GitHub Actions 尚未运行：当前授权缺少 workflow scope
 ```
 
 ## 安装依赖
@@ -167,6 +175,8 @@ pnpm --dir apps/api install
 ```
 
 ## 启动后端
+
+以下 `nest start` 会按当前源码重新编译，可能覆盖本机保留的服务器发布构建。要保持同步文件原样，请使用上方“最简启动”的 `dist` 命令。
 
 ```powershell
 pnpm --dir apps/api start
@@ -246,22 +256,26 @@ pnpm --dir apps/api lint
 pnpm --dir apps/admin build
 ```
 
-当前已验证：
+历史开发阶段验证过构建；服务器同步后的本地 API `dist` 保持原样，未在其目录重新构建。当前已重新验证类型检查、单元测试和独立数据库集成测试：
 
 ```text
 typecheck 通过
-build 通过
+test 32/32 通过
+test:integration 8/8 通过
 ```
 
 ## 核心 API
 
 ### 报价
 
-- `POST /api/quotes/calculate` 实时报价
-- `POST /api/quotes` 保存报价
+- `POST /api/admin/quotes/calculate` 后台报价计算，需 `admin:quote`
+- `POST /api/admin/quotes/preview` 后台规则试算，需 `admin:quote-rule`
 - `GET /api/admin/quotes` 后台报价列表
 - `GET /api/admin/quotes/:quoteNo` 后台报价详情
 - `GET /api/admin/quote-snapshots/:quoteNo` 报价快照
+- `GET /api/member/quotes`、`GET /api/member/quotes/:quoteNo` 登录会员历史报价读取
+
+当前代码**没有** `POST /api/quotes/calculate` 或 `POST /api/quotes` 路由；旧阶段文档中的用户端报价接口不能直接用于现行 H5/小程序。
 
 ### 后台配置
 

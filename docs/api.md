@@ -1,8 +1,8 @@
 # API 设计说明
 
-当前优先实现报价闭环 API，后续再补齐产品、会员、库存、后台配置的持久化接口。
+本文档包含早期报价 API 设计，**不是全部路由的现行清单**。2026-09-23 服务器同步后的源码没有 `POST /api/quotes/calculate`、`POST /api/quotes`；目前只有需管理员权限的 `POST /api/admin/quotes/calculate`、`POST /api/admin/quotes/preview`，以及会员历史报价读取。下面第 1、2 节的用户端写接口仍属待恢复设计，不能直接调用。当前状态见 `docs/current-development-progress.md`。
 
-## 1. 报价计算
+## 1. 报价计算（用户端接口待恢复）
 
 ### `POST /api/quotes/calculate`
 
@@ -61,7 +61,7 @@
 }
 ```
 
-## 2. 保存报价
+## 2. 保存报价（用户端接口待恢复）
 
 ### `POST /api/quotes`
 
@@ -120,7 +120,7 @@ Authorization: Bearer <member-token>
 
 ## 4.1 数据库相关命令
 
-在 `apps/api/.env` 中配置 `DATABASE_URL` 后执行：
+以下命令**只适用于新建的空开发/测试数据库**。本机已恢复服务器业务快照，不得对其执行：
 
 ```powershell
 pnpm --dir apps/api prisma:push
@@ -129,9 +129,9 @@ pnpm --dir apps/api db:seed
 
 当前后端支持数据库优先读取报价配置；如果数据库不可用，会自动回退到内存示例数据。
 
-## 5. 后续待实现 API
+## 5. 其他 API 与规划
 
-产品：
+以下产品短路径为早期规划，当前公开产品读取走上面的 `/api/catalog/*`：
 
 - `GET /api/products`
 - `GET /api/products/:id`
@@ -145,14 +145,14 @@ pnpm --dir apps/api db:seed
 - `GET /api/member/profile`
 - `PUT /api/member/profile`
 - `GET /api/member/quotes`
-- `GET /api/member/quotes/:id`
+- `GET /api/member/quotes/:quoteNo`
 - `GET /api/member/addresses`
 - `POST /api/member/addresses`
 - `PUT /api/member/addresses/:id`
 - `PUT /api/member/addresses/:id/default`
 - `DELETE /api/member/addresses/:id`
 
-说明：`wx-login` 会返回会员 token。未配置 `WECHAT_APPID` / `WECHAT_APP_SECRET` 或传入 `mock_` 前缀 code 时，会使用开发期 mock openid；配置正式小程序密钥后会调用微信 code2Session。会员资料、地址、历史报价与保存报价接口需要携带 `Authorization: Bearer <member-token>`。
+说明：`wx-login` 会返回会员 token。只有显式 `mock_` 前缀的 code 可走开发期 mock；真实微信 code 缺少 `WECHAT_APPID` / `WECHAT_APP_SECRET` 时会被拒绝，配置密钥后才调用微信 code2Session。会员资料、地址及历史报价读取需要携带 `Authorization: Bearer <member-token>`；会员保存报价的 HTTP 路由当前尚未恢复。
 
 后台配置：
 
