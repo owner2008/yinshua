@@ -39,6 +39,39 @@ describe('QuoteValidatorService label parameters', () => {
     assert.throws(() => service.validate(dto, template), BadRequestException);
   });
 
+  it('accepts exact template size and quantity boundaries', () => {
+    assert.doesNotThrow(() => service.validate(createDto({
+      widthMm: template.widthMin,
+      heightMm: template.heightMin,
+      quantity: template.quantityMin,
+    }), template));
+    assert.doesNotThrow(() => service.validate(createDto({
+      widthMm: template.widthMax,
+      heightMm: template.heightMax,
+      quantity: template.quantityMax,
+    }), template));
+  });
+
+  it('rejects values outside each template boundary', () => {
+    const cases: Array<[Partial<CreateQuoteDto>, RegExp]> = [
+      [{ widthMm: template.widthMin - 1 }, /宽度/],
+      [{ widthMm: template.widthMax + 1 }, /宽度/],
+      [{ heightMm: template.heightMin - 1 }, /高度/],
+      [{ heightMm: template.heightMax + 1 }, /高度/],
+      [{ quantity: template.quantityMin - 1 }, /数量/],
+      [{ quantity: template.quantityMax + 1 }, /数量/],
+    ];
+
+    for (const [overrides, message] of cases) {
+      assert.throws(() => service.validate(createDto(overrides), template), message);
+    }
+  });
+
+  it('rejects materials and processes not offered by the template', () => {
+    assert.throws(() => service.validate(createDto({ materialId: 999 }), template), /材料/);
+    assert.throws(() => service.validate(createDto({ processCodes: ['uv'] }), template), /工艺/);
+  });
+
   it('rejects unsupported adhesive type from template options', () => {
     const dto = createDto({ adhesiveType: 'freezer' });
 

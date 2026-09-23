@@ -8,7 +8,7 @@
     "build": "nest build",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
-    "test:integration": "node --import tsx --test \"src/**/*.itest.ts\"",
+    "test:integration": "node ../../scripts/run-api-integration.mjs",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",

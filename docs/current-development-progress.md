@@ -2,7 +2,15 @@
 
 本文档用于快速恢复项目上下文。重新打开项目时，优先阅读本文，再按需查看 `docs/execution-status.md` 和 `docs/content-management-qa-checklist.md`。
 
-更新时间：2026-04-27
+更新时间：2026-09-23
+
+## 2026-09-23：P6 自动检查准备
+
+- API 单元/集成测试和后台、H5 构建脚本已改为跨系统调用 `node`，不再写死本机的 `.tools/node/node.exe`。
+- 新增 `.github/workflows/ci.yml`，计划在 GitHub 的临时 MySQL 8.4 服务中建空库、导入种子并执行 API 类型检查、32 个单元测试、8 个集成测试，以及 API、后台和 H5 构建。工作流已通过 `actionlint`，但 GitHub 首次运行尚未验证。
+- 本机 API 类型检查及 32 个单元测试通过，其中新补了不同尺寸/数量/材料、最低收费、加急费、模板边界和非法材料/工艺验收；后台与 H5 的类型检查、Vite 构建通过，构建结果写入 E 盘临时目录，未覆盖服务器同步的 `dist`。
+- 集成测试使用 E 盘独立 MySQL 数据目录和 `127.0.0.1:3307/yinshua_ci`，建表、种子及 8 个测试均通过；新增目录/会员地址真实 HTTP 接口覆盖。测试命令现在先检查 `DATABASE_URL` 必须指向本机 `yinshua_ci` 或 `yinshua_test_*`，再用 TypeScript 编译保留 Nest 装饰器元数据；误指向恢复的业务库时已验证会拒绝运行。临时编译结果只写入系统临时目录并在测试结束后清理，未覆盖服务器同步的 `dist`，也未向业务库写入测试数据。
+- **未发布到 GitHub**：当前 OAuth 授权没有 `workflow` scope，GitHub 拒绝包含 `.github/workflows/ci.yml` 的推送。远程分支仍停留在先前的线上站点修复提交；获得用户授权并完成推送后，必须检查 GitHub Actions 的实际结果，才能把 CI 标记为已完成。
 
 ## 最新进展
 
@@ -691,7 +699,7 @@ Client: http://127.0.0.1:5174
 
 ## 常用验证命令
 
-集成测试会修改数据库，构建会覆盖本地保存的服务器发布文件；在这份快照上仅直接运行不写库的单元测试和类型检查。
+集成测试会修改数据库，运行前必须显式设置 `DATABASE_URL` 指向本机一次性 `yinshua_ci` 或 `yinshua_test_*`；脚本会拒绝恢复的业务库。API 构建会覆盖本地保存的服务器发布文件；在这份快照上直接运行的仅应是不写库的单元测试和类型检查。
 
 ```powershell
 pnpm --dir apps/api typecheck

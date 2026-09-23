@@ -26,6 +26,64 @@ describe('QuoteCalcService', () => {
     assert.equal(result.summary.unitPrice, 0.1084);
   });
 
+  it('uses the selected dimensions, quantity, and material price without optional processes', () => {
+    const result = new QuoteCalcService().calculate(
+      {
+        ...sampleInput,
+        widthMm: 200,
+        heightMm: 100,
+        quantity: 10000,
+        materialId: 3,
+        processCodes: [],
+      },
+      {
+        ...sampleConfig,
+        material: { materialId: 3, materialName: '合成纸', unitPrice: 2 },
+        print: { printMode: 'four_color', unitPrice: 0.02, setupFee: 30 },
+        processes: [],
+        rule: {
+          ...sampleConfig.rule,
+          lossRate: 1.1,
+          profitRate: 1.2,
+          memberRate: 1,
+          minPrice: 0,
+          packageFee: 0,
+        },
+      },
+    );
+
+    assert.equal(result.dimensions.areaM2, 0.02);
+    assert.equal(result.material.cost, 440);
+    assert.equal(result.print.cost, 230);
+    assert.deepEqual(result.processes, []);
+    assert.equal(result.summary.baseCost, 670);
+    assert.equal(result.summary.finalPrice, 804);
+  });
+
+  it('applies the minimum charge after the member rate', () => {
+    const result = new QuoteCalcService().calculate(sampleInput, {
+      ...sampleConfig,
+      rule: { ...sampleConfig.rule, minPrice: 600 },
+    });
+
+    assert.equal(result.summary.salePrice, 570.78);
+    assert.equal(result.summary.finalPrice, 600);
+    assert.equal(result.summary.unitPrice, 0.12);
+    assert.equal(result.summary.minPriceApplied, true);
+    assert.equal(result.snapshot.result.finalPrice, 600);
+  });
+
+  it('charges urgent production based on material, printing, and process costs', () => {
+    const result = new QuoteCalcService().calculate({ ...sampleInput, isUrgent: true }, sampleConfig);
+
+    assert.deepEqual(result.extraFees.map((fee) => [fee.code, fee.amount]), [
+      ['package', 20],
+      ['urgent', 60.42],
+    ]);
+    assert.equal(result.summary.baseCost, 483.22);
+    assert.equal(result.summary.finalPrice, 619.73);
+  });
+
   it('adds requirement-based extra fees without changing core process matching', () => {
     const service = new QuoteCalcService();
     const result = service.calculate(
