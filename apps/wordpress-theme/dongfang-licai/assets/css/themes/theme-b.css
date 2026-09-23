@@ -1,0 +1,39 @@
+/* ===== 方案B: 红陶暖橙 · 质感厚重 ===== */
+/* 覆盖 CSS 变量，通过后台「外观 → 主题风格」切换 */
+
+:root {
+  /* --- 主色: 陶土红 --- */
+  --blue-900: #3b1606;
+  --blue-800: #5c1e0a;
+  --blue-700: #7c2d12;
+  --blue-600: #9a3a1a;
+  --blue-500: #b8451e;
+  --blue-400: #d4653a;
+  --blue-300: #e08a6a;
+  --blue-200: #ecb09a;
+  --blue-100: #f5d5c8;
+  --blue-50:  #fdf0ea;
+
+  /* --- 强调色: 暖橙 --- */
+  --teal-700: #78350f;
+  --teal-600: #92400e;
+  --teal-500: #d97706;
+  --teal-400: #e5901a;
+  --teal-300: #f0ab3a;
+  --teal-200: #f5c66a;
+  --teal-100: #fbe0aa;
+  --teal-50:  #fef5e7;
+
+  --primary:      var(--blue-600);
+  --primary-dark: var(--blue-800);
+  --primary-light: var(--blue-100);
+  --primary-rgb:  124,45,18;
+  --accent:       var(--teal-500);
+  --accent-dark:  var(--teal-600);
+  --accent-light: var(--teal-100);
+  --accent-rgb:   217,119,6;
+
+  /* Advantage card icons - 红陶暖橙 */
+  --icon-bg: #fef5e7;
+  --icon-color: #d97706;
+}

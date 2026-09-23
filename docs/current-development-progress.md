@@ -665,12 +665,18 @@ pnpm --dir apps/client build
 
 ## 常用启动命令
 
+本机已按服务器版本恢复数据库；不要在这份快照上运行 `prisma:push` 或 `db:seed`。详情见 `docs/aliyun-server-sync-2026-09-23.md`。
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\dev-env.ps1
 . .\scripts\start-mysql.ps1
-pnpm --dir apps/api prisma:push
-pnpm --dir apps/api db:seed
-pnpm --dir apps/api start:dev
+cd apps\api
+..\..\.tools\node\node.exe dist\src\main.js
+```
+
+后台和前台请另开终端：
+
+```powershell
 pnpm --dir apps/admin dev
 pnpm --dir apps/client dev
 ```
@@ -685,6 +691,8 @@ Client: http://127.0.0.1:5174
 
 ## 常用验证命令
 
+集成测试会修改数据库，构建会覆盖本地保存的服务器发布文件；在这份快照上仅直接运行不写库的单元测试和类型检查。
+
 ```powershell
 pnpm --dir apps/api typecheck
 pnpm --dir apps/api build
@@ -696,6 +704,7 @@ pnpm --dir apps/client build
 
 ## 重点文档索引
 
+- `docs/aliyun-server-sync-2026-09-23.md`：服务器基准同步范围、数据快照、校验和限制。
 - `docs/execution-status.md`：详细执行状态。
 - `docs/api.md`：API 说明。
 - `docs/content-management-qa-checklist.md`：内容管理验收清单。
@@ -705,7 +714,7 @@ pnpm --dir apps/client build
 
 ## 下一次打开项目建议顺序
 
-1. 先读本文档。
+1. 先读本文档和 `docs/aliyun-server-sync-2026-09-23.md`。
 2. 看 `git status --short`，确认当前未提交改动范围。
 3. 如继续内容管理，直接按 `docs/content-management-qa-checklist.md` 验收。
 4. 如继续小程序，先配置真实微信参数与合法域名。

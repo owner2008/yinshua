@@ -45,7 +45,9 @@ apps/
   api/      NestJS 后端
   admin/    后台管理端
   client/   微信小程序 / H5 用户端占位
+  wordpress-theme/  当前 WordPress 官网主题源码
 database/   SQL 草案与种子数据
+deploy/wordpress/  官网 Nginx 配置
 docs/       API 文档与执行状态
 scripts/    本地开发环境脚本
 ```
@@ -75,6 +77,8 @@ scripts/    本地开发环境脚本
 详细进度见：
 
 - [当前开发进度与后续计划](docs/current-development-progress.md)
+- [阿里云服务器同步记录（2026-09-23）](docs/aliyun-server-sync-2026-09-23.md)
+- [WordPress 官网与域名切换记录（2026-09-23）](docs/wordpress-site-and-domain-2026-09-23.md)
 - [执行状态](docs/execution-status.md)
 - [H5 与小程序首页及报价体验重设计需求](docs/frontend-home-quote-redesign-requirements.md)
 - [开发落地执行文档](开发落地执行文档.md)
@@ -111,14 +115,21 @@ scripts\dev-env.cmd
 
 ## 最简启动
 
-建议在项目根目录按下面顺序启动：
+当前本机已恢复阿里云数据库快照。不要对这份数据执行 `prisma:push` 或 `db:seed`；它们只适用于新建的空开发库。先在项目根目录启动本地数据库：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\dev-env.ps1
 . .\scripts\start-mysql.ps1
-pnpm --dir apps/api prisma:push
-pnpm --dir apps/api db:seed
-pnpm --dir apps/api start:dev
+```
+
+后端、后台、前台分别在独立终端启动。后端以下命令运行与服务器一致的已发布构建，且会自动读取 `apps/api/.env`：
+
+```powershell
+cd apps\api
+..\..\.tools\node\node.exe dist\src\main.js
+```
+
+```powershell
 pnpm --dir apps/admin dev
 pnpm --dir apps/client dev
 ```
@@ -135,10 +146,9 @@ Client: http://127.0.0.1:5174
 
 ```powershell
 pnpm --dir apps/api test
-pnpm --dir apps/api test:integration
-pnpm --dir apps/admin build
-pnpm --dir apps/client build
 ```
+
+集成测试会写入数据库，请在另建的测试库上运行，不要直接对服务器快照运行。重新构建前后端会覆盖本地保存的服务器发布文件；需要保持发布文件逐字节一致时不要运行构建命令或 `scripts/start-all.ps1`。
 
 当前已验证：
 
@@ -192,6 +202,8 @@ http://127.0.0.1:5173
 管理端通过 Vite 代理访问后端 `/api`。
 
 ## 数据库配置
+
+当前本机已配置并恢复服务器数据库，`apps/api/.env` 已存在。以下复制配置、推送结构和写入种子数据的步骤仅适用于全新的空开发库，不要对这份服务器快照执行。
 
 复制环境变量文件：
 

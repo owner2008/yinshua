@@ -1,0 +1,39 @@
+/* ===== 方案A: 深蓝金 · 高端商务 ===== */
+/* 覆盖 CSS 变量，通过后台「外观 → 主题风格」切换 */
+
+:root {
+  /* --- 主色: 深海蓝 --- */
+  --blue-900: #091a2e;
+  --blue-800: #0f2b46;
+  --blue-700: #143d5e;
+  --blue-600: #1a4f7a;
+  --blue-500: #1f6090;
+  --blue-400: #3b82c4;
+  --blue-300: #6aa8d8;
+  --blue-200: #9ec8e6;
+  --blue-100: #cfe4f2;
+  --blue-50:  #edf4fa;
+
+  /* --- 强调色: 香槟金 --- */
+  --teal-700: #8b6914;
+  --teal-600: #a68a34;
+  --teal-500: #c9a84c;
+  --teal-400: #d4b96a;
+  --teal-300: #dfca88;
+  --teal-200: #ebddaa;
+  --teal-100: #f5eec8;
+  --teal-50:  #faf6ed;
+
+  --primary:      var(--blue-600);
+  --primary-dark: var(--blue-800);
+  --primary-light: var(--blue-100);
+  --primary-rgb:  15,43,70;
+  --accent:       var(--teal-500);
+  --accent-dark:  var(--teal-600);
+  --accent-light: var(--teal-100);
+  --accent-rgb:   201,168,76;
+
+  /* Advantage card icons - 深蓝金 */
+  --icon-bg: #f5eec8;
+  --icon-color: #c9a84c;
+}

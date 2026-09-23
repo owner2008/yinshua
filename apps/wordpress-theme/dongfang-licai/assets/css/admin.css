@@ -1,0 +1,212 @@
+/**
+ * 东方丽彩 — 后台管理界面品牌定制
+ * 配色：深蓝 #1e6b9e / #153e5e + 青绿 #14b8a6
+ */
+
+/* ===== 左侧菜单栏 ===== */
+#adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
+    background: #153e5e;
+}
+#adminmenu a {
+    color: rgba(255,255,255,0.75);
+}
+#adminmenu a:hover,
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub > a.menu-top,
+#adminmenu li > a.menu-top:focus {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+}
+#adminmenu .wp-has-current-submenu .wp-submenu,
+#adminmenu .wp-has-current-submenu .wp-submenu.sub-open,
+#adminmenu .wp-has-current-submenu.opensub .wp-submenu,
+#adminmenu a.wp-has-current-submenu:focus + .wp-submenu,
+.no-js li.wp-has-current-submenu:hover .wp-submenu {
+    background: #0f2f48;
+}
+#adminmenu .wp-submenu a {
+    color: rgba(255,255,255,0.7);
+}
+#adminmenu .wp-submenu a:hover,
+#adminmenu .wp-submenu a:focus,
+#adminmenu a.wp-has-current-submenu:focus + .wp-submenu a:hover {
+    color: #14b8a6;
+}
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub > a.menu-top,
+#adminmenu li > a.menu-top:focus {
+    background: rgba(20,184,166,0.15);
+}
+#adminmenu .wp-has-current-submenu .wp-submenu .wp-submenu-head,
+#adminmenu .wp-menu-arrow,
+#adminmenu .wp-menu-arrow div,
+#adminmenu li.current a.menu-top,
+#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu {
+    background: #1e6b9e;
+    color: #fff;
+}
+#adminmenu li.current a.menu-top:hover {
+    background: #14b8a6;
+}
+#adminmenu .awaiting-mod,
+#adminmenu .update-plugins {
+    background: #14b8a6;
+}
+#adminmenu li a.wp-has-current-submenu .update-plugins {
+    background: #14b8a6;
+}
+#collapse-button {
+    color: rgba(255,255,255,0.7);
+}
+#collapse-button:hover,
+#collapse-button:focus {
+    color: #14b8a6;
+}
+
+/* ===== 顶部工具栏 ===== */
+#wpadminbar {
+    background: #153e5e;
+}
+#wpadminbar .ab-top-menu > li:hover > .ab-item,
+#wpadminbar .ab-top-menu > li > .ab-item:focus,
+#wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus,
+#wpadminbar .menupop .ab-sub-wrapper {
+    background: #1e6b9e;
+}
+#wpadminbar .quicklinks .ab-sub-wrapper .ab-item:hover {
+    color: #14b8a6;
+}
+
+/* ===== 按钮和链接 ===== */
+.wp-core-ui .button-primary {
+    background: #1e6b9e;
+    border-color: #153e5e;
+}
+.wp-core-ui .button-primary:hover,
+.wp-core-ui .button-primary:focus {
+    background: #14b8a6;
+    border-color: #0d9488;
+}
+.wp-core-ui .button-secondary:hover {
+    color: #1e6b9e;
+    border-color: #1e6b9e;
+}
+a {
+    color: #1e6b9e;
+}
+a:hover {
+    color: #14b8a6;
+}
+.plugins .active th.check-column {
+    border-left-color: #14b8a6;
+}
+
+/* ===== 标题和UI元素 ===== */
+.wrap h1, .wrap h2, .wrap .add-new-h2,
+.wp-heading-inline {
+    color: #153e5e;
+}
+#wpcontent, #wpfooter {
+    background: #f8fafc;
+}
+.postbox {
+    border-color: #e2e8f0;
+}
+.postbox .hndle {
+    background: #f1f5f9;
+    border-bottom-color: #e2e8f0;
+}
+.wp-list-table thead th,
+.wp-list-table tfoot th {
+    background: #f1f5f9;
+}
+
+/* ===== 产品编辑页 - ACF 字段美化 ===== */
+.acf-postbox .postbox-header {
+    background: #153e5e;
+    color: #fff;
+}
+.acf-postbox .postbox-header h2 {
+    color: #fff !important;
+}
+
+/* ===== 仪表盘小部件 ===== */
+#dashboard-widgets .postbox .hndle {
+    background: #153e5e;
+    color: #fff;
+    border-bottom: none;
+}
+#dashboard-widgets .postbox .hndle .postbox-title {
+    color: #fff;
+}
+
+/* ===== 登录页 ===== */
+body.login {
+    background: #f1f5f9;
+}
+.login h1 a {
+    background-size: contain;
+    width: 200px;
+    height: 60px;
+}
+.login #backtoblog a,
+.login #nav a {
+    color: #1e6b9e;
+}
+.login #backtoblog a:hover,
+.login #nav a:hover {
+    color: #14b8a6;
+}
+.wp-core-ui .button-primary {
+    background: #1e6b9e;
+    border-color: #153e5e;
+}
+.login .button-primary:hover {
+    background: #14b8a6;
+    border-color: #0d9488;
+}
+.login .message {
+    border-left-color: #14b8a6;
+}
+
+/* ===== 询价记录详情页美化 ===== */
+.post-type-inquiry #post-body-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+.post-type-inquiry #post-body-content textarea#content {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #334155;
+    min-height: 300px;
+}
+
+/* ===== WooCommerce 子菜单徽章隐藏 ===== */
+#adminmenu .wc-admin-menu-badge,
+#adminmenu .awaiting-mod.count-0 {
+    display: none;
+}
+
+/* ===== 简化页脚 ===== */
+#wpfooter {
+    color: #94a3b8;
+    font-size: 12px;
+}
+#wpfooter a {
+    color: #1e6b9e;
+}
+
+/* ===== 响应式：移动端菜单 ===== */
+@media screen and (max-width: 782px) {
+    #adminmenu {
+        background: #153e5e;
+    }
+    #adminmenu a {
+        color: rgba(255,255,255,0.85);
+    }
+}

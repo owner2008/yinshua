@@ -1,0 +1,39 @@
+/* ===== 方案D: 天蓝珊瑚 · 清新现代 ===== */
+/* 覆盖 CSS 变量，通过后台「主题风格」切换 */
+
+:root {
+  /* --- 主色: 天蓝 --- */
+  --blue-900: #0c4a6e;
+  --blue-800: #075985;
+  --blue-700: #0369a1;
+  --blue-600: #0284c7;
+  --blue-500: #0ea5e9;
+  --blue-400: #38bdf8;
+  --blue-300: #7dd3fc;
+  --blue-200: #bae6fd;
+  --blue-100: #e0f2fe;
+  --blue-50:  #f0f9ff;
+
+  /* --- 强调色: 珊瑚橙 --- */
+  --teal-700: #9a3412;
+  --teal-600: #c2410c;
+  --teal-500: #f97316;
+  --teal-400: #fb923c;
+  --teal-300: #fdba74;
+  --teal-200: #fed7aa;
+  --teal-100: #ffedd5;
+  --teal-50:  #fff7ed;
+
+  --primary:      var(--blue-600);
+  --primary-dark: var(--blue-800);
+  --primary-light: var(--blue-100);
+  --primary-rgb:  2,132,199;
+  --accent:       var(--teal-500);
+  --accent-dark:  var(--teal-600);
+  --accent-light: var(--teal-100);
+  --accent-rgb:   249,115,22;
+
+  /* Advantage card icons - 天蓝珊瑚 */
+  --icon-bg: #ffedd5;
+  --icon-color: #f97316;
+}

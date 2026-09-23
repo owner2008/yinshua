@@ -1,0 +1,39 @@
+/* ===== 方案C: 墨绿铜 · 自然质感 ===== */
+/* 覆盖 CSS 变量，通过后台「外观 → 主题风格」切换 */
+
+:root {
+  /* --- 主色: 墨绿 --- */
+  --blue-900: #022c22;
+  --blue-800: #064e3b;
+  --blue-700: #065f46;
+  --blue-600: #047857;
+  --blue-500: #059669;
+  --blue-400: #10b981;
+  --blue-300: #34d399;
+  --blue-200: #6ee7b7;
+  --blue-100: #a7f3d0;
+  --blue-50:  #d1fae5;
+
+  /* --- 强调色: 古铜 --- */
+  --teal-700: #78350f;
+  --teal-600: #92400e;
+  --teal-500: #b45309;
+  --teal-400: #c96a1e;
+  --teal-300: #d98a3e;
+  --teal-200: #e8b06a;
+  --teal-100: #f5d6aa;
+  --teal-50:  #fef5e7;
+
+  --primary:      var(--blue-600);
+  --primary-dark: var(--blue-800);
+  --primary-light: var(--blue-100);
+  --primary-rgb:  6,78,59;
+  --accent:       var(--teal-500);
+  --accent-dark:  var(--teal-600);
+  --accent-light: var(--teal-100);
+  --accent-rgb:   180,83,9;
+
+  /* Advantage card icons - 墨绿铜 */
+  --icon-bg: #fef5e7;
+  --icon-color: #b45309;
+}
