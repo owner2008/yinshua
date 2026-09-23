@@ -473,9 +473,9 @@ function dflc_lang_switch_url($target_lang) {
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('dflc-style', get_stylesheet_uri(), [], '1.0');
     if (dflc_is_mobile()) {
-        wp_enqueue_style('dflc-h5', get_template_directory_uri() . '/h5/css/h5.css', [], '3.8');
+        wp_enqueue_style('dflc-h5', get_template_directory_uri() . '/h5/css/h5.css', [], '3.9');
     } else {
-        wp_enqueue_style('dflc-main', get_template_directory_uri() . '/assets/css/main.css', [], '5.8');
+        wp_enqueue_style('dflc-main', get_template_directory_uri() . '/assets/css/main.css', [], '5.9');
         wp_enqueue_script('dflc-script', get_template_directory_uri() . '/assets/js/main.js', [], '1.0', true);
     }
     // 主题风格 CSS（默认不加载，选非默认时加载对应文件）

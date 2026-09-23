@@ -511,6 +511,9 @@ section.section-alt { background: var(--bg-alt); }
 .contact-info-item h3 { font-size: .9rem; margin-bottom: 4px; }
 .contact-info-item p { font-size: .85rem; color: var(--text-muted); }
 .contact-info-item > div:last-child { min-width: 0; }
+.contact-email-links { display: grid; gap: 4px; margin-top: 8px; font-size: .85rem; line-height: 1.5; overflow-wrap: anywhere; }
+.contact-email-links a { color: var(--primary); }
+.contact-email-links a:hover { text-decoration: underline; }
 .contact-phone-list { display: grid; gap: 5px; margin-top: 8px; }
 .contact-phone-list > div { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 12px; align-items: baseline; }
 .contact-phone-list dt { font-size: .8rem; color: var(--text-muted); }
@@ -547,6 +550,7 @@ section.section-alt { background: var(--bg-alt); }
 .footer-contact > div > span:first-child { color: rgba(255,255,255,.55); }
 .footer-contact a { color: rgba(255,255,255,.9); font-weight: 600; }
 .footer-contact a:hover { color: #fff; text-decoration: underline; }
+.footer-email-links { display: grid; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
 .footer-col h3 { color: #fff; font-size: .9rem; margin-bottom: 16px; }
 .footer-col a { display: block; padding: 4px 0; color: rgba(255,255,255,.6); transition: color .2s; }
 .footer-col a:hover { color: var(--teal-400); }

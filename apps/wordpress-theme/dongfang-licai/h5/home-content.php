@@ -183,7 +183,7 @@
           </dl>
         </div>
       </div>
-      <div class="contact-row"><div class="icon">✉️</div><div><h3><?php echo dflc_t('电子邮箱'); ?></h3><p>79927940@qq.com</p></div></div>
+      <div class="contact-row"><div class="icon">✉️</div><div><h3><?php echo dflc_t('电子邮箱'); ?></h3><div class="contact-email-links"><a href="mailto:79927940@qq.com">79927940@qq.com</a><a href="mailto:qd7931@126.com">qd7931@126.com</a></div></div></div>
     </div>
     <form class="contact-form" onsubmit="return dflc_submit_contact(event)">
       <input type="text" name="customer_name" placeholder="<?php echo dflc_t('您的姓名'); ?>" required>

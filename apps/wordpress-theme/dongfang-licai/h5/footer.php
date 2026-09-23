@@ -13,7 +13,7 @@
   <address class="footer-contact">
     <div><span><?php echo dflc_t('手机'); ?></span><a href="tel:18705328806">18705328806</a></div>
     <div><span><?php echo dflc_t('办公室电话'); ?></span><a href="tel:053288860880">0532-8886 0880</a></div>
-    <div><span><?php echo dflc_t('电子邮箱'); ?></span><a href="mailto:79927940@qq.com">79927940@qq.com</a></div>
+    <div><span><?php echo dflc_t('电子邮箱'); ?></span><span class="footer-email-links"><a href="mailto:79927940@qq.com">79927940@qq.com</a><a href="mailto:qd7931@126.com">qd7931@126.com</a></span></div>
     <div><span><?php echo dflc_t('地址'); ?></span><span><?php echo dflc_t('青岛市城阳区书雨路118号'); ?></span></div>
     <div><span>QQ</span><span>551933467 / 79927940</span></div>
   </address>
