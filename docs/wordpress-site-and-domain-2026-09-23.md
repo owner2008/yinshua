@@ -30,7 +30,9 @@
 - 服务器备份：`/root/dongfang-licai-before-20260923.tgz`、`/root/dflc-posts-before-20260923.sql`、`/root/wordpress.conf.before-20260923`、`/root/wordpress.conf.after-certbot-before-ip-fix`。备份不在公开 Web 目录中，也未进入 Git。
 - 联系方式排版调整前的主题备份：`/root/dongfang-licai-before-contact-layout-20260923.tgz`。
 - 增加邮箱前的服务器备份：`/root/qddflc-before-email-20260923.sql` 和 `/root/dongfang-licai-before-email-20260923.tgz`。邮箱更新脚本已在服务器执行，四个页面均显示为 `updated`；PHP 语法检查及 WordPress 缓存刷新成功。
-- 电脑和手机 User-Agent 请求首页、招聘页、联系页及对应英文页，均能看到新邮箱；真实手机主题的首页和页脚截图已核对，320px 宽度下招聘页和联系页没有整页水平溢出。浏览器另有 `/favicon.ico` 的 404，与邮箱功能无关。
+- 电脑和手机 User-Agent 请求首页、招聘页、联系页及对应英文页，均能看到新邮箱；真实手机主题的首页和页脚截图已核对，320px 宽度下招聘页和联系页没有整页水平溢出。
+- 浏览器图标由站点现有的 DF 标识制成：源码 `deploy/wordpress/favicon-source.png`，构建脚本 `scripts/build-favicon.mjs`，发布文件 `deploy/wordpress/favicon.ico`。服务器文件必须放在 `/var/www/html/favicon.ico`；仅复制主题目录不会恢复该图标。
+- 手机分享图原先引用不存在的 `h5/og-image.png`。现由已有 SVG 渲染出 1200×630 PNG，放在主题同目录。图标和分享图发布前备份为 `/root/dongfang-licai-before-icons-20260923.tgz`，发布后两个 URL 均返回 HTTP 200，MIME 分别为 `image/x-icon`、`image/png`。
 - GitHub `master` 和 `codex/sync-from-aliyun-20260923` 已同步主题源码；数据库快照、凭据及被忽略的发布构建文件不在 Git 中。WordPress 页面正文的变化需随数据库迁移，不能仅靠切换主题获得。
 
 ## 公网域名与剩余异常
@@ -41,5 +43,6 @@
 - `.com` 顶级域当前把 `qddflc.com` 委派给 `dns13.hichina.com` / `dns14.hichina.com`，阿里云新权威 DNS 返回 `39.106.169.147`。但旧 DNSPod 的 `f1g1ns1.dnspod.net` / `f1g1ns2.dnspod.net` 仍对根域名和 `www` 返回旧 CNAME `qddflc.ecs.xinshangxin.cn`；用户没有原 DNSPod 账号权限。
 - **仍待上游处理**：服务器默认内网递归 DNS `100.100.2.136/138` 仍返回旧 DNSPod 委派及 `47.104.13.73`，与顶级域委派和阿里云新权威记录不一致。当前阿里云账号只读核查 `DescribeDnsCacheDomains`、`DescribeZones`、`DescribeResolverRules` 均无匹配规则，不能据此认定其他账号或解析节点没有覆盖；不要未经确认执行收费缓存清理。需要阿里云核查内网 DNS 的旧委派来源。
 - 2026-09-23 再次从服务器查询：阿里云权威 `dns13.hichina.com` 与公网递归 `223.5.5.5`、`8.8.8.8`、`1.1.1.1`、`119.29.29.29` 均把 `@`/`www` 返回为 `39.106.169.147`；但服务器默认内网解析器 `100.100.2.136` 对两者仍返回 TTL 为 10 秒的旧 CNAME `qddflc.ecs.xinshangxin.cn`，再解析为 `47.104.13.73`。因此旧 DNSPod 不修改并不意味着公网故障会永久持续，也不能保证删除其旧记录就能修复阿里云内网解析；若该内网结果持续，应由阿里云排查解析来源。
+- 后续再次查询两台内网解析器 `100.100.2.136/138`，其 SOA 和 NS 也仍指向旧 DNSPod，且应答无权威 `aa` 标志；阿里云权威 DNS 同时返回新 SOA/NS。此现象可能与旧委派缓存或内网转发有关，但仅凭结果不能确认具体来源，暂不改服务器的全局 DNS。
 - 为保障此服务器的 WordPress 自身调用，`/etc/hosts` 仅把 `qddflc.com` 和 `www.qddflc.com` 映射至 `127.0.0.1`，原文件备份在 `/root/hosts.before-qddflc-loopback-20260923`。普通 `curl` 从服务器访问两个 HTTPS 域名均返回 200；`certbot renew --dry-run --quiet` 成功。该本机映射不会改变公网 DNS 或其他访客的解析结果。
 - 本机测试网络使用代理虚拟 DNS，Chrome 视觉验收和外网内页检查通过显式连接 `39.106.169.147` 完成，不代表所有访客的本地 DNS 均已更新。若仍看到旧 IIS 404，先核对访问端解析结果，再排查旧委派或联系阿里云支持。
