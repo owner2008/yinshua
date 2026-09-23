@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-only-password
+          MYSQL_DATABASE: yinshua_ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pci-only-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DATABASE_URL: mysql://root:ci-only-password@127.0.0.1:3306/yinshua_ci
+      ADMIN_USERNAME: ci_admin
+      ADMIN_PASSWORD: ci-only-admin-password
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: |
+            apps/api/pnpm-lock.yaml
+            apps/admin/pnpm-lock.yaml
+            apps/client/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: |
+          pnpm --dir apps/api install --frozen-lockfile
+          pnpm --dir apps/admin install --frozen-lockfile
+          pnpm --dir apps/client install --frozen-lockfile
+
+      - name: Prepare disposable database
+        run: |
+          pnpm --dir apps/api prisma:generate
+          pnpm --dir apps/api prisma:push
+          pnpm --dir apps/api db:seed
+
+      - name: Check API
+        run: |
+          pnpm --dir apps/api typecheck
+          pnpm --dir apps/api test
+          pnpm --dir apps/api test:integration
+          pnpm --dir apps/api build
+
+      - name: Build frontends
+        run: |
+          pnpm --dir apps/admin build
+          pnpm --dir apps/client build
