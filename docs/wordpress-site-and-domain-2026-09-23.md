@@ -24,12 +24,17 @@
 - 从服务器本机以电脑和手机 User-Agent 访问首页及 `/products/`、`/production/`、`/about/`、`/jobs/`、`/industries/`、`/news/`、`/contact/`，均返回 HTTP 200。首页显示新电话和面积，生产内页显示 `6000㎡`。
 - 外网强制连接新 IP 时，两个域名的 HTTPS 证书有效，首页和主要内页返回 200；电脑和手机首页均包含 `6000㎡`、办公室电话及相同的内页链接。HTTP 和 IP 入口返回指向正式 HTTPS 域名的 301。
 - 使用 Chrome 分别以电脑和手机视口检查了上线后的联系区及页脚截图：号码、邮箱、地址、QQ 均完整显示；在 320px 手机视口下，联系区和页脚均在屏幕范围内，手机菜单可正常展开。手机端重新加载后不再出现电脑导航脚本异常。
+- 对 `qddflc.com` 和 `www.qddflc.com` 分别检查首页及七个主要内页，共 16 个 HTTPS 请求，直连新服务器均返回 200。手机 320px 视口的整页水平溢出为 0，行业展示区仍可横向滚动。
 - 服务器备份：`/root/dongfang-licai-before-20260923.tgz`、`/root/dflc-posts-before-20260923.sql`、`/root/wordpress.conf.before-20260923`、`/root/wordpress.conf.after-certbot-before-ip-fix`。备份不在公开 Web 目录中，也未进入 Git。
 - 联系方式排版调整前的主题备份：`/root/dongfang-licai-before-contact-layout-20260923.tgz`。
+- GitHub `master` 和 `codex/sync-from-aliyun-20260923` 均已推送到提交 `50a31256806ac435f332223e242b5f3cb6d3267e`；数据库快照、凭据及被忽略的发布构建文件不在 Git 中。
 
 ## 公网域名与剩余异常
 
 - 最初 `qddflc.com` 和 `www.qddflc.com` 指向旧 IIS 服务器 `47.104.13.73`，其内页返回截图所示 404。用户确认切换后，通过阿里云官方 CLI 的浏览器 OAuth 临时授权读取 DNS，发现 `@` 和 `www` 两条 A 记录**已是** `39.106.169.147`，因此没有重复提交 DNS 修改。阿里云权威 DNS、阿里云公共 DNS 和 Google 公共 DNS 均返回新地址。
 - 已使用 Let's Encrypt 为两个域名签发证书，有效期至 2026-12-22；证书文件位于服务器 `/etc/letsencrypt/live/qddflc.com`，未复制到本地或 Git。正式签发前的演练和签发后的续期演练均成功，`certbot-renew.timer` 已启用且运行中。
-- 本次核查使用的本机阿里云 CLI 临时 OAuth 配置 `codex-dns` 已删除；项目内仅保留被 Git 忽略的 CLI 程序，不保存云端凭据。
-- **剩余异常**：这台服务器自带的递归 DNS `100.100.2.136/138` 曾以 10 秒 TTL 将域名解析为旧 CNAME `qddflc.ecs.xinshangxin.cn` / `47.104.13.73`，与权威和公共 DNS 不一致。账号内未查询到同名 PrivateZone。本次 Chrome 实测通过显式映射新服务器 IP 完成，不代表所有访客的本地 DNS 均已更新；若仍看到旧 IIS 404，优先检查访问端解析器的结果，必要时联系阿里云排查其内部递归解析。
+- 两次核查使用的本机阿里云 CLI 临时 OAuth 配置 `codex-dns` 和 `codex-dns-audit` 均已删除；项目内仅保留被 Git 忽略的 CLI 程序，不保存云端凭据。
+- `.com` 顶级域当前把 `qddflc.com` 委派给 `dns13.hichina.com` / `dns14.hichina.com`，阿里云新权威 DNS 返回 `39.106.169.147`。但旧 DNSPod 的 `f1g1ns1.dnspod.net` / `f1g1ns2.dnspod.net` 仍对根域名和 `www` 返回旧 CNAME `qddflc.ecs.xinshangxin.cn`；用户没有原 DNSPod 账号权限。
+- **仍待上游处理**：服务器默认内网递归 DNS `100.100.2.136/138` 仍返回旧 DNSPod 委派及 `47.104.13.73`，与顶级域委派和阿里云新权威记录不一致。当前阿里云账号只读核查 `DescribeDnsCacheDomains`、`DescribeZones`、`DescribeResolverRules` 均无匹配规则，不能据此认定其他账号或解析节点没有覆盖；不要未经确认执行收费缓存清理。需要阿里云核查内网 DNS 的旧委派来源。
+- 为保障此服务器的 WordPress 自身调用，`/etc/hosts` 仅把 `qddflc.com` 和 `www.qddflc.com` 映射至 `127.0.0.1`，原文件备份在 `/root/hosts.before-qddflc-loopback-20260923`。普通 `curl` 从服务器访问两个 HTTPS 域名均返回 200；`certbot renew --dry-run --quiet` 成功。该本机映射不会改变公网 DNS 或其他访客的解析结果。
+- 本机测试网络使用代理虚拟 DNS，Chrome 视觉验收和外网内页检查通过显式连接 `39.106.169.147` 完成，不代表所有访客的本地 DNS 均已更新。若仍看到旧 IIS 404，先核对访问端解析结果，再排查旧委派或联系阿里云支持。
