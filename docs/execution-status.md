@@ -159,7 +159,7 @@ pnpm --dir apps/client dev
 1. 配置正式小程序 `WECHAT_APPID` / `WECHAT_APP_SECRET`，用真实微信 code 校验替换开发期 mock code。
 2. 配置小程序 request 合法域名或本地开发"不校验合法域名"，完成微信开发者工具与真机联调。
 3. `ProductCategory` 管理、`/api/catalog/*` 与会员地址 PUT/DELETE 集成测试已补，需继续做浏览器页面和小程序真机验收。
-4. Docker / Nginx 配置和本地 CI 脚本已补；GitHub Actions 工作流因当前授权缺少 `workflow` scope 尚未推送和云端验证。
+4. Docker / Nginx 配置与 GitHub Actions CI 已补，2026-09-24 `master` 首次云端运行 `35941497214` 通过；仍需补后台与 H5 页面级 smoke 测试。
 5. 为后台管理端补充页面级 smoke 测试。
 
 ## 验收用报价样例

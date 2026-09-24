@@ -18,13 +18,13 @@
 - 8088 偶发产品 500 的主要原因是容器混用 Podman 与阿里云 DNS，内部数据库名间歇性解析失败。API 和代理现已仅使用 Podman DNS `10.89.0.1`；轮换凭据后连续 70 次目录请求均为 200。发布时数据库跟随短暂重启，API 出现一次启动期 `P1001`，随后复查无持续错误。MySQL 应用/root 密码及 API 签名密钥已轮换，运行容器与正式配置核对一致；root 专用数据库快照与新凭据回退文件在服务器，细节见 `deploy/aliyun/README.md`。
 - 服务器 `podman-compose` 1.0.6 的 `--force-recreate` 不会可靠应用新镜像/命令；后续发布须先备份，再按依赖顺序移除 8088 代理和 API，使用校验过的单份 Compose 创建。不可把旧 Compose 备份直接恢复到生产，也不可移除会员代理拦截。
 
-## 2026-09-23：P6 自动检查准备
+## 2026-09-24：P6 自动检查已上线
 
 - API 单元/集成测试和后台、H5 构建脚本已改为跨系统调用 `node`，不再写死本机的 `.tools/node/node.exe`。
-- 新增 `.github/workflows/ci.yml`，计划在 GitHub 的临时 MySQL 8.4 服务中建空库、导入种子并执行 API 类型检查、38 个单元测试、9 个集成测试，以及 API、后台和 H5 构建。工作流已通过 `actionlint`，但 GitHub 首次运行尚未验证。
+- `.github/workflows/ci.yml` 已推送到 GitHub `master`，使用临时 MySQL 8.4 建库、播种并执行 API 类型检查、38 个单元测试、9 个集成测试，以及 API、后台和 H5 构建。2026-09-24 首次云端运行 `35941497214` 全部通过；后续仍需补页面级 smoke 测试。
 - 本机 API 类型检查及 38 个单元测试通过，其中新补了报价边界、模拟身份及后台默认账号安全验收；后台与 H5 的类型检查、Vite 构建通过，构建结果写入 E 盘临时目录，未覆盖服务器同步的 `dist`。
 - 集成测试使用 E 盘独立 MySQL 数据目录和 `127.0.0.1:3307/yinshua_ci`，建表、种子及 9 个测试均通过；覆盖目录/会员地址 HTTP 接口、手机号绑定权限及旧模拟会话拒绝。测试命令现在先检查 `DATABASE_URL` 必须指向本机 `yinshua_ci` 或 `yinshua_test_*`，再用 TypeScript 编译保留 Nest 装饰器元数据；误指向恢复的业务库时已验证会拒绝运行。临时编译结果只写入系统临时目录并在测试结束后清理，未覆盖服务器同步的 `dist`，也未向业务库写入测试数据。
-- **未发布到 GitHub**：当前 OAuth 授权没有 `workflow` scope，GitHub 拒绝包含 `.github/workflows/ci.yml` 的推送。远程分支仍停留在先前的线上站点修复提交；获得用户授权并完成推送后，必须检查 GitHub Actions 的实际结果，才能把 CI 标记为已完成。
+- GitHub 授权已补齐 `workflow` scope；`master` 与 `codex/sync-from-aliyun-20260923` 均已快进到提交 `2176dad`，新电脑克隆默认分支即可看到本轮服务器发布记录与源码。该状态不表示 WordPress 数据库正文、服务器生产凭据或仍未发布的 H5 构建已进入 Git。
 
 ## 最新进展
 

@@ -81,7 +81,7 @@ scripts/    本地开发环境脚本
 - 真实微信登录 code2Session 对接
 - 小程序真机联调与合法域名配置
 - H5/小程序报价入口及会员报价创建路由是否恢复、恢复到哪套前端
-- GitHub Actions 云端运行与页面级 smoke 测试
+- 后台及 H5 的页面级 smoke 测试（GitHub Actions CI 已通过）
 
 详细进度见：
 
@@ -167,7 +167,7 @@ apps/api 38 个单元测试通过
 apps/api 9 个独立 MySQL 集成测试通过
 apps/admin build 通过
 apps/client build 通过
-GitHub Actions 尚未运行：当前授权缺少 workflow scope
+GitHub Actions CI 已在 master 首次运行通过（run 35941497214）
 ```
 
 ## 安装依赖
