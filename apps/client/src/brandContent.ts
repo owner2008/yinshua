@@ -4,10 +4,11 @@ export const brand = {
   subtitle: '标签印刷 / 包装定制 / 数字溯源',
   phone: '0532-8886 0880',
   mobile: '18705328806',
+  emails: ['79927940@qq.com', 'qd7931@126.com'],
   contactPerson: '尚经理',
   address: '青岛市城阳区书雨路118号',
   factoryAddress: '城阳夏庄书雨路118号工厂 / 高新区工厂',
-  website: 'http://www.qddflc.com/',
+  website: 'https://www.qddflc.com/',
   recordNo: '鲁ICP备 xxxxxxxx 号',
 } as const;
 

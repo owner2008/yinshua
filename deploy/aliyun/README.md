@@ -9,7 +9,8 @@
 - MySQL 应用账号、MySQL root 账号、管理员/会员签名密钥已轮换；运行中容器与正式 Compose 配置逐项核对一致。旧管理员 token 需重新登录。不要将服务器配置或任何凭据复制入仓库。
 - 服务器 root 专用数据库备份：`/root/yinshua-before-credential-rotation-20260924.sql`（81,956 字节，SHA-256 `27811dd8c5d1dfffa72dcb1cf2fac10e7d0bc97eb738e472d2fedc033a0569c1`）；原 Compose 备份：`/root/yinshua-before-safe-api-20260924T002355Z.compose.yml`。这些备份含旧凭据/业务数据，禁止公开。
 - 直接访问 API 时，模拟微信登录、无 token 手机绑定及会员地址接口均返回 401；8088 代理的三个临时会员拦截继续返回 403，公开首页/目录与 WordPress 官网返回 200。2026-09-24 已发布不再自动使用模拟身份的 H5，但真实微信登录入口尚未实现/验收，不能开放会员接口。
-- H5 发布包 SHA-256 为 `2424e842f379877999b4c078b39e3daeb959a6d977f0ff03a2529adb9dec36c8`。发布前已备份完整 `dist` 到 `/root/yinshua-h5-before-20260924.tar.gz`（0600，SHA-256 `c1cc94785ec05596840edf00b574a02044c7967bcffc4cd548ddae4f803910ac`）。新旧构建除首页入口和一份 JS 外完全一致；仅增加带哈希的新 JS、原子替换首页入口，旧 JS 和 `dist/admin` 均保留，未重启容器。静态入口、新 JS、后台、产品接口及 WordPress 已通过 HTTP 验收；浏览器视觉验收仍待补。
+- H5 发布包 SHA-256 为 `2424e842f379877999b4c078b39e3daeb959a6d977f0ff03a2529adb9dec36c8`。发布前已备份完整 `dist` 到 `/root/yinshua-h5-before-20260924.tar.gz`（0600，SHA-256 `c1cc94785ec05596840edf00b574a02044c7967bcffc4cd548ddae4f803910ac`）。新旧构建除首页入口和一份 JS 外完全一致；仅增加带哈希的新 JS、原子替换首页入口，旧 JS 和 `dist/admin` 均保留，未重启容器。静态入口、新 JS、后台、产品接口及 WordPress 已通过 HTTP 验收；浏览器视觉验收见下条。
+- 2026-09-24 追加 H5 联系方式修正：旧页面的错误座机、虚构邮箱/域名和笼统地址已替换为手机 `18705328806`、办公室电话 `0532-8886 0880`、邮箱 `79927940@qq.com` 与 `qd7931@126.com`、正式官网及完整地址。发布包 `.h5-contact-20260924-a.tar.gz` SHA-256 为 `509475aeac06e9638913b04545d49da8eebc49a4c6c285baa3438a491a30ea84`，只含首页入口及新 JS/CSS；线上完整 `dist` 发布前备份 `/root/yinshua-h5-before-contact-sync-20260924.tar.gz`（0600，SHA-256 `c0ba33162f4f835e8d8c83f6873067f3c95a4e3f9fdecf550199f02b20c25d55`）。已先安装带哈希资源，再原子替换入口，未重启容器或改动后台。浏览器实测桌面 1280px 与手机 320px 联系页、手机首页内容和布局正常，手机首页控制台 0 错误；后台、目录和 WordPress 首页/联系页均 200，会员代理仍 403。已有打开中的 H5 单页会话需完整刷新，才能加载新入口。
 
 ## 运行与回退
 
@@ -18,3 +19,4 @@
 3. `render-compose.py` 只允许安全版/回退覆盖文件里的预期键，输出必须在正式 Compose 同目录、权限 0600。`podman-compose config` 可能打印所有环境变量，务必同时丢弃 stdout/stderr，不要保存输出。网络重建后先重新确认 `10.89.0.1` 是否仍为网关。
 4. 当前新凭据的回退文件为服务器 `.rollback-after-rotation-20260924.merged.yml`（0600），会运行旧 `api/dist`，但保留新凭据与单一 Podman DNS。仅紧急使用，仍须按上述依赖顺序重建，并维持三个会员代理拦截；不可回退到旧凭据或开放旧会员认证。
 5. `rotate-credentials.py` 仅用于服务器端分阶段轮换与验证，不输出密码。再次轮换须先生成新备份和新的候选文件，不得复用本次备份/临时文件。上线后检查公开目录、模拟登录拒绝、会员拦截、管理员重新登录和官网。
+6. 仅回退本次 H5 联系方式修正时，从 `/root/yinshua-h5-before-contact-sync-20260924.tar.gz` 提取旧 `dist/index.html` 到隔离目录，再原子替换现有 `dist/index.html`；旧 JS/CSS 已保留。不要整包覆盖当前 `dist`，以免误回退后台或之后新增的静态资源。回退后复查 8088 前台、后台、目录及会员拦截。

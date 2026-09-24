@@ -1,5 +1,7 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { toAssetUrl } from '../api';
+import { brand } from '../brandContent';
 import { useCatalog } from '../catalogContext';
 import type { Product } from '../types';
 
@@ -191,10 +193,11 @@ export function ContactPage() {
       <SubpageHero title="联系我们" subtitle="告诉我们您的产品和包装需求，工作人员会尽快与您沟通。" image="/images/hero-contact-service.jpg" />
       <section className="subpage-section contact-page-layout">
         <div className="contact-list">
-          <InfoLine label="电话" value="0532-5828 8288" />
-          <InfoLine label="邮箱" value="service@dflcyprint.com" />
-          <InfoLine label="官网" value="www.dflcyprint.com" />
-          <InfoLine label="地址" value="山东省青岛市" />
+          <InfoLine label="手机" value={<a href={`tel:${brand.mobile}`}>{brand.mobile}</a>} />
+          <InfoLine label="办公室电话" value={<a href={`tel:${brand.phone.replace(/\D/g, '')}`}>{brand.phone}</a>} />
+          <InfoLine label="电子邮箱" value={brand.emails.map((email) => <a key={email} href={`mailto:${email}`}>{email}</a>)} />
+          <InfoLine label="官网" value={<a href={brand.website}>{brand.website}</a>} />
+          <InfoLine label="地址" value={brand.address} />
         </div>
         <div className="contact-message-card">
           <h2>需求沟通建议</h2>
@@ -230,11 +233,11 @@ function ProductFallback({ index }: { index: number }) {
   return <img src={productFallbackImages[index % productFallbackImages.length]} alt="印刷包装产品" />;
 }
 
-function InfoLine({ label, value }: { label: string; value: string }) {
+function InfoLine({ label, value }: { label: string; value: ReactNode }) {
   return (
     <article>
       <strong>{label}</strong>
-      <span>{value}</span>
+      <div className="contact-value">{value}</div>
     </article>
   );
 }

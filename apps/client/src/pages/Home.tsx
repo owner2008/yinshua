@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { brand } from '../brandContent';
 
 const productTiles = [
   {
@@ -186,8 +187,10 @@ export function HomePage() {
         <h2>联系我们</h2>
         <p>期待与您合作，共创美好未来</p>
         <div>
-          <a href="tel:053258288288">0532-5828 8288</a>
-          <span>山东省青岛市</span>
+          <a href={`tel:${brand.mobile}`}>{brand.mobile}</a>
+          <a href={`tel:${brand.phone.replace(/\D/g, '')}`}>{brand.phone}</a>
+          {brand.emails.map((email) => <a key={email} href={`mailto:${email}`}>{email}</a>)}
+          <span>{brand.address}</span>
         </div>
       </section>
 
@@ -200,7 +203,7 @@ export function HomePage() {
           <span aria-hidden="true">▦</span>
           产品中心
         </Link>
-        <a href="tel:053258288288">
+        <a href={`tel:${brand.mobile}`}>
           <span aria-hidden="true">☎</span>
           拨打电话
         </a>

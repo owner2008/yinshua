@@ -767,10 +767,23 @@
   color: #06479e;
 }
 
-.contact-list span {
+.contact-list .contact-value {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
   color: #233a55;
   font-size: 18px;
   font-weight: 700;
+}
+
+.contact-list a {
+  color: #075bd2;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.contact-list a:hover {
+  text-decoration: underline;
 }
 
 .contact-message-card img {
