@@ -1,0 +1,4 @@
+services:
+  qddflc-api:
+    image: localhost/qddflc-api-runtime:20260924
+    command: ["node", "dist/src/main.js"]

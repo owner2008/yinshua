@@ -2,6 +2,8 @@
 
 这个目录用于把完整项目部署到极空间 Docker，包括前端页面、NestJS API 和 MySQL 数据库。
 
+**历史预览示例，不可直接用于现行阿里云生产环境。** 本目录 Compose 曾内置示例数据库密钥和默认管理员凭据，且启动时自动执行 `prisma:push`/`db:seed`；现行 API seed 已要求显式设置强管理员凭据。生产发布请使用 `deploy/aliyun/README.md` 的安全启动方案，勿复制本示例中的账号或密钥。
+
 ## NAS 目录结构
 
 建议在极空间项目目录中保持以下结构：
@@ -58,11 +60,6 @@ https://remote-access-8088.zconnect.cn/member
 https://remote-access-8088.zconnect.cn/history
 ```
 
-后台默认账号来自种子数据：
-
-```text
-账号：admin
-密码：admin123
-```
+管理员账号由部署时显式提供的 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD` 创建，不再提供默认账号。
 
 如果会员中心和历史页仍然没有数据，检查 `qddflc-api` 和 `qddflc-db` 容器日志。
