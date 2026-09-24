@@ -8,7 +8,8 @@ import type {
 } from './types';
 
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '/api';
-const MEMBER_SESSION_KEY = 'yinshua_member_session';
+const LEGACY_MEMBER_SESSION_KEY = 'yinshua_member_session';
+const MEMBER_SESSION_KEY = 'yinshua_member_session_v2';
 
 export async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const session = getMemberSession();
@@ -56,6 +57,7 @@ export class ApiRequestError extends Error {
 
 export function getMemberSession(): MemberSession | null {
   try {
+    localStorage.removeItem(LEGACY_MEMBER_SESSION_KEY);
     const raw = localStorage.getItem(MEMBER_SESSION_KEY);
     if (!raw) {
       return null;
@@ -76,6 +78,7 @@ export function getMemberSession(): MemberSession | null {
 
 export function clearMemberSession() {
   localStorage.removeItem(MEMBER_SESSION_KEY);
+  localStorage.removeItem(LEGACY_MEMBER_SESSION_KEY);
 }
 
 export function fetchCatalogHome() {
