@@ -1,24 +1,19 @@
-# 阿里云 API 安全发布准备
+# 阿里云 8088 API 发布与回退（2026-09-24）
 
-本目录是现行 `/opt/yinshua/current/docker-compose.yml` 的小范围覆盖文件，不包含服务器上的数据库凭据。正式官网 WordPress 不属于这个 Compose 项目。公网 8088 的会员接口仍由代理临时拦截；仅放置候选构建或提交本目录文件不代表已经发布。
+本目录的覆盖文件和脚本不含生产凭据。服务器 `/opt/yinshua/current/docker-compose.yml` 已更新为安全版 API 的正式配置，仅 root 可读；正式 WordPress 官网不属于此 Compose 项目。公网 8088 的会员接口仍由代理临时拦截。
 
-## 当前候选
+## 已发布状态
 
-- 候选 API：服务器 `api/dist-auth-20260924`，由本地提交 `cb54efa` 构建；候选包 SHA-256 为 `b3e5c0e70cf2da51c2a2b85f0f7b845c9eef38bb6a573dc4407ebe4c50167256`。
-- 旧 API：服务器 `api/dist`，保持原样供回退。
-- 候选在容器内 3001 端口已通过产品读取与认证拒绝验收，但临时进程已停止，公网仍走旧 API。验收期间曾发生一次旧 API 到数据库的短时断连，原因尚未定位。详见 `docs/8088-member-auth-safeguard-2026-09-23.md`。
-- 2026-09-24 已在服务器构建 `localhost/qddflc-api-runtime:20260924`；在无网络、只读挂载的隔离容器中，OpenSSL 和现有 Prisma Client 可加载。构建镜像不等于已切换运行容器。
+- `qddflc-api` 正在运行 `localhost/qddflc-api-runtime:20260924` 与 `node dist-auth-20260924/src/main.js`。候选包来自提交 `cb54efa`，SHA-256 为 `b3e5c0e70cf2da51c2a2b85f0f7b845c9eef38bb6a573dc4407ebe4c50167256`；旧 `api/dist` 保留供紧急回退。
+- `qddflc-api` 与 `qddflc-web` 均仅使用 Podman DNS `10.89.0.1`。此前混用阿里云 DNS 会间歇性解析不到内部数据库名，造成目录接口偶发 500；发布后经多轮连续请求验证均为 200。容器重建时数据库曾跟随短暂重启，API 日志出现一次启动期 `P1001`，随后 30 次复查均为 200，未发现持续错误。
+- MySQL 应用账号、MySQL root 账号、管理员/会员签名密钥已轮换；运行中容器与正式 Compose 配置逐项核对一致。旧管理员 token 需重新登录。不要将服务器配置或任何凭据复制入仓库。
+- 服务器 root 专用数据库备份：`/root/yinshua-before-credential-rotation-20260924.sql`（81,956 字节，SHA-256 `27811dd8c5d1dfffa72dcb1cf2fac10e7d0bc97eb738e472d2fedc033a0569c1`）；原 Compose 备份：`/root/yinshua-before-safe-api-20260924T002355Z.compose.yml`。这些备份含旧凭据/业务数据，禁止公开。
+- 直接访问 API 时，模拟微信登录、无 token 手机绑定及会员地址接口均返回 401；8088 代理的三个临时会员拦截继续返回 403，公开首页/目录与 WordPress 官网返回 200。旧 H5 发布包未更新，不能开放会员入口。
 
-## 发布前置条件
+## 运行与回退
 
-1. 确认数据库连接稳定、业务数据库已备份且备份可读取；确认 `qddflc-web`、`qddflc-api`、`qddflc-db` 的当前状态和回退窗口。
-2. 将本目录两个覆盖文件和 Dockerfile 放到服务器 `/opt/yinshua/current`，不要覆盖现行 `docker-compose.yml`。确认候选目录与旧 `dist` 均存在，并对候选文件核对校验值。
-3. 在服务器构建 `localhost/qddflc-api-runtime:20260924`。该镜像只补充 OpenSSL，API 依赖继续来自现行 `api/node_modules` 挂载；必须在隔离容器中先验证 Prisma Client 可运行。
-4. 组合现行 Compose 和 `docker-compose.safe-api.yml` 执行配置校验，确认只改变 API 的镜像及启动命令，且不会重建数据库或 WordPress。`podman-compose config` 会把环境变量写到标准错误输出；检查时必须同时捕获并丢弃标准输出与错误输出，不要复制到聊天或日志。
-5. 发布前轮换数据库及 API 签名凭据并准备回退；轮换会使现有登录 token 失效，需协调管理员重新登录。不要把真实凭据写入仓库或诊断输出。
-
-## 切换与回退
-
-在可接受短暂 8088 API 中断的维护窗口，用 `podman-compose` 指定现行文件和安全覆盖文件，仅重建 `qddflc-api` 服务；覆盖后的启动命令只运行 `node dist-auth-20260924/src/main.js`，**不得执行** `prisma:push`、`db:seed` 或依赖安装。上线后先验证产品目录、管理员登录拒绝规则及日志，再考虑后续 H5 认证入口。当前 8088 的三个会员代理拦截不可因此移除。
-
-如候选未通过验收，以 `docker-compose.rollback-api.yml` 覆盖现行 Compose，仅重建 API，启动保留的旧 `dist/src/main.js`。**不要直接使用原 Compose 文件回退**，它的旧启动命令会重跑推表/播种。回退后复核产品接口、代理拦截和 WordPress 官网。
+1. 当前正式 Compose 的 API 命令只启动编译后的服务，不再自动安装依赖、推表、播种或构建。不要把 root 备份中的旧 Compose 直接恢复到生产：它含已失效的旧凭据和不安全的旧启动链。
+2. 服务器 `podman-compose` 为 1.0.6。实测 `up --force-recreate` 只是停启原有容器，**不会可靠应用新镜像/命令/DNS**；而 `qddflc-web` 依赖 `qddflc-api`，不能先删除 API。后续变更必须先备份、校验，按顺序停/删 `qddflc-web`、停/删 `qddflc-api`，再用经过校验的单份 Compose 文件先创建 API、后创建 web；预留 8088 中断，并复查数据库是否被工具一同重启。WordPress 独立运行。
+3. `render-compose.py` 只允许安全版/回退覆盖文件里的预期键，输出必须在正式 Compose 同目录、权限 0600。`podman-compose config` 可能打印所有环境变量，务必同时丢弃 stdout/stderr，不要保存输出。网络重建后先重新确认 `10.89.0.1` 是否仍为网关。
+4. 当前新凭据的回退文件为服务器 `.rollback-after-rotation-20260924.merged.yml`（0600），会运行旧 `api/dist`，但保留新凭据与单一 Podman DNS。仅紧急使用，仍须按上述依赖顺序重建，并维持三个会员代理拦截；不可回退到旧凭据或开放旧会员认证。
+5. `rotate-credentials.py` 仅用于服务器端分阶段轮换与验证，不输出密码。再次轮换须先生成新备份和新的候选文件，不得复用本次备份/临时文件。上线后检查公开目录、模拟登录拒绝、会员拦截、管理员重新登录和官网。

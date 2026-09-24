@@ -1,4 +1,8 @@
 services:
+  qddflc-web:
+    dns: [10.89.0.1]
+
   qddflc-api:
     image: localhost/qddflc-api-runtime:20260924
+    dns: [10.89.0.1]
     command: ["node", "dist-auth-20260924/src/main.js"]
